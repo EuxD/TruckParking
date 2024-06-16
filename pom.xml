@@ -10,7 +10,7 @@
   <name>TruckParking</name>
 
   <modules>
-<!--    <module>Entities</module>-->
+    <module>Entities</module>
   </modules>
 
   <properties>
