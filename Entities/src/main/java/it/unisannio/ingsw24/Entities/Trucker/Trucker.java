@@ -11,6 +11,8 @@ public class Trucker extends Persona {
     private String id_trucker;
     private List<String> bookings;
 
+    public Trucker(){}
+
     public Trucker(String id,String name, String surname, Date bDate, String mail, String gender, String role, String password ,List<String> bookings) {
         super(name, surname, bDate, mail, gender, role, password);
         this.id_trucker = id;
@@ -20,6 +22,11 @@ public class Trucker extends Persona {
     public Trucker(String name, String surname, Date bDate, String mail, String gender, String role, String password ,List<String> bookings) {
         super(name, surname, bDate, mail, gender, role, password);
         this.bookings = bookings;
+    }
+
+    public Trucker(String id,String name, String surname, Date bDate, String mail, String gender, String role, String password) {
+        super(name, surname, bDate, mail, gender, role, password);
+        this.id_trucker = id;
     }
 
     public String getId_trucker() {

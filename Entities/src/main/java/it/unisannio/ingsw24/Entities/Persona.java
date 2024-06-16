@@ -1,5 +1,7 @@
 package it.unisannio.ingsw24.Entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -7,7 +9,7 @@ public abstract class Persona {
 
     private String name;
     private String surname;
-//    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date bDate;
     private String email;
     private String gender;
