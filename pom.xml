@@ -11,6 +11,7 @@
 
   <modules>
     <module>Entities</module>
+    <module>Trucker</module>
   </modules>
 
   <properties>
