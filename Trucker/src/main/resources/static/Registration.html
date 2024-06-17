@@ -79,19 +79,19 @@
     <h2>Registration</h2>
 
     <label for="name">Name:</label>
-    <input type="text" id="name" name="name">
+    <input type="text" id="name" name="name" required>
 
     <label for="surname">Surname:</label>
-    <input type="text" id="surname" name="surname">
+    <input type="text" id="surname" name="surname" required>
 
     <label for="bDate">Year of Birth:</label>
-    <input type="date" id="bDate" name="bdate">
+    <input type="date" id="bDate" name="bdate" required>
 
     <label for="email">Email:</label>
-    <input type="email" id="email" name="email">
+    <input type="email" id="email" name="email" required>
 
     <label for="password">Password:</label>
-    <input type="password" id="password" name="password">
+    <input type="password" id="password" name="password" required>
 
     <div class="radio-group">
         <label>Gender:</label>
@@ -110,8 +110,6 @@
         </div>
     </div>
 
-
-
     <input type="submit" value="Create" onclick="onCreateButtonPressed()">
 </form>
 
@@ -128,13 +126,15 @@
         // Formatta la data nel formato "dd/MM/yyyy"
         const formattedBDate = formatDate(bDateValue);
 
-        let url = "http://localhost:8081/trucker/create";
+        let url;
 
-        // Verifica il ruolo selezionato e modifica l'URL di destinazione
         if (role && role.value === "Trucker") {
             url = "http://localhost:8081/trucker/create";
-        } else {
+        } else if (role && role.value === "Owner") {
             url = "http://localhost:8082/owner/create";
+        } else {
+            console.error("Invalid role selected");
+            return;
         }
 
         const data = JSON.stringify({
@@ -147,12 +147,18 @@
             password: document.getElementById("password").value
         });
 
+        console.log("Sending data to: " + url);
         console.log(data);
         const xhr = new XMLHttpRequest();
         xhr.addEventListener("readystatechange", function () {
-            if (this.readyState === this.DONE && this.status === 201) {
-                var location = this.getResponseHeader("Location");
-                alert("Registration Successful");
+            if (this.readyState === this.DONE) {
+                if (this.status === 201) {
+                    var location = this.getResponseHeader("Location");
+                    alert("Registration Successful");
+                } else {
+                    console.error("Registration failed: " + this.status);
+                    alert("Registration Failed: " + this.status);
+                }
             }
         });
 

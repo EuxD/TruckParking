@@ -10,9 +10,16 @@ public class Owner extends Persona {
     private String id_owner;
     private ArrayList<String> parks;
 
+    public Owner(){}
+
     public Owner(String name, String surname, Date bDate, String mail, String gender, ArrayList<String> parks, String role, String password) {
         super(name, surname, bDate, mail, gender, role, password);
         this.parks = new ArrayList<>();
+    }
+
+    public Owner(String name, String surname, Date bDate, String mail, String gender, String role, String password) {
+        super(name, surname, bDate, mail, gender, role, password);
+        this.parks = null;
     }
 
     public String getId_owner() {
