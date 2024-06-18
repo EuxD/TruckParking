@@ -2,51 +2,66 @@ package it.unisannio.ingsw24.Trucker.Controller;
 
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Trucker.Persistence.TruckerDAOMongo;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.Produces;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
 
-@RestController
-@Produces(MediaType.APPLICATION_JSON_VALUE)
-@Consumes(MediaType.APPLICATION_JSON_VALUE)
-@RequestMapping("/trucker")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Path("/trucker")
 public class TruckerRestController {
 
     private TruckerDAOMongo truckerDAOMongo = TruckerDAOMongo.getIstance();
 
-    @GetMapping("/{email}")
-    public ResponseEntity<?> getTruckerByEmail(@PathVariable("email") String email) {
+    @GET
+    @Path("/{email}")
+    public Response getTruckerByEmail(@PathParam("email") String email) {
         try {
             Trucker t = truckerDAOMongo.findTruckerByEmail(email);
-            return ResponseEntity.status(HttpStatus.OK).body(t);
+            return Response.ok()
+                    .entity(t)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found, try a different email");
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Nessun Trucker trovato con quella mail")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Multiple users found with the same email");
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("Più utenti con la stessa mail")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
         }
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createTrucker(@RequestBody Trucker t) {
+    @POST
+    @Path("/create")
+    public Response createTrucker(@RequestBody Trucker t) {
         Trucker trucker = truckerDAOMongo.createTrucker(t);
         if(trucker == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Errore nella creazione del Trucker");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Errore nella creazione del Trucker")
+                    .type(MediaType.TEXT_PLAIN).build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(trucker);
+        return Response.status(Response.Status.CREATED)
+                .entity(trucker).type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
-    @GetMapping("id/{id}")
-    public ResponseEntity<?> getTruckerById(@PathVariable("id") String id) {
+    @GET
+    @Path("id/{id}")
+    public Response getTruckerById(@PathParam("id") String id) {
         Trucker t = truckerDAOMongo.findTruckerById(id);
         if (t == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Trucker not found, try a different id");
+            return Response.status(Response.Status.NOT_FOUND).entity("Nessun Trucker con quel ID").build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(t);
+        return Response.ok().build();
     }
 
 

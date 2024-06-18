@@ -126,17 +126,6 @@
         // Formatta la data nel formato "dd/MM/yyyy"
         const formattedBDate = formatDate(bDateValue);
 
-        let url;
-
-        if (role && role.value === "Trucker") {
-            url = "http://localhost:8081/trucker/create";
-        } else if (role && role.value === "Owner") {
-            url = "http://localhost:8082/owner/create";
-        } else {
-            console.error("Invalid role selected");
-            return;
-        }
-
         const data = JSON.stringify({
             name: document.getElementById("name").value,
             surname: document.getElementById("surname").value,
@@ -147,13 +136,13 @@
             password: document.getElementById("password").value
         });
 
-        console.log("Sending data to: " + url);
         console.log(data);
         const xhr = new XMLHttpRequest();
         xhr.addEventListener("readystatechange", function () {
             if (this.readyState === this.DONE) {
                 if (this.status === 201) {
-                    var location = this.getResponseHeader("Location");
+                    // var location = this.getResponseHeader("Location");
+                    // var id = location.substring(location.lastIndexOf('/') + 1)
                     alert("Registration Successful");
                 } else {
                     console.error("Registration failed: " + this.status);
@@ -161,6 +150,8 @@
                 }
             }
         });
+
+        let url = "http://localhost:8080/rest/createOwner"
 
         xhr.open("POST", url, true); // Utilizza l'URL dinamico in base al ruolo
         xhr.setRequestHeader("Content-Type", "application/json");

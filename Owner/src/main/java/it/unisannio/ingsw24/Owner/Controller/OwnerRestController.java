@@ -4,7 +4,10 @@ import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Owner.Persistence.OwnerDAOMongo;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,20 +16,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @Produces(MediaType.APPLICATION_JSON_VALUE)
 @Consumes(MediaType.APPLICATION_JSON_VALUE)
-@RequestMapping("/owner")
+@Path("/owner")
 public class OwnerRestController {
 
     private OwnerDAOMongo ownerDAOMongo = OwnerDAOMongo.getIstance();
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createTrucker(@RequestBody Owner ow) {
+    @POST
+    @Path("/create")
+    public Response createOwner(@RequestBody Owner ow) {
         Owner owner = ownerDAOMongo.createOwner(ow);
         if(owner == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Errore nella creazione del Trucker");
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(owner);
+        return Response.status(Response.Status.CREATED).build();
     }
 }

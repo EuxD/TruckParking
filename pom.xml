@@ -13,6 +13,7 @@
     <module>Entities</module>
     <module>Trucker</module>
       <module>Owner</module>
+      <module>TruckParkingGateway</module>
   </modules>
 
   <properties>
