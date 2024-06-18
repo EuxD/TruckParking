@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 320px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .radio-group {
+            margin-bottom: 10px;
+        }
+
+        .radio-group label {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .radio-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<form onsubmit="return false">
+    <h2>Registration</h2>
+
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="surname">Surname:</label>
+    <input type="text" id="surname" name="surname" required>
+
+    <label for="bDate">Year of Birth:</label>
+    <input type="date" id="bDate" name="bdate" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <div class="radio-group">
+        <label>Gender:</label>
+        <div class="radio-container">
+            <label for="male"><input type="radio" id="male" name="gender" value="male"> Male</label>
+            <label for="female"><input type="radio" id="female" name="gender" value="female"> Female</label>
+            <label for="other"><input type="radio" id="other" name="gender" value="other"> Other</label>
+        </div>
+    </div>
+
+    <div class="radio-group">
+        <label>Role:</label>
+        <div class="radio-container">
+            <label for="trucker"><input type="radio" id="trucker" name="role" value="Trucker"> Trucker</label>
+            <label for="owner"><input type="radio" id="owner" name="role" value="Owner"> Owner</label>
+        </div>
+    </div>
+
+    <input type="submit" value="Create" onclick="onCreateButtonPressed()">
+</form>
+
+<script>
+    function onCreateButtonPressed() {
+        console.log("onCreate");
+
+        const gender = document.querySelector('input[name="gender"]:checked');
+        const role = document.querySelector('input[name="role"]:checked');
+
+        // Ottieni il valore dalla data di nascita
+        const bDateValue = document.getElementById("bDate").value;
+
+        // Formatta la data nel formato "dd/MM/yyyy"
+        const formattedBDate = formatDate(bDateValue);
+
+        const data = JSON.stringify({
+            name: document.getElementById("name").value,
+            surname: document.getElementById("surname").value,
+            bDate: formattedBDate, // Utilizza la data formattata
+            email: document.getElementById("email").value,
+            gender: gender ? gender.value : null,
+            role: role ? role.value : null,
+            password: document.getElementById("password").value
+        });
+
+        console.log(data);
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === this.DONE) {
+                if (this.status === 201) {
+                    // var location = this.getResponseHeader("Location");
+                    // var id = location.substring(location.lastIndexOf('/') + 1)
+                    alert("Registration Successful");
+                } else {
+                    console.error("Registration failed: " + this.status);
+                    alert("Registration Failed: " + this.status);
+                }
+            }
+        });
+
+        let url = "http://localhost:8080/rest/createOwner"
+
+        xhr.open("POST", url, true); // Utilizza l'URL dinamico in base al ruolo
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+        console.log("sent");
+    }
+
+    function formatDate(dateString) {
+        const dateParts = dateString.split("-");
+        if (dateParts.length === 3) {
+            const year = dateParts[0];
+            const month = dateParts[1];
+            const day = dateParts[2];
+            return `${day}/${month}/${year}`;
+        }
+        return null; // Gestione del fallback nel caso in cui la data non sia nel formato atteso
+    }
+
+</script>
+</body>
+</html>
