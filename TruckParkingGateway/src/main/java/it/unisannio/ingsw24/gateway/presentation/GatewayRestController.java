@@ -1,7 +1,7 @@
 package it.unisannio.ingsw24.gateway.presentation;
 
 import it.unisannio.ingsw24.Entities.Owner.Owner;
-import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import it.unisannio.ingsw24.Entities.Trucker.*;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogic;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogicImpl;
 
@@ -53,4 +53,6 @@ public class GatewayRestController {
         }
         return Response.ok().build();
     }
+
+
 }

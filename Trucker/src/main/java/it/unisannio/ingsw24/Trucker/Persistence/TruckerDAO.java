@@ -1,6 +1,7 @@
 package it.unisannio.ingsw24.Trucker.Persistence;
 
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import it.unisannio.ingsw24.Trucker.DTO.TruckerLoginDTO;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,6 +23,7 @@ public interface TruckerDAO {
     Trucker findTruckerByEmail(String email);
     Trucker createTrucker(Trucker t);
     Trucker findTruckerById(String id);
+//    TruckerLoginDTO loginTrucker(TruckerLoginDTO t);
 
 
 }

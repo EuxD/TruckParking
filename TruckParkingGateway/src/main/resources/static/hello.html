@@ -3,76 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Registration</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+    <link rel="stylesheet" href="styles.css">
 
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 320px;
-        }
-
-        h2 {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="date"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .radio-group {
-            margin-bottom: 10px;
-        }
-
-        .radio-group label {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        .radio-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
 </head>
 <body>
 <form onsubmit="return false">
@@ -139,11 +71,10 @@
         console.log(data);
         const xhr = new XMLHttpRequest();
         xhr.addEventListener("readystatechange", function () {
-            if (this.readyState === this.DONE) {
-                if (this.status === 201) {
-                    // var location = this.getResponseHeader("Location");
-                    // var id = location.substring(location.lastIndexOf('/') + 1)
+            if (this.readyState === XMLHttpRequest.DONE) {
+                if (this.status === 201 || this.status === 200) {
                     alert("Registration Successful");
+                    // document.getElementById('dataForm').reset();  //ripulisce i capi quando schiaccio il bottone
                 } else {
                     console.error("Registration failed: " + this.status);
                     alert("Registration Failed: " + this.status);
@@ -151,7 +82,12 @@
             }
         });
 
-        let url = "http://localhost:8080/rest/createOwner"
+        let url;
+        if (role && role.value === "Owner") {
+            url = "http://localhost:8080/truckparking/rest/createOwner";
+        } else if (role && role.value === "Trucker") {
+            url = "http://localhost:8080/truckparking/rest/createTrucker";
+        }
 
         xhr.open("POST", url, true); // Utilizza l'URL dinamico in base al ruolo
         xhr.setRequestHeader("Content-Type", "application/json");

@@ -7,12 +7,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import it.unisannio.ingsw24.Trucker.DTO.TruckerLoginDTO;
 import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 public class TruckerDAOMongo implements TruckerDAO {
@@ -81,6 +83,7 @@ public class TruckerDAOMongo implements TruckerDAO {
                 document.getList(ELEMENT_BOOKINGS, String.class));
     }
 
+
     private static Document truckerToDocument(Trucker t) {
         return new Document(ELEMENT_ID, t.getId_trucker())
                 .append(ELEMENT_NAME, t.getName())
@@ -125,6 +128,24 @@ public class TruckerDAOMongo implements TruckerDAO {
         assert truckers.size() == 1;
         return truckers.get(0);
     }
+
+//    @Override
+//    public TruckerLoginDTO loginTrucker(TruckerLoginDTO t) {
+//        Document doc = this.collection.find(and(
+//                eq(ELEMENT_EMAIL, t.getEmail()),
+//                eq(ELEMENT_PASSWORD, t.getPassword())
+//        )).first();
+//
+//        TruckerLoginDTO truckerLoginDTO = truckerFromDocumentLogin(doc);
+//
+//        if(truckerLoginDTO == null){
+//            return null;
+//        } else{
+//            return truckerLoginDTO;
+//        }
+//
+//
+//    }
 
 
     @Override
