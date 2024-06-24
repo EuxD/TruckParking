@@ -28,7 +28,7 @@ public class TruckerDAOMongo implements TruckerDAO {
     private final MongoCollection<Document> collection;
     private static TruckerDAOMongo truckerDAO = null;
     private static final String COUNTER_ID = "counter";
-    private static final String PREFIX = "T";
+    private static final String PREFIX = "U";
     private static final int ID_LENGTH = 2;
 
     public static TruckerDAOMongo getIstance(){
@@ -98,15 +98,17 @@ public class TruckerDAOMongo implements TruckerDAO {
 
     public Trucker createTrucker(Trucker t){
 //        String newId = UUID.randomUUID().toString();
-        int newSeq = getNextSequence();
-        String newId = formatId(newSeq);
-        t.setId_trucker(newId);
-        try {
-            Document trucker = truckerToDocument(t);
-            collection.insertOne(trucker);
-            return t;
-        }catch (MongoWriteException e){
-            e.printStackTrace();
+        if(resourcheEmail(t.getEmail())){
+            int newSeq = getNextSequence();
+            String newId = formatId(newSeq);
+            t.setId_trucker(newId);
+            try {
+                Document trucker = truckerToDocument(t);
+                collection.insertOne(trucker);
+                return t;
+            }catch (MongoWriteException e){
+                e.printStackTrace();
+            }
         }
 
         return null;
@@ -127,6 +129,15 @@ public class TruckerDAOMongo implements TruckerDAO {
 
         assert truckers.size() == 1;
         return truckers.get(0);
+    }
+
+    private boolean resourcheEmail(String email){
+        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
+        if(doc == null){
+            return true;
+        }
+
+        return false;
     }
 
 //    @Override

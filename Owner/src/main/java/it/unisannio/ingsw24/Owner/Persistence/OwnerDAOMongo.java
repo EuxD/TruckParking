@@ -10,7 +10,9 @@ import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import org.bson.Document;
 
-public class OwnerDAOMongo implements OwnerDAO{
+import static com.mongodb.client.model.Filters.eq;
+
+public class OwnerDAOMongo implements OwnerDAO {
 
     private String host = System.getenv("HOST");
     private String port = System.getenv("PORT");
@@ -21,21 +23,21 @@ public class OwnerDAOMongo implements OwnerDAO{
     private final MongoCollection<Document> collection;
     private static OwnerDAOMongo ownerDAOMongo = null;
     private static final String COUNTER_ID = "counter";
-    private static final String PREFIX = "Ow";
+    private static final String PREFIX = "U";
     private static final int ID_LENGTH = 2;
 
-    public static OwnerDAOMongo getIstance(){
-        if(ownerDAOMongo == null){
+    public static OwnerDAOMongo getIstance() {
+        if (ownerDAOMongo == null) {
             ownerDAOMongo = new OwnerDAOMongo();
         }
         return ownerDAOMongo;
     }
 
-    public OwnerDAOMongo(){
-        if(host == null){
+    public OwnerDAOMongo() {
+        if (host == null) {
             host = "172.31.6.11";
         }
-        if(port == null){
+        if (port == null) {
             port = "27017";
         }
         URI = "mongodb://" + host + ":" + port;
@@ -64,7 +66,7 @@ public class OwnerDAOMongo implements OwnerDAO{
         return result.getInteger("seq") + 1;
     }
 
-    private static Trucker ownerFromDocument(Document document){
+    private static Trucker ownerFromDocument(Document document) {
         return new Trucker(document.getString(ELEMENT_ID),
                 document.getString(ELEMENT_NAME),
                 document.getString(ELEMENT_SURNAME),
@@ -89,20 +91,36 @@ public class OwnerDAOMongo implements OwnerDAO{
     }
 
     @Override
-    public Owner createOwner(Owner ow){
+    public Owner createOwner(Owner ow) {
 //        String newId = UUID.randomUUID().toString();
-        int newSeq = getNextSequence();
-        String newId = formatId(newSeq);
-        ow.setId_owner(newId);
-        try {
-            Document owner = ownerToDocument(ow);
-            collection.insertOne(owner);
-            return ow;
-        }catch (MongoWriteException e){
-            e.printStackTrace();
-        }
+        if (resourcheEmail(ow.getEmail())) {
+            int newSeq = getNextSequence();
+            String newId = formatId(newSeq);
+            ow.setId_owner(newId);
+            try {
+                Document trucker = ownerToDocument(ow);
+                collection.insertOne(trucker);
+                return ow;
+            } catch (MongoWriteException e) {
+                e.printStackTrace();
+            }
 
+
+        }
         return null;
     }
 
+    private boolean resourcheEmail(String email) {
+        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
+        if (doc == null) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
+
+
+
+
