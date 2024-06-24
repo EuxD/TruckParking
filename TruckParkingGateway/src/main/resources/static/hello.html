@@ -37,8 +37,8 @@
     <div class="radio-group">
         <label>Role:</label>
         <div class="radio-container">
-            <label for="trucker"><input type="radio" id="trucker" name="role" value="Trucker"> Trucker</label>
-            <label for="owner"><input type="radio" id="owner" name="role" value="Owner"> Owner</label>
+            <label for="trucker"><input type="radio" id="trucker" name="role" value="ROLE_TRUCKER"> Trucker</label>
+            <label for="owner"><input type="radio" id="owner" name="role" value="ROLE_OWNER"> Owner</label>
         </div>
     </div>
 
@@ -83,10 +83,11 @@
         });
 
         let url;
-        if (role && role.value === "Owner") {
+        if (role && role.value === "ROLE_OWNER") {
             url = "http://localhost:8080/truckparking/rest/createOwner";
-        } else if (role && role.value === "Trucker") {
+        } else if (role && role.value === "ROLE_TRUCKER") {
             url = "http://localhost:8080/truckparking/rest/createTrucker";
+
         }
 
         xhr.open("POST", url, true); // Utilizza l'URL dinamico in base al ruolo

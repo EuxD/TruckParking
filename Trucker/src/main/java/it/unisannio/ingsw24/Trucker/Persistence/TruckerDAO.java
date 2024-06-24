@@ -1,14 +1,13 @@
 package it.unisannio.ingsw24.Trucker.Persistence;
 
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
-import it.unisannio.ingsw24.Trucker.DTO.TruckerLoginDTO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TruckerDAO {
 
     String DATABASE_NAME = "TruckParking";
-    String COLLECTION_NAME = "Trucker";
+    String COLLECTION_NAME = "Users";
     String ELEMENT_ID = "id_trucker";
     String ELEMENT_NAME = "name";
     String ELEMENT_SURNAME = "surname";
@@ -20,10 +19,12 @@ public interface TruckerDAO {
     String ELEMENT_BOOKINGS = "bookings";
 
 
+
     Trucker findTruckerByEmail(String email);
     Trucker createTrucker(Trucker t);
     Trucker findTruckerById(String id);
-//    TruckerLoginDTO loginTrucker(TruckerLoginDTO t);
+    Boolean deleteTruckerByEmail(String email);
+
 
 
 }

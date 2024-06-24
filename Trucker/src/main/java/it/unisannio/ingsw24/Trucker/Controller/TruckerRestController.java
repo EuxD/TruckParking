@@ -1,5 +1,6 @@
 package it.unisannio.ingsw24.Trucker.Controller;
 
+import it.unisannio.ingsw24.Entities.Trucker.DTO.TruckerLogin;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Trucker.Persistence.TruckerDAOMongo;
 import jakarta.ws.rs.*;
@@ -54,6 +55,17 @@ public class TruckerRestController {
                 .build();
     }
 
+    @POST
+    @Path("/loginTrucker")
+    public Response loginTrucker(@RequestBody TruckerLogin truckerLogin){
+        TruckerLogin t = truckerDAOMongo.getTruckerByEmailAndPassword(truckerLogin.getEmail(), truckerLogin.getPassword());
+        if(t == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        return Response.ok().build();
+    }
+
     @GET
     @Path("id/{id}")
     public Response getTruckerById(@PathParam("id") String id) {
@@ -62,6 +74,18 @@ public class TruckerRestController {
             return Response.status(Response.Status.NOT_FOUND).entity("Nessun Trucker con quel ID").build();
         }
         return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/deleteTrucker") //de gestire meglio le eccezioni come fatto per findByMail
+    public Response deleteTruckerByEmail(@QueryParam("email") String email){
+        boolean flag = truckerDAOMongo.deleteTruckerByEmail(email);
+        if(flag){
+            return Response.ok().entity("Trucker eliminato con successo").type(MediaType.TEXT_PLAIN).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Trucker non trovato")
+                    .entity(MediaType.TEXT_PLAIN).build();
+        }
     }
 
 

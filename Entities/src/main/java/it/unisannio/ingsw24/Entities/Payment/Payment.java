@@ -9,7 +9,7 @@ public class Payment {
     private Date start;
     private Date end;
     private String id_parking;
-    private Double total; //bisogna vedere se aggiungerlo in un eventuale DAO per il calcolo totale della tariffa
+    private Double total;
 
     public Payment(String id_payment, Date start, Date end, String parking) {
         this.id_payment = id_payment;

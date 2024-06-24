@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 public interface OwnerDAO {
 
     String DATABASE_NAME = "TruckParking";
-    String COLLECTION_NAME = "Owner";
+    String COLLECTION_NAME = "Users";
     String ELEMENT_ID = "id_owner";
     String ELEMENT_NAME = "name";
     String ELEMENT_SURNAME = "surname";

@@ -12,8 +12,9 @@
   <modules>
     <module>Entities</module>
     <module>Trucker</module>
-      <module>Owner</module>
-      <module>TruckParkingGateway</module>
+    <module>Owner</module>
+    <module>TruckParkingGateway</module>
+      <module>Parking</module>
   </modules>
 
   <properties>

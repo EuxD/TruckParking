@@ -2,10 +2,15 @@ package it.unisannio.ingsw24.gateway.logic;
 
 import com.google.gson.*;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
+import it.unisannio.ingsw24.Entities.Trucker.DTO.TruckerLogin;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import okhttp3.*;
 
+import javax.swing.text.Document;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 
 public class GatewayLogicImpl implements GatewayLogic{
@@ -67,6 +72,30 @@ public class GatewayLogicImpl implements GatewayLogic{
         return owner;
     }
 
+    @Override
+    public TruckerLogin truckerLogin(TruckerLogin truckerLogin) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        Gson gson = new GsonBuilder().create();
+        String jsonBody = gson.toJson(truckerLogin);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8081/trucker/loginTrucker")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+        System.out.println(response.code());
+        if (response.code() != 200) {
+            return null;
+        }
+
+        return truckerLogin;
+    }
+
 
     @Override
     public Trucker createTrucker(Trucker trucker) throws IOException{
@@ -93,6 +122,29 @@ public class GatewayLogicImpl implements GatewayLogic{
         }
 
         return trucker;
+    }
+
+    @Override
+    public Boolean deleteTruckerByEmail(String email) {
+        try{
+            String URL = String.format(truckerAddress + "/trucker/deleteTrucker?email=" + email);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .delete()
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 200) {
+                return false;
+            }
+
+
+        } catch (Exception e) {}
+
+        return true;
+
     }
 
 

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prenotazione Posti Camion</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .header {
+            position: relative;
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            height: 400px; /* Aumentata l'altezza dell'intestazione */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .header h1 {
+            position: relative;
+            z-index: 2;
+            margin: 0;
+            padding: 20px;
+            font-size: 3em; /* Aumentata la dimensione del carattere */
+            background: rgba(0, 128, 0, 0.7); /* Verde scuro */
+            border-radius: 10px;
+        }
+        .header .blur-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('parcheggio.jpeg') no-repeat center center;
+            background-size: cover;
+            filter: blur(8px);
+            z-index: 1;
+            opacity: 0.7;
+        }
+        .nav-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between; /* Aggiunta la spaziatura tra i pulsanti */
+            margin-top: 20px;
+        }
+        .nav-links {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        .nav-links li {
+            margin: 0 10px;
+        }
+        .nav-links li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #44c767; /* Verde più chiaro */
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .nav-links li a:hover {
+            background-color: #5cbf2a; /* Verde più scuro */
+        }
+
+        h2 {
+            margin-top: 20px; /* Ridotto il margine superiore */
+            font-size: 2em;
+            color: #44c767; /* Verde più chiaro */
+        }
+        p {
+            text-align: justify;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #44c767; /* Verde più chiaro */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        .btn:hover {
+            background-color: #5cbf2a; /* Verde più scuro */
+        }
+        img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .welcome-section {
+            background: #f4f4f4;
+            padding: 20px;
+            box-shadow: 20px 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="blur-image"></div>
+    <h1>Prenotazione Posti Camion</h1>
+</header>
+<div class="nav-container">
+    <ul class="nav-links">
+        <li><a href="hello.html">Register</a></li>
+        <li><a href="#">Prenotazione</a></li>
+        <li><a href="#">Assistenza</a></li>
+    </ul>
+</div>
+<div class="container">
+    <div class="welcome-section">
+        <h2>Benvenuti!</h2>
+        <p>La nostra applicazione web offre una soluzione pratica per i camionisti che desiderano prenotare un posto sicuro per il loro camion, e per i privati che vogliono mettere a disposizione il proprio terreno e guadagnare.</p>
+        <p>Sia che tu sia un camionista in cerca di un parcheggio sicuro, sia che tu sia un privato interessato a monetizzare il tuo spazio disponibile, sei nel posto giusto!</p>
+        <img src="parcheggio.jpeg" alt="Parcheggio per camion">
+    </div>
+</div>
+</body>
+</html>

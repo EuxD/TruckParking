@@ -6,7 +6,7 @@ public class Parking {
     private String address;
     private String city;
     private String id_owner;
-    private int numbers;
+    private int numbers;    //posti disponibili
     private Double tariff;
 
     public Parking(String idpark, String address, String city, String owner, int numbers, Double tariff) {
