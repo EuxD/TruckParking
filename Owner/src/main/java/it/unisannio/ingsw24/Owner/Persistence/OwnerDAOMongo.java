@@ -10,6 +10,8 @@ import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import org.bson.Document;
 
+import static com.mongodb.client.model.Filters.eq;
+
 public class OwnerDAOMongo implements OwnerDAO{
 
     private String host = System.getenv("HOST");
@@ -91,18 +93,31 @@ public class OwnerDAOMongo implements OwnerDAO{
     @Override
     public Owner createOwner(Owner ow){
 //        String newId = UUID.randomUUID().toString();
-        int newSeq = getNextSequence();
-        String newId = formatId(newSeq);
-        ow.setId_owner(newId);
-        try {
-            Document owner = ownerToDocument(ow);
-            collection.insertOne(owner);
-            return ow;
-        }catch (MongoWriteException e){
-            e.printStackTrace();
-        }
+        if (resourcheEmail(ow.getEmail())) {
+            int newSeq = getNextSequence();
+            String newId = formatId(newSeq);
+            ow.setId_owner(newId);
+            try {
+                Document trucker = ownerToDocument(ow);
+                collection.insertOne(trucker);
+                return ow;
+            } catch (MongoWriteException e) {
+                e.printStackTrace();
+            }
 
+
+        }
         return null;
     }
+
+    private boolean resourcheEmail(String email) {
+        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
+        if (doc == null) {
+            return true;
+        }
+
+        return false;
+    }
+
 
 }

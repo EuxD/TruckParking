@@ -7,7 +7,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
-import it.unisannio.ingsw24.Trucker.DTO.TruckerLoginDTO;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -98,19 +97,32 @@ public class TruckerDAOMongo implements TruckerDAO {
 
     public Trucker createTrucker(Trucker t){
 //        String newId = UUID.randomUUID().toString();
-        int newSeq = getNextSequence();
-        String newId = formatId(newSeq);
-        t.setId_trucker(newId);
-        try {
-            Document trucker = truckerToDocument(t);
-            collection.insertOne(trucker);
-            return t;
-        }catch (MongoWriteException e){
-            e.printStackTrace();
-        }
+        if (resourcheEmail(t.getEmail())) {
+            int newSeq = getNextSequence();
+            String newId = formatId(newSeq);
+            t.setId_trucker(newId);
+            try {
+                Document trucker = truckerToDocument(t);
+                collection.insertOne(trucker);
+                return t;
+            } catch (MongoWriteException e) {
+                e.printStackTrace();
+            }
 
+
+        }
         return null;
     }
+
+    private boolean resourcheEmail(String email) {
+        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
+        if (doc == null) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     @Override
     public Trucker findTruckerById(String id) {
@@ -128,24 +140,6 @@ public class TruckerDAOMongo implements TruckerDAO {
         assert truckers.size() == 1;
         return truckers.get(0);
     }
-
-//    @Override
-//    public TruckerLoginDTO loginTrucker(TruckerLoginDTO t) {
-//        Document doc = this.collection.find(and(
-//                eq(ELEMENT_EMAIL, t.getEmail()),
-//                eq(ELEMENT_PASSWORD, t.getPassword())
-//        )).first();
-//
-//        TruckerLoginDTO truckerLoginDTO = truckerFromDocumentLogin(doc);
-//
-//        if(truckerLoginDTO == null){
-//            return null;
-//        } else{
-//            return truckerLoginDTO;
-//        }
-//
-//
-//    }
 
 
     @Override

@@ -23,7 +23,6 @@ public interface TruckerDAO {
     Trucker findTruckerByEmail(String email);
     Trucker createTrucker(Trucker t);
     Trucker findTruckerById(String id);
-    Boolean deleteTruckerByEmail(String email);
 
 
 
