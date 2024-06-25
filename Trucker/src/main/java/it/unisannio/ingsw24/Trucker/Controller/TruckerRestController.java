@@ -65,6 +65,21 @@ public class TruckerRestController {
         return Response.ok().build();
     }
 
+    @DELETE
+    @Path("/delete/{email}")
+    public Response deleteTruckerByEmail(@PathParam("email") String email) {
+        Trucker deletedTrucker = truckerDAOMongo.deleteTruckerByEmail(email);
+        if (deletedTrucker == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Trucker not found")
+                    .type(MediaType.TEXT_PLAIN).build();
+        }
+        return Response.status(Response.Status.OK)
+                .entity(deletedTrucker)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
 //    @DELETE
 //    @Path("/deleteTrucker") //de gestire meglio le eccezioni come fatto per findByMail
 //    public Response deleteTruckerByEmail(@QueryParam("email") String email){
