@@ -184,32 +184,11 @@ public class TruckerDAOMongo implements TruckerDAO {
             Document filter = new Document(ELEMENT_EMAIL, email);
             Document truckerDoc = collection.find(filter).first();
             if (truckerDoc != null) {
-                trucker = documentToTrucker(truckerDoc);
+                trucker = truckerFromDocument(truckerDoc);
             }
         } catch (MongoException e) {
             e.printStackTrace();
         }
         return trucker;
     }
-
-//    private Trucker documentToTrucker(Document document) {
-//        Trucker trucker = new Trucker();
-//        trucker.setId_trucker(document.getObjectId("_id").toString());
-//        trucker.setName(document.getString("name"));
-//        trucker.setEmail(document.getString("email"));
-//        // Add more fields as needed
-//        return trucker;
-//    }
-private Trucker documentToTrucker(Document document) {
-    Trucker trucker = new Trucker();
-    trucker.setId_trucker(document.getString(ELEMENT_ID));
-    trucker.setName(document.getString(ELEMENT_NAME));
-    trucker.setSurname(document.getString(ELEMENT_SURNAME));
-    trucker.setbDate(document.getDate(ELEMENT_BDATE));
-    trucker.setEmail(document.getString(ELEMENT_EMAIL));
-    trucker.setGender(document.getString(ELEMENT_GENDER));
-    trucker.setRole(document.getString(ELEMENT_ROLE));
-    trucker.setPassword(document.getString(ELEMENT_PASSWORD));
-    return trucker;
-}
 }
