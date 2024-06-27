@@ -66,5 +66,18 @@ public class GatewayRestController {
         }
     }
 
+    @GET
+    @Path("/owner/email/{email}")
+    public Response getOwnerByEmail(@PathParam("email") String email) throws IOException {
+        Owner o = logic.getOwnerByEmail(email);
+        if(o == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Owner non trovato")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+        return Response.ok().build();
+    }
+
 
 }
