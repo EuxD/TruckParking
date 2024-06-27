@@ -112,12 +112,13 @@ public class OwnerDAOMongo implements OwnerDAO{
 
     @Override
     public Owner findOwnerByEmail(String email) {
-        return null;
+        return null; //PIPPO
     }
 
     @Override
     public Owner findOwnerById(String id) {
         return null;
+        //CIAO
     }
 
     @Override
@@ -138,6 +139,8 @@ public class OwnerDAOMongo implements OwnerDAO{
 
         return false;
     }
+
+    
 
 
 }
