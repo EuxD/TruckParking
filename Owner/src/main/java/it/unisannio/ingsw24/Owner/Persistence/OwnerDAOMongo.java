@@ -110,6 +110,26 @@ public class OwnerDAOMongo implements OwnerDAO{
         return null;
     }
 
+    @Override
+    public Owner findOwnerByEmail(String email) {
+        return null;
+    }
+
+    @Override
+    public Owner findOwnerById(String id) {
+        return null;
+    }
+
+    @Override
+    public Owner deleteOwnerByEmail(String email) {
+        return null;
+    }
+
+    @Override
+    public Owner updateOwner(Owner o) {
+        return null;
+    }
+
     private boolean resourcheEmail(String email) {
         Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
         if (doc == null) {

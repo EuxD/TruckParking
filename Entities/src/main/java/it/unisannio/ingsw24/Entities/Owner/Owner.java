@@ -40,4 +40,3 @@ public class Owner extends Persona {
         this.parks = parks;
     }
 }
-

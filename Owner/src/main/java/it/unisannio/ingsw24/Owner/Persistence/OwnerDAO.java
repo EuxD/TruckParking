@@ -1,7 +1,6 @@
 package it.unisannio.ingsw24.Owner.Persistence;
 
 import it.unisannio.ingsw24.Entities.Owner.Owner;
-import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,7 +20,10 @@ public interface OwnerDAO {
 
 
     Owner createOwner(Owner owner);
-
+    Owner findOwnerByEmail(String email);
+    Owner findOwnerById(String id);
+    Owner deleteOwnerByEmail(String email);
+    Owner updateOwner(Owner o);
 }
 
 
