@@ -28,7 +28,7 @@ public class TruckerDAOMongo implements TruckerDAO {
     private final MongoCollection<Document> collection;
     private static TruckerDAOMongo truckerDAO = null;
     private static final String COUNTER_ID = "counter";
-    private static final String PREFIX = "T";
+    private static final String PREFIX = "U";
     private static final int ID_LENGTH = 2;
 
     public static TruckerDAOMongo getIstance(){
@@ -171,6 +171,19 @@ public class TruckerDAOMongo implements TruckerDAO {
         }
         this.collection.deleteOne(doc);
         return truckerFromDocument(doc);
+    }
+
+    @Override
+    public Trucker updateTrucker(Trucker t) {
+        try {
+            Document query = new Document(ELEMENT_EMAIL, t.getEmail());
+            Document update = new Document("$set", truckerToDocument(t));
+            collection.updateOne(query, update);
+            return t;
+        } catch (MongoWriteException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

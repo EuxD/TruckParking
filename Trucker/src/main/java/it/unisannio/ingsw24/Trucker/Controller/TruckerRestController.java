@@ -56,7 +56,7 @@ public class TruckerRestController {
     }
 
     @GET
-    @Path("id/{id}")
+    @Path("truckerID/{id}")
     public Response getTruckerById(@PathParam("id") String id) {
         Trucker t = truckerDAOMongo.findTruckerById(id);
         if (t == null) {
@@ -66,7 +66,7 @@ public class TruckerRestController {
     }
 
     @DELETE
-    @Path("/delete/{email}")
+    @Path("/deleteTrucker/{email}")
     public Response deleteTruckerByEmail(@PathParam("email") String email) {
         Trucker deletedTrucker = truckerDAOMongo.deleteTruckerByEmail(email);
         if (deletedTrucker == null) {
@@ -74,23 +74,29 @@ public class TruckerRestController {
                     .entity("Trucker not found")
                     .type(MediaType.TEXT_PLAIN).build();
         }
-        return Response.status(Response.Status.OK)
+        return Response.ok()
                 .entity(deletedTrucker)
                 .type(MediaType.APPLICATION_JSON)
                 .build();
     }
 
-//    @DELETE
-//    @Path("/deleteTrucker") //de gestire meglio le eccezioni come fatto per findByMail
-//    public Response deleteTruckerByEmail(@QueryParam("email") String email){
-//        boolean flag = truckerDAOMongo.deleteTruckerByEmail(email);
-//        if(flag){
-//            return Response.ok().entity("Trucker eliminato con successo").type(MediaType.TEXT_PLAIN).build();
-//        } else {
-//            return Response.status(Response.Status.NOT_FOUND).entity("Trucker non trovato")
-//                    .entity(MediaType.TEXT_PLAIN).build();
-//        }
-//    }
+    @PUT
+    @Path("/updateTrucker")
+    public Response updateTrucker(@RequestBody Trucker t) {
+        Trucker updatedTrucker = truckerDAOMongo.updateTrucker(t);
+        if (updatedTrucker == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Trucker not found")
+                    .type(MediaType.TEXT_HTML).build();
+        }
+
+        return Response.ok()
+                .entity("Trucker modificato con successo")
+                .type(MediaType.TEXT_HTML)
+                .build();
+    }
+
+
 
 
 

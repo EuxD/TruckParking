@@ -4,22 +4,24 @@ import it.unisannio.ingsw24.Entities.Persona;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Owner extends Persona {
 
     private String id_owner;
-    private ArrayList<String> parks;
+    private List<String> parks;
 
     public Owner(){}
 
-    public Owner(String name, String surname, Date bDate, String mail, String gender, ArrayList<String> parks, String role, String password) {
+    public Owner(String id, String name, String surname, Date bDate, String mail, String gender, String role, String password, List<String> parks) {
         super(name, surname, bDate, mail, gender, role, password);
-        this.parks = new ArrayList<>();
+        this.parks = parks;
+        this.id_owner = id;
     }
 
-    public Owner(String name, String surname, Date bDate, String mail, String gender, String role, String password) {
+    public Owner(String id, String name, String surname, Date bDate, String mail, String gender, String role, String password) {
         super(name, surname, bDate, mail, gender, role, password);
-        this.parks = null;
+        this.id_owner = id;
     }
 
     public String getId_owner() {
@@ -30,7 +32,7 @@ public class Owner extends Persona {
         this.id_owner = id_owner;
     }
 
-    public ArrayList<String> getParks() {
+    public List<String> getParks() {
         return parks;
     }
 

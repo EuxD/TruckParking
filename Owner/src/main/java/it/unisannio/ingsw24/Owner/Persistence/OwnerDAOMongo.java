@@ -66,8 +66,8 @@ public class OwnerDAOMongo implements OwnerDAO{
         return result.getInteger("seq") + 1;
     }
 
-    private static Trucker ownerFromDocument(Document document){
-        return new Trucker(document.getString(ELEMENT_ID),
+    private static Owner ownerFromDocument(Document document){
+        return new Owner(document.getString(ELEMENT_ID),
                 document.getString(ELEMENT_NAME),
                 document.getString(ELEMENT_SURNAME),
                 document.getDate(ELEMENT_BDATE),
