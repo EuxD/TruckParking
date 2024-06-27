@@ -155,13 +155,27 @@ public class OwnerDAOMongo implements OwnerDAO{
 
     @Override
     public Owner deleteOwnerByEmail(String email) {
-        return null;
+        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
+        if (doc == null) {
+            return null;
+        }
+        this.collection.deleteOne(doc);
+        return ownerFromDocument(doc);
     }
 
     @Override
     public Owner updateOwner(Owner o) {
+        try {
+            Document query = new Document(ELEMENT_EMAIL, o.getEmail());
+            Document update = new Document("$set", ownerToDocument(o));
+            collection.updateOne(query, update);
+            return o;
+        } catch (MongoWriteException e) {
+            e.printStackTrace();
+        }
         return null;
     }
+
 
     private boolean resourcheEmail(String email) {
         Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
