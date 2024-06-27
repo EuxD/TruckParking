@@ -10,6 +10,10 @@ import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import org.bson.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import static com.mongodb.client.model.Filters.eq;
 
 public class OwnerDAOMongo implements OwnerDAO{
@@ -112,14 +116,41 @@ public class OwnerDAOMongo implements OwnerDAO{
 
     @Override
     public Owner findOwnerByEmail(String email) {
-        return null; //PIPPO
+        List<Owner> owners = new ArrayList<>();
+
+        for (Document doc : this.collection.find(eq(ELEMENT_EMAIL, email))) {
+            Owner o = ownerFromDocument(doc);
+            owners.add(o);
+        }
+
+        if (owners.size() > 1) {
+            throw new IllegalStateException();
+        }
+
+        if (owners.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        assert owners.size() == 1;
+        return owners.get(0);
     }
 
     @Override
     public Owner findOwnerById(String id) {
-        return null;
-        //CIAO
-        //fkdjsjslkgslòhs
+        List<Owner> owners = new ArrayList<>();
+
+        for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
+            Owner o = ownerFromDocument(doc);
+            owners.add(o);
+        }
+
+        if(owners.isEmpty()){
+            return null;
+        }
+
+        assert owners.size() == 1;
+        return owners.get(0);
+
     }
 
     @Override
