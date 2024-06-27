@@ -1,6 +1,5 @@
 package it.unisannio.ingsw24.Trucker.Controller;
 
-import it.unisannio.ingsw24.Entities.Trucker.DTO.TruckerLogin;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Trucker.Persistence.TruckerDAOMongo;
 import jakarta.ws.rs.*;
@@ -66,7 +65,7 @@ public class TruckerRestController {
     }
 
     @DELETE
-    @Path("/deleteTrucker/{email}")
+    @Path("/delete/{email}")
     public Response deleteTruckerByEmail(@PathParam("email") String email) {
         Trucker deletedTrucker = truckerDAOMongo.deleteTruckerByEmail(email);
         if (deletedTrucker == null) {
@@ -81,7 +80,7 @@ public class TruckerRestController {
     }
 
     @PUT
-    @Path("/updateTrucker")
+    @Path("/update")
     public Response updateTrucker(@RequestBody Trucker t) {
         Trucker updatedTrucker = truckerDAOMongo.updateTrucker(t);
         if (updatedTrucker == null) {
