@@ -165,30 +165,12 @@ public class TruckerDAOMongo implements TruckerDAO {
 
     @Override
     public Trucker deleteTruckerByEmail(String email){
-        if (!resourcheEmail(email)){
-            Trucker deletedTrucker = getTruckerByEmail(email);
-            try {
-                collection.deleteOne(eq(ELEMENT_EMAIL, email));
-                return deletedTrucker;
-            } catch (MongoWriteException e) {
-                e.printStackTrace();
-            }
+        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
+        if (doc == null) {
+            return null;
         }
-        return null;
-
+        this.collection.deleteOne(doc);
+        return truckerFromDocument(doc);
     }
 
-    public Trucker getTruckerByEmail(String email) {
-        Trucker trucker = null;
-        try {
-            Document filter = new Document(ELEMENT_EMAIL, email);
-            Document truckerDoc = collection.find(filter).first();
-            if (truckerDoc != null) {
-                trucker = truckerFromDocument(truckerDoc);
-            }
-        } catch (MongoException e) {
-            e.printStackTrace();
-        }
-        return trucker;
-    }
 }

@@ -18,17 +18,19 @@ public class SecurityConfig {
     private final MyUserAuthUserDetailService userDetailService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
+//                .authorizeRequests()
+//                .requestMatchers("/truckparking/rest/createTrucker").hasRole("TRUCKER")
+//                .requestMatchers("/hello.html").hasRole("TRUCKER")
+//                .anyRequest().authenticated()
+//                .and()
+//                .httpBasic();
                 .authorizeHttpRequests().anyRequest().permitAll();
-
-
-
-
 
         return http.build();
     }
+
 
     public SecurityConfig(MyUserAuthUserDetailService userDetailService){
         this.userDetailService = userDetailService;

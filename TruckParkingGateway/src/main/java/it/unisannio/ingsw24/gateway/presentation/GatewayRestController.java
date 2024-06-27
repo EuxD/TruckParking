@@ -55,21 +55,6 @@ public class GatewayRestController {
         return Response.ok().build();
     }
 
-    @POST
-    @Path("/getTruckerForLogin")
-    public Response loginTrucker(@RequestBody TruckerLogin truckerLogin) throws IOException {
-
-        TruckerLogin t = logic.truckerLogin(truckerLogin);
-        if(t == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Errore nella creazione del Trucker")
-                    .type(MediaType.TEXT_PLAIN)
-                    .build();
-        }
-        return Response.ok().build();
-
-    }
-
     @DELETE
     @Path("/deleteTrucker")
     public Response deleteTruckerByEmail(@QueryParam("email") String email){

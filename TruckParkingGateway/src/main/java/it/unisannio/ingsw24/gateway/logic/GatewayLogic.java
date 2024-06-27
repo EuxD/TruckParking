@@ -12,6 +12,5 @@ public interface GatewayLogic {
 
     Trucker createTrucker(Trucker trucker) throws IOException;
     Boolean deleteTruckerByEmail(String email);
-    public TruckerLogin truckerLogin(TruckerLogin truckerLogin) throws IOException;
 
 }

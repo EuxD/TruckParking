@@ -72,30 +72,6 @@ public class GatewayLogicImpl implements GatewayLogic{
         return owner;
     }
 
-    @Override
-    public TruckerLogin truckerLogin(TruckerLogin truckerLogin) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/json");
-
-        Gson gson = new GsonBuilder().create();
-        String jsonBody = gson.toJson(truckerLogin);
-
-        RequestBody body = RequestBody.create(mediaType, jsonBody);
-        Request request = new Request.Builder()
-                .url("http://localhost:8081/trucker/loginTrucker")
-                .post(body)
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        Response response = client.newCall(request).execute();
-        System.out.println(response.code());
-        if (response.code() != 200) {
-            return null;
-        }
-
-        return truckerLogin;
-    }
-
 
     @Override
     public Trucker createTrucker(Trucker trucker) throws IOException{
