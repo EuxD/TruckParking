@@ -174,6 +174,16 @@ public class TruckerDAOMongo implements TruckerDAO {
     }
 
     @Override
+    public Trucker deleteTruckerByID(String id) {
+        Document doc = this.collection.find(eq(ELEMENT_ID, id)).first();
+        if (doc == null) {
+            return null;
+        }
+        this.collection.deleteOne(doc);
+        return truckerFromDocument(doc);
+    }
+
+    @Override
     public Trucker updateTrucker(Trucker t) {
         try {
             Document query = new Document(ELEMENT_EMAIL, t.getEmail());

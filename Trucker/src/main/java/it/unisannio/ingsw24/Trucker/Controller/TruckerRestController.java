@@ -61,13 +61,28 @@ public class TruckerRestController {
         if (t == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Nessun Trucker con quel ID").build();
         }
-        return Response.ok().build();
+        return Response.ok().entity(t).build();
     }
 
     @DELETE
     @Path("/delete/{email}")
     public Response deleteTruckerByEmail(@PathParam("email") String email) {
         Trucker deletedTrucker = truckerDAOMongo.deleteTruckerByEmail(email);
+        if (deletedTrucker == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Trucker not found")
+                    .type(MediaType.TEXT_PLAIN).build();
+        }
+        return Response.ok()
+                .entity(deletedTrucker)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    @DELETE
+    @Path("/deleteID/{id}")
+    public Response deleteTruckerByID(@PathParam("id") String id) {
+        Trucker deletedTrucker = truckerDAOMongo.deleteTruckerByID(id);
         if (deletedTrucker == null) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Trucker not found")

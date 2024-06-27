@@ -8,6 +8,7 @@ import okhttp3.*;
 import java.io.IOException;
 
 
+
 public class GatewayLogicImpl implements GatewayLogic{
 
     private final String ownerAddress;
@@ -41,32 +42,8 @@ public class GatewayLogicImpl implements GatewayLogic{
         truckerAddress = "http://" + truckerHost + ":" + truckerPort;
     }
 
-    @Override
-    public Owner createOwner(Owner owner) throws IOException {
 
-        OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/json");
-
-        // Formatta la data nel formato desiderato
-        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
-        String jsonBody = gson.toJson(owner);
-
-        RequestBody body = RequestBody.create(mediaType, jsonBody);
-        Request request = new Request.Builder()
-                .url("http://localhost:8082/owner/create")
-                .post(body)
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        Response response = client.newCall(request).execute();
-        System.out.println(response.code());
-        if (response.code() != 201) {
-            return null;
-        }
-
-        return owner;
-    }
-
+    //////////////////////////////////// TRUCKER ///////////////////////////////////////////////////
 
     @Override
     public Trucker createTrucker(Trucker trucker) throws IOException{
@@ -93,7 +70,88 @@ public class GatewayLogicImpl implements GatewayLogic{
         }
 
         return trucker;
-    }
+    } //FUNZIONA
+
+    @Override
+    public Trucker getTruckerByEmail(String email) {
+        try{
+            String URL = String.format(truckerAddress + "/trucker/" + email);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 200) {
+                return null;
+            }
+
+
+            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+            String body = response.body().string();
+//            System.out.println(body);
+            Trucker t = gson.fromJson(body, Trucker.class);
+            return t;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    } //FUNZIONA
+
+    @Override
+    public Trucker getTruckerByID(String id) {
+        try{
+            String URL = String.format(truckerAddress + "/trucker/truckerID/" + id);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 200) {
+                return null;
+            }
+
+
+            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+            String body = response.body().string();
+//            System.out.println(body);
+            Trucker t = gson.fromJson(body, Trucker.class);
+            return t;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    } //FUNZIONA
+
+    @Override
+    public Trucker updateTrucker(Trucker trucker) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Formatta la data nel formato desiderato
+        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        String jsonBody = gson.toJson(trucker);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8081/trucker/update")
+                .put(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+//        System.out.println(response.code());
+        if (response.code() != 200) {
+            return null;
+        }
+
+        return trucker;
+    } //FUNZIONA
 
     @Override
     public Boolean deleteTruckerByEmail(String email) {
@@ -115,12 +173,12 @@ public class GatewayLogicImpl implements GatewayLogic{
         } catch (Exception e) {}
 
         return true;
-    }
+    } //FUNZIONA
 
     @Override
-    public Boolean deleteOwnerByEmail(String email) {
+    public Boolean deleteTruckerByID(String id) {
         try{
-            String URL = String.format(ownerAddress + "/owner//delete/{email}" + email);
+            String URL = String.format(truckerAddress + "/trucker/deleteID/" + id);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
@@ -137,6 +195,34 @@ public class GatewayLogicImpl implements GatewayLogic{
         } catch (Exception e) {}
 
         return true;
+    } //FUNZIONA
+
+    ///////////////////////////////////////////////// OWNER /////////////////////////////////////////////////
+
+    @Override
+    public Owner createOwner(Owner owner) throws IOException {
+
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Formatta la data nel formato desiderato
+        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        String jsonBody = gson.toJson(owner);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8082/owner/create")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+        System.out.println(response.code());
+        if (response.code() != 201) {
+            return null;
+        }
+
+        return owner;
     }
 
     public Owner getOwnerByEmail(String email) {
@@ -185,5 +271,33 @@ public class GatewayLogicImpl implements GatewayLogic{
         }
         return null;
     }
+
+    //MANCANO DELETE CON ID e UPDATE DELL'OWNER
+    //TESTARE SE FUNZIONANO
+
+    @Override
+    public Boolean deleteOwnerByEmail(String email) throws IOException {
+        try{
+            String URL = String.format(ownerAddress + "/owner//delete/{email}" + email);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .delete()
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 200) {
+                return false;
+            }
+
+
+        } catch (Exception e) {}
+
+        return true;
+    }
+
+
+
 
 }

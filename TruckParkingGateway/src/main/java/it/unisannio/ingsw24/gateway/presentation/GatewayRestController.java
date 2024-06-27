@@ -27,6 +27,89 @@ public class GatewayRestController {
     }
 
     @POST
+    @Path("/createTrucker")
+    public Response createTrucker(@RequestBody Trucker t) throws IOException {
+        Trucker trucker = logic.createTrucker(t);
+        if(trucker == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Errore nella creazione del Trucker")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+        return Response.ok().build();
+        //FUNZIONA
+    }
+
+    @GET
+    @Path("/trucker/email/{email}")
+    public Response getTruckerByEmail(@PathParam("email") String email){
+        Trucker trucker = logic.getTruckerByEmail(email);
+        if(trucker == null){
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Nessun trucker trovato")
+                    .type(MediaType.TEXT_HTML)
+                    .build();
+        }
+
+        return Response.ok().entity(trucker).type(MediaType.APPLICATION_JSON).build();
+        // mi recupera anche un utente con ruolo owner, da controllare
+        //FUNZIONA
+    }
+
+    @GET
+    @Path("/trucker/ID/{id}")
+    public Response getTruckerByID(@PathParam("id") String id){
+        Trucker trucker = logic.getTruckerByID(id);
+        if(trucker == null){
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Nessun trucker trovato")
+                    .type(MediaType.TEXT_HTML)
+                    .build();
+        }
+
+        return Response.ok().entity(trucker).type(MediaType.APPLICATION_JSON).build();
+        //FUNZIONA
+    }
+
+    @PUT
+    @Path("/trucker/update")
+    public Response updateTrucker(@RequestBody Trucker trucker) throws IOException {
+        Trucker t = logic.updateTrucker(trucker);
+        if(t == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Errore nella modifica del Trucker")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+        return Response.ok().build();
+    }
+
+
+    @DELETE
+    @Path("/trucker/delete/email/{email}")
+    public Response deleteTruckerByEmail(@PathParam("email") String email){
+        boolean flag = logic.deleteTruckerByEmail(email);
+        if(flag){
+            return Response.ok().entity("Trucker eliminato con successo").type(MediaType.TEXT_PLAIN).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Trucker non trovato").build();
+        }
+        //FUNZIONA
+    }
+
+    @DELETE
+    @Path("/trucker/delete/ID/{id}")
+    public Response deleteTruckerByID(@PathParam("id") String id){
+        boolean flag = logic.deleteTruckerByID(id);
+        if(flag){
+            return Response.ok().entity("Trucker eliminato con successo").type(MediaType.TEXT_PLAIN).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Trucker non trovato").build();
+        }
+        //FUNZIONA
+    }
+
+    @POST
     @Path("/createOwner")
     public Response createOwner(@RequestBody Owner ow) throws IOException {
         Owner owner = logic.createOwner(ow);
@@ -42,30 +125,6 @@ public class GatewayRestController {
                 .build();
     }
 
-    @POST
-    @Path("/createTrucker")
-    public Response createTrucker(@RequestBody Trucker t) throws IOException {
-        Trucker trucker = logic.createTrucker(t);
-        if(trucker == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Errore nella creazione del Trucker")
-                    .type(MediaType.TEXT_PLAIN)
-                    .build();
-        }
-        return Response.ok().build();
-    }
-
-    @DELETE
-    @Path("/deleteTrucker")
-    public Response deleteTruckerByEmail(@QueryParam("email") String email){
-        boolean flag = logic.deleteTruckerByEmail(email);
-        if(flag){
-            return Response.ok().entity("Trucker eliminato con successo").type(MediaType.TEXT_PLAIN).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Trucker non trovato").build();
-        }
-    }
-
     @GET
     @Path("/owner/email/{email}")
     public Response getOwnerByEmail(@PathParam("email") String email) throws IOException {
@@ -77,7 +136,10 @@ public class GatewayRestController {
                     .build();
         }
         return Response.ok().build();
+        //FUNZIONA
     }
+
+
 
 
 }
