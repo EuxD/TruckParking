@@ -7,7 +7,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
-import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -154,16 +153,6 @@ public class OwnerDAOMongo implements OwnerDAO{
     }
 
     @Override
-    public Owner deleteOwnerByEmail(String email) {
-        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
-        if (doc == null) {
-            return null;
-        }
-        this.collection.deleteOne(doc);
-        return ownerFromDocument(doc);
-    }
-
-    @Override
     public Owner updateOwner(Owner o) {
         try {
             Document query = new Document(ELEMENT_EMAIL, o.getEmail());
@@ -174,6 +163,26 @@ public class OwnerDAOMongo implements OwnerDAO{
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public Owner deleteOwnerByEmail(String email) {
+        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
+        if (doc == null) {
+            return null;
+        }
+        this.collection.deleteOne(doc);
+        return ownerFromDocument(doc);
+    }
+
+    @Override
+    public Owner deleteOwnerByID(String id) {
+        Document doc = this.collection.find(eq(ELEMENT_ID, id)).first();
+        if (doc == null) {
+            return null;
+        }
+        this.collection.deleteOne(doc);
+        return ownerFromDocument(doc);
     }
 
 

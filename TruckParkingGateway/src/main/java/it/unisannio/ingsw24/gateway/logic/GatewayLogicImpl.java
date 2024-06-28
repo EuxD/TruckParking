@@ -249,7 +249,7 @@ public class GatewayLogicImpl implements GatewayLogic{
     }
 
     @Override
-    public Owner getOwnerById(int id) throws IOException {
+    public Owner getOwnerById(String id) throws IOException {
         try {
             String URL = String.format(ownerAddress + "/owner/id/" + id);
             OkHttpClient client = new OkHttpClient();
@@ -262,7 +262,7 @@ public class GatewayLogicImpl implements GatewayLogic{
             if (response.code() != 200 ){
                 return null;
             }
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
             String body = response.body().string();
             Owner o = gson.fromJson(body, Owner.class);
             return o;
@@ -272,13 +272,10 @@ public class GatewayLogicImpl implements GatewayLogic{
         return null;
     }
 
-    //MANCANO DELETE CON ID e UPDATE DELL'OWNER
-    //TESTARE SE FUNZIONANO
-
     @Override
     public Boolean deleteOwnerByEmail(String email) throws IOException {
         try{
-            String URL = String.format(ownerAddress + "/owner//delete/{email}" + email);
+            String URL = String.format(ownerAddress + "/owner/delete/" + email);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
@@ -295,6 +292,53 @@ public class GatewayLogicImpl implements GatewayLogic{
         } catch (Exception e) {}
 
         return true;
+    }
+
+    @Override
+    public Boolean deleteOwnerByID(String id) throws IOException {
+        try{
+            String URL = String.format(ownerAddress + "/owner/delete/" + id);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .delete()
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 200) {
+                return false;
+            }
+
+
+        } catch (Exception e) {}
+
+        return true;
+    }
+
+    @Override
+    public Owner updateOwner(Owner owner) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Formatta la data nel formato desiderato
+        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        String jsonBody = gson.toJson(owner);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8082/owner/update")
+                .put(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+//        System.out.println(response.code());
+        if (response.code() != 200) {
+            return null;
+        }
+
+        return owner;
     }
 
 

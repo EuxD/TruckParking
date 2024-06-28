@@ -35,7 +35,8 @@ public class OwnerRestController {
     public Response getOwnerById(@PathParam("id") String id) {
         Owner o = ownerDAOMongo.findOwnerById(id);
         if (o == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Nessun Owner con quel ID").build();
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Nessun Owner con quel ID").build();
         }
         return Response.ok().build();
     }
@@ -47,11 +48,26 @@ public class OwnerRestController {
         if (deletedOwner == null) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Owner not found")
-                    .type(jakarta.ws.rs.core.MediaType.TEXT_PLAIN).build();
+                    .type(MediaType.TEXT_PLAIN).build();
         }
         return Response.status(Response.Status.OK)
                 .entity(deletedOwner)
-                .type(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    @DELETE
+    @Path("/delete/{id}")
+    public Response deleteOwnerByID(@PathParam("id") String id) {
+        Owner deletedOwner = ownerDAOMongo.deleteOwnerByID(id);
+        if (deletedOwner == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Owner not found")
+                    .type(MediaType.TEXT_PLAIN).build();
+        }
+        return Response.ok()
+                .entity(deletedOwner)
+                .type(MediaType.APPLICATION_JSON)
                 .build();
     }
 

@@ -26,6 +26,8 @@ public class GatewayRestController {
         logic = new GatewayLogicImpl();
     }
 
+    //////////////////////////////// TRUCKER ////////////////////////////////////////
+
     @POST
     @Path("/createTrucker")
     public Response createTrucker(@RequestBody Trucker t) throws IOException {
@@ -84,7 +86,6 @@ public class GatewayRestController {
         return Response.ok().build();
     }
 
-
     @DELETE
     @Path("/trucker/delete/email/{email}")
     public Response deleteTruckerByEmail(@PathParam("email") String email){
@@ -108,6 +109,8 @@ public class GatewayRestController {
         }
         //FUNZIONA
     }
+
+    //////////////////////////////////// OWNER //////////////////////////////////////////
 
     @POST
     @Path("/createOwner")
@@ -136,10 +139,57 @@ public class GatewayRestController {
                     .build();
         }
         return Response.ok().build();
-        //FUNZIONA
     }
 
+    @GET
+    @Path("/owner/ID/{id}")
+    public Response getOwnerByID(@PathParam("id") String id) throws IOException {
+        Owner o = logic.getOwnerById(id);
+        if(o == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Owner non trovato")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+        return Response.ok().build();
+    }
 
+    @PUT
+    @Path("/owner/update")
+    public Response updateOwner(@RequestBody Owner ow) throws IOException {
+        Owner o = logic.updateOwner(ow);
+        if(o == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Errore nella modifica del Trucker")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+        return Response.ok().build();
+    }
 
+    @DELETE
+    @Path("/owner/delete/email/{email}")
+    public Response deleteOwnerByEmail(@PathParam("email") String email) throws IOException {
+        boolean flag = logic.deleteOwnerByEmail(email);
+        if(flag){
+            return Response.ok().entity("Owner eliminato con successo").type(MediaType.TEXT_PLAIN).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Owner non trovato").build();
+        }
+    }
+
+    @DELETE
+    @Path("/owner/delete/ID/{id}")
+    public Response deleteOwnerByID(@PathParam("id") String id) throws IOException {
+        boolean flag = logic.deleteOwnerByID(id);
+        if(flag){
+            return Response.ok().entity("Owner eliminato con successo").type(MediaType.TEXT_PLAIN).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Owner non trovato").build();
+        }
+    }
+
+    // METODI OWNER DA TESTARE
 
 }
+

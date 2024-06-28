@@ -24,6 +24,7 @@ public interface OwnerDAO {
     Owner findOwnerById(String id);
     Owner deleteOwnerByEmail(String email);
     Owner updateOwner(Owner o);
+    Owner deleteOwnerByID(String id);
 }
 
 
