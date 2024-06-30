@@ -8,15 +8,17 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import it.unisannio.ingsw24.Trucker.utils.EmailAlreadyExistsException;
 import org.bson.Document;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
+@Repository
 public class TruckerDAOMongo implements TruckerDAO {
 
     private String host = System.getenv("HOST");
@@ -26,17 +28,9 @@ public class TruckerDAOMongo implements TruckerDAO {
     private final MongoClient mongoClient;
     private final MongoDatabase database;
     private final MongoCollection<Document> collection;
-    private static TruckerDAOMongo truckerDAO = null;
     private static final String COUNTER_ID = "counter";
     private static final String PREFIX = "U";
     private static final int ID_LENGTH = 2;
-
-    public static TruckerDAOMongo getIstance(){
-        if(truckerDAO == null){
-            truckerDAO = new TruckerDAOMongo();
-        }
-        return truckerDAO;
-    }
 
     public TruckerDAOMongo(){
         if(host == null){
@@ -98,7 +92,7 @@ public class TruckerDAOMongo implements TruckerDAO {
 
     public Trucker createTrucker(Trucker t){
 //        String newId = UUID.randomUUID().toString();
-        if (resourcheEmail(t.getEmail())) {
+        if (!resourcheEmail(t.getEmail())) {
             int newSeq = getNextSequence();
             String newId = formatId(newSeq);
             t.setId_trucker(newId);
@@ -109,18 +103,15 @@ public class TruckerDAOMongo implements TruckerDAO {
             } catch (MongoWriteException e) {
                 e.printStackTrace();
             }
-
-
+        } else {
+            throw new EmailAlreadyExistsException("Email già in uso: " + t.getEmail());
         }
         return null;
     }
 
     private boolean resourcheEmail(String email) {
         Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
-        if (doc == null) {
-            return true;
-        }
-        return false;
+        return doc == null;
     }
 
 

@@ -2,11 +2,12 @@ package it.unisannio.ingsw24.Entities.Trucker;
 
 
 import it.unisannio.ingsw24.Entities.Persona;
+import it.unisannio.ingsw24.Entities.user.AppUser;
 
 import java.util.Date;
 import java.util.List;
 
-public class Trucker extends Persona {
+public class Trucker extends Persona implements AppUser {
 
     private String id_trucker;
     private List<String> bookings;

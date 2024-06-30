@@ -31,14 +31,14 @@ public class OwnerRestController {
     }
 
     @GET
-    @Path("id/{id}")
+    @Path("ID/{id}")
     public Response getOwnerById(@PathParam("id") String id) {
         Owner o = ownerDAOMongo.findOwnerById(id);
         if (o == null) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Nessun Owner con quel ID").build();
         }
-        return Response.ok().build();
+        return Response.ok().entity(o).build();
     }
 
     @DELETE
@@ -57,7 +57,7 @@ public class OwnerRestController {
     }
 
     @DELETE
-    @Path("/delete/{id}")
+    @Path("/deleteID/{id}")
     public Response deleteOwnerByID(@PathParam("id") String id) {
         Owner deletedOwner = ownerDAOMongo.deleteOwnerByID(id);
         if (deletedOwner == null) {

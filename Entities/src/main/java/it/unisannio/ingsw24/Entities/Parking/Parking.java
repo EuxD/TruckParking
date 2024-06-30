@@ -6,24 +6,26 @@ public class Parking {
     private String address;
     private String city;
     private String id_owner;
-    private int numbers;    //posti disponibili
-    private Double tariff;
+    private int nPlace;    //posti disponibili
+    private Double rate;
 
-    public Parking(String idpark, String address, String city, String owner, int numbers, Double tariff) {
+    public Parking() {}
+
+    public Parking(String idpark, String address, String city, String owner, int nPlace, Double rate) {
         this.id_park = idpark;
         this.address = address;
         this.city = city;
         this.id_owner = owner;
-        this.numbers = numbers;
-        this.tariff = tariff;
+        this.nPlace = nPlace;
+        this.rate = rate;
     }
 
-    public Parking(String address, String city, String owner, int numbers, Double tariff) {
+    public Parking(String address, String city, String owner, int nPlace, Double rate) {
         this.address = address;
         this.city = city;
         this.id_owner = owner;
-        this.numbers = numbers;
-        this.tariff = tariff;
+        this.nPlace = nPlace;
+        this.rate = rate;
     }
 
     public String getId_park() {
@@ -58,20 +60,31 @@ public class Parking {
         this.id_owner = id_owner;
     }
 
-    public int getNumbers() {
-        return numbers;
+    public int getnPlace() {
+        return nPlace;
     }
 
-    public void setNumbers(int numbers) {
-        this.numbers = numbers;
+    public void setnPlace(int nPlace) {
+        this.nPlace = nPlace;
     }
 
-    public Double getTariff() {
-        return tariff;
+    public Double getRate() {
+        return rate;
     }
 
-    public void setTariff(Double tariff) {
-        this.tariff = tariff;
+    public void setRate(Double rate) {
+        this.rate = rate;
+    }
+
+    @Override
+    public String toString() {
+        return "Parking{" +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", id_owner='" + id_owner + '\'' +
+                ", nPlace=" + nPlace +
+                ", rate=" + rate +
+                '}';
     }
 }
 

@@ -1,7 +1,7 @@
 package it.unisannio.ingsw24.gateway.logic;
 
 import it.unisannio.ingsw24.Entities.Owner.Owner;
-import it.unisannio.ingsw24.Entities.Trucker.DTO.TruckerLogin;
+import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 
 import java.io.IOException;
@@ -21,5 +21,7 @@ public interface GatewayLogic {
     Trucker getTruckerByEmail(String email);
     Trucker getTruckerByID(String id);
     Trucker updateTrucker(Trucker trucker) throws IOException;
+
+    Parking createParking(Parking parking) throws IOException;
 
 }

@@ -1,10 +1,14 @@
 package it.unisannio.ingsw24.Trucker.Controller;
 
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import it.unisannio.ingsw24.Trucker.Persistence.TruckerDAO;
 import it.unisannio.ingsw24.Trucker.Persistence.TruckerDAOMongo;
+import it.unisannio.ingsw24.Trucker.utils.EmailAlreadyExistsException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
@@ -14,7 +18,9 @@ import java.util.NoSuchElementException;
 @Path("/trucker")
 public class TruckerRestController {
 
-    private TruckerDAOMongo truckerDAOMongo = TruckerDAOMongo.getIstance();
+    @Autowired
+//    @Qualifier("truckerDAO") //indico quale BEAN andare ad iniettare (in questo caso posso anche evitare, dato che è uno)
+    private TruckerDAO truckerDAOMongo;
 
     @GET
     @Path("/{email}")
@@ -43,15 +49,24 @@ public class TruckerRestController {
     @POST
     @Path("/create")
     public Response createTrucker(@RequestBody Trucker t) {
-        Trucker trucker = truckerDAOMongo.createTrucker(t);
-        if(trucker == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Errore nella creazione del Trucker")
+        try {
+            Trucker trucker = truckerDAOMongo.createTrucker(t);
+            if (trucker == null) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Errore nella creazione del Trucker")
+                        .type(MediaType.TEXT_PLAIN).build();
+            }
+
+            return Response.status(Response.Status.CREATED)
+                    .entity(trucker)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
+        } catch (EmailAlreadyExistsException e) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(e.getMessage())
                     .type(MediaType.TEXT_PLAIN).build();
         }
-        return Response.status(Response.Status.CREATED)
-                .entity(trucker).type(MediaType.APPLICATION_JSON)
-                .build();
     }
 
     @GET

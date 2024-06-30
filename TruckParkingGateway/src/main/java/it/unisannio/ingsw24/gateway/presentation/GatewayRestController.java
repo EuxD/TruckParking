@@ -1,11 +1,12 @@
 package it.unisannio.ingsw24.gateway.presentation;
 
 import it.unisannio.ingsw24.Entities.Owner.Owner;
+import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.*;
-import it.unisannio.ingsw24.Entities.Trucker.DTO.TruckerLogin;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogic;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogicImpl;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -54,9 +55,8 @@ public class GatewayRestController {
         }
 
         return Response.ok().entity(trucker).type(MediaType.APPLICATION_JSON).build();
-        // mi recupera anche un utente con ruolo owner, da controllare
         //FUNZIONA
-    }
+    }   // mi recupera anche un utente con ruolo owner, da controllare
 
     @GET
     @Path("/trucker/ID/{id}")
@@ -126,7 +126,7 @@ public class GatewayRestController {
 //                .entity(owner.toString())
 //                .type(MediaType.TEXT_HTML)
                 .build();
-    }
+    } //FUNZIONA
 
     @GET
     @Path("/owner/email/{email}")
@@ -138,8 +138,9 @@ public class GatewayRestController {
                     .type(MediaType.TEXT_PLAIN)
                     .build();
         }
-        return Response.ok().build();
-    }
+        return Response.ok().
+                entity(o).type(MediaType.APPLICATION_JSON).build();
+    } //DA controllare, mi recupera anche i Trucker
 
     @GET
     @Path("/owner/ID/{id}")
@@ -151,8 +152,9 @@ public class GatewayRestController {
                     .type(MediaType.TEXT_PLAIN)
                     .build();
         }
-        return Response.ok().build();
-    }
+        return Response.ok()
+                .entity(o).type(MediaType.APPLICATION_JSON).build();
+    } //FUNZIONA
 
     @PUT
     @Path("/owner/update")
@@ -176,7 +178,7 @@ public class GatewayRestController {
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("Owner non trovato").build();
         }
-    }
+    } //stessa cosa getEmail
 
     @DELETE
     @Path("/owner/delete/ID/{id}")
@@ -187,9 +189,16 @@ public class GatewayRestController {
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("Owner non trovato").build();
         }
+    } //FUNZIONA
+
+    //////////////////////////////////// PARKING //////////////////////////////////////////
+
+    @POST
+    @Path("/parking/create")
+    public Response createParking(@RequestBody Parking parking) {
+        return null;
     }
 
-    // METODI OWNER DA TESTARE
 
 }
 

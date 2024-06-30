@@ -2,6 +2,7 @@ package it.unisannio.ingsw24.gateway.logic;
 
 import com.google.gson.*;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
+import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import okhttp3.*;
 
@@ -251,7 +252,7 @@ public class GatewayLogicImpl implements GatewayLogic{
     @Override
     public Owner getOwnerById(String id) throws IOException {
         try {
-            String URL = String.format(ownerAddress + "/owner/id/" + id);
+            String URL = String.format(ownerAddress + "/owner/ID/" + id);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
@@ -297,7 +298,7 @@ public class GatewayLogicImpl implements GatewayLogic{
     @Override
     public Boolean deleteOwnerByID(String id) throws IOException {
         try{
-            String URL = String.format(ownerAddress + "/owner/delete/" + id);
+            String URL = String.format(ownerAddress + "/owner/deleteID/" + id);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
@@ -340,6 +341,34 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         return owner;
     }
+
+    //////////////////////////////////// PARKING //////////////////////////////////////////
+
+    @Override
+    public Parking createParking(Parking parking) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Formatta la data nel formato desiderato
+        Gson gson = new GsonBuilder().create();
+        String jsonBody = gson.toJson(parking);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8083/parking/create")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+//        System.out.println(response.code());
+        if (response.code() != 201) {
+            return null;
+        }
+
+        return parking;
+    }
+
 
 
 

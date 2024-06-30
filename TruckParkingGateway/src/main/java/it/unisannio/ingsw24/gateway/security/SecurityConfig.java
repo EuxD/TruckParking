@@ -20,12 +20,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeHttpRequests().anyRequest().permitAll();
-//                .authorizeRequests()
-//                .requestMatchers("/truckparking/rest/trucker/**").hasRole("TRUCKER")
-//                .requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER")
-//                .anyRequest().permitAll()  // Permetti tutte le altre richieste senza autenticazione
-//                .and()
-//                .httpBasic();
 
         return http.build();
     }

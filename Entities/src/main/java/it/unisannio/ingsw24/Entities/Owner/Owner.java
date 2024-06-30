@@ -1,12 +1,13 @@
 package it.unisannio.ingsw24.Entities.Owner;
 
 import it.unisannio.ingsw24.Entities.Persona;
+import it.unisannio.ingsw24.Entities.user.AppUser;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Owner extends Persona {
+public class Owner extends Persona implements AppUser {
 
     private String id_owner;
     private List<String> parks;
