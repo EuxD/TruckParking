@@ -14,4 +14,7 @@ public interface ParkingDAO {
     String ELEMENT_RATE = "rate";
 
     Parking createParking(Parking parking);
+    Parking findParkingById(String id);
+    Boolean deleteParkingById(String id);
+
 }
