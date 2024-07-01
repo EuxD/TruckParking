@@ -2,10 +2,7 @@ package it.unisannio.ingsw24.parking.controller;
 
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.parking.persistence.ParkingDAOMongo;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +30,32 @@ public class ParkingRestController {
                 .entity(parking)
                 .type(MediaType.APPLICATION_JSON)
                 .build();
+    }
+
+    @GET
+    @Path("/id/{id}")
+    public Response findParkingById(@PathParam("id") String id) {
+        Parking p = parkingDAOMongo.findParkingById(id);
+        if(p == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Nessun Parcheggio con quel ID")
+                    .build();
+        }
+        return Response.ok().entity(p).build();
+    }
+
+    @DELETE
+    @Path("/delete/{id}")
+    public Response deleteParkingById(@PathParam("id") String id) {
+        if(parkingDAOMongo.deleteParkingById(id)) {
+            return Response.ok()
+            .entity("Parcheggio eliminato").type(MediaType.TEXT_PLAIN).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Parcheggio non trovato")
+                .type(MediaType.TEXT_PLAIN)
+                .build();
+
     }
 
 }

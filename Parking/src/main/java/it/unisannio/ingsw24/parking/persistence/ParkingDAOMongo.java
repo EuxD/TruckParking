@@ -16,7 +16,11 @@ import okhttp3.Response;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class ParkingDAOMongo implements ParkingDAO{
@@ -136,4 +140,30 @@ public class ParkingDAOMongo implements ParkingDAO{
         }
         return null;
     }
+
+    public Parking findParkingById(String id) {
+        List<Parking> park = new ArrayList<>();
+
+        for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
+            Parking p = parkingFromDocument(doc);
+            park.add(p);
+        }
+
+        if(park.isEmpty()){
+            return null;
+        }
+
+        assert park.size() == 1;
+        return park.get(0);
+    }
+
+    public Boolean deleteParkingById(String id){
+        Document doc = this.collection.find(eq(ELEMENT_ID, id)).first();
+        if(doc != null){
+            this.collection.deleteOne(doc);
+            return true;
+        }
+        return false;
+    }
+
 }
