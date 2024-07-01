@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 @Repository
@@ -32,11 +33,11 @@ public class TruckerDAOMongo implements TruckerDAO {
     private static final String PREFIX = "U";
     private static final int ID_LENGTH = 2;
 
-    public TruckerDAOMongo(){
-        if(host == null){
+    public TruckerDAOMongo() {
+        if (host == null) {
             host = "172.31.6.11";
         }
-        if(port == null){
+        if (port == null) {
             port = "27017";
         }
         URI = "mongodb://" + host + ":" + port;
@@ -65,7 +66,7 @@ public class TruckerDAOMongo implements TruckerDAO {
         return result.getInteger("seq") + 1;
     }
 
-    private static Trucker truckerFromDocument(Document document){
+    private static Trucker truckerFromDocument(Document document) {
         return new Trucker(document.getString(ELEMENT_ID),
                 document.getString(ELEMENT_NAME),
                 document.getString(ELEMENT_SURNAME),
@@ -90,7 +91,7 @@ public class TruckerDAOMongo implements TruckerDAO {
                 .append(ELEMENT_BOOKINGS, t.getBookings());
     }
 
-    public Trucker createTrucker(Trucker t){
+    public Trucker createTrucker(Trucker t) {
 //        String newId = UUID.randomUUID().toString();
         if (!resourcheEmail(t.getEmail())) {
             int newSeq = getNextSequence();
@@ -119,12 +120,12 @@ public class TruckerDAOMongo implements TruckerDAO {
     public Trucker findTruckerById(String id) {
         List<Trucker> truckers = new ArrayList<>();
 
-        for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
+        for (Document doc : this.collection.find(eq(ELEMENT_ID, id))) {
             Trucker t = truckerFromDocument(doc);
             truckers.add(t);
         }
 
-        if(truckers.isEmpty()){
+        if (truckers.isEmpty()) {
             return null;
         }
 
@@ -137,17 +138,17 @@ public class TruckerDAOMongo implements TruckerDAO {
     public Trucker findTruckerByEmail(String email) {
         List<Trucker> truckers = new ArrayList<>();
 
-        for (Document doc : this.collection.find(eq(ELEMENT_EMAIL, email))) {
+        for (Document doc : this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE, "ROLE_TRUCKER")))) {
             Trucker t = truckerFromDocument(doc);
             truckers.add(t);
         }
 
         if (truckers.size() > 1) {
-            throw new IllegalStateException();
+            throw  new IllegalStateException();
         }
 
         if (truckers.isEmpty()) {
-            throw new NoSuchElementException();
+            throw  new NoSuchElementException();
         }
 
         assert truckers.size() == 1;
@@ -155,8 +156,8 @@ public class TruckerDAOMongo implements TruckerDAO {
     }
 
     @Override
-    public Trucker deleteTruckerByEmail(String email){
-        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
+    public Trucker deleteTruckerByEmail(String email) {
+        Document doc = this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE, "ROLE_TRUCKER"))).first();
         if (doc == null) {
             return null;
         }
@@ -177,14 +178,32 @@ public class TruckerDAOMongo implements TruckerDAO {
     @Override
     public Trucker updateTrucker(Trucker t) {
         try {
-            Document query = new Document(ELEMENT_EMAIL, t.getEmail());
-            Document update = new Document("$set", truckerToDocument(t));
-            collection.updateOne(query, update);
+            Trucker trucker = findTruckerByEmail(t.getEmail());
+            Document query = new Document(truckerToDocument(t));
+            Document doc = new Document();
+            if (t.getName() != null) {
+                doc.append(ELEMENT_NAME, t.getName());
+            }
+            if (t.getSurname() != null) {
+                doc.append(ELEMENT_SURNAME, t.getSurname());
+            }
+            if (t.getPassword() != null) {
+                doc.append(ELEMENT_PASSWORD, t.getPassword());
+            }
+
+            if (!doc.isEmpty()) {
+                Document update = new Document("$set", doc);
+                this.collection.updateOne(query, update);
+            } else {
+                System.out.println("Errore");
+            }
             return t;
+
+
         } catch (MongoWriteException e) {
             e.printStackTrace();
         }
         return null;
-    }
 
+    }
 }

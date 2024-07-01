@@ -2,6 +2,9 @@ package it.unisannio.ingsw24.parking.persistence;
 
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface ParkingDAO {
 
     String DATABASE_NAME = "TruckParking";
@@ -16,5 +19,8 @@ public interface ParkingDAO {
     Parking createParking(Parking parking);
     Parking findParkingById(String id);
     Boolean deleteParkingById(String id);
+
+    List<Parking> findParkingByIdOwner(String id);
+    List<Parking> getAllParking();
 
 }

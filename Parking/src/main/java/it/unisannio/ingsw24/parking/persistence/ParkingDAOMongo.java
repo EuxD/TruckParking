@@ -21,6 +21,10 @@ import static com.mongodb.client.model.Filters.eq;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.ne;
 
 @Repository
 public class ParkingDAOMongo implements ParkingDAO{
@@ -166,4 +170,39 @@ public class ParkingDAOMongo implements ParkingDAO{
         return false;
     }
 
+
+    @Override
+    public List<Parking> findParkingByIdOwner(String id) {
+        List<Parking> parkings = new ArrayList<>();
+
+        for(Document doc : this.collection.find(eq(ELEMENT_ID_OWNER, id))){
+            Parking p = parkingFromDocument(doc);
+            parkings.add(p);
+        }
+
+        if(parkings.isEmpty()){
+            throw new NoSuchElementException();
+        }
+
+        return parkings;
+
+    }
+
+    @Override
+    public List<Parking> getAllParking(){
+        List<Parking> parkings = new ArrayList<>();
+
+        for(Document doc : this.collection.find(ne("_id", COUNTER_ID))){
+            Parking p = parkingFromDocument(doc);
+            parkings.add(p);
+        }
+
+        if(parkings.isEmpty()){
+            throw new NoSuchElementException();
+        }
+
+        return parkings;
+
+    }
 }
+
