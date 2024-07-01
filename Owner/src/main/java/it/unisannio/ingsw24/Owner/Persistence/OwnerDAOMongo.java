@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 public class OwnerDAOMongo implements OwnerDAO{
@@ -117,7 +118,7 @@ public class OwnerDAOMongo implements OwnerDAO{
     public Owner findOwnerByEmail(String email) {
         List<Owner> owners = new ArrayList<>();
 
-        for (Document doc : this.collection.find(eq(ELEMENT_EMAIL, email))) {
+        for (Document doc : this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE,"ROLE_OWNER")))) {
             Owner o = ownerFromDocument(doc);
             owners.add(o);
         }
@@ -167,13 +168,14 @@ public class OwnerDAOMongo implements OwnerDAO{
 
     @Override
     public Owner deleteOwnerByEmail(String email) {
-        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
+        Document doc = this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE, "ROLE_OWNER"))).first();
         if (doc == null) {
             return null;
         }
         this.collection.deleteOne(doc);
         return ownerFromDocument(doc);
     }
+
 
     @Override
     public Owner deleteOwnerByID(String id) {

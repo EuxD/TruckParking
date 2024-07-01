@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.NoSuchElementException;
+
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/owner")
@@ -74,14 +76,26 @@ public class OwnerRestController {
     @GET
     @Path("/{email}")
     public Response getOwnerByEmail(@PathParam("email") String email) {
-        Owner o = ownerDAOMongo.findOwnerByEmail(email);
-        if (o == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Nessun Owner con quella email")
+        try {
+            Owner o = ownerDAOMongo.findOwnerByEmail(email);
+            return Response.ok()
+                    .entity(o)
                     .type(MediaType.APPLICATION_JSON)
                     .build();
+
+        } catch (NoSuchElementException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Nessun Owner con quel email")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+
+        } catch (IllegalStateException e) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("Più utenti con la stessa mail")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
         }
-        return Response.ok().entity(o).type(MediaType.APPLICATION_JSON).build();
+
     }
 
     @PUT
