@@ -35,14 +35,14 @@
                             <i class='bx bxs-lock-alt'></i>
                             <input type="password" id="password" name="password" placeholder="Password" required>
                         </div>
-                        <label>Gender:</label>
+                        <label><h4>Gender:</h4></label>
                         <select id="gender" name="gender">
                             <option value="male"> Male</option>
                             <option value="female"> Female</option>
                             <option value="other"> Other</option>
                         </select>
 
-                        <label>Role:</label>
+                        <label><h4>Role:</h4></label>
                         <select id="role" name="role">
                             <option value="ROLE_TRUCKER"> Trucker </option>
                             <option value="ROLE_OWNER"> Owner </option>
@@ -119,19 +119,22 @@
         event.preventDefault();
         console.log("onCreate");
 
-        const gender = document.querySelector('input[name="gender"]:checked');
-        const role = document.querySelector('input[name="role"]:checked');
+        const role = document.getElementById("role").value;
+
 
         const bDateValue = document.getElementById("bDate").value;
         const formattedBDate = formatDate(bDateValue);
+
+
 
         const data = JSON.stringify({
             name: document.getElementById("name").value,
             surname: document.getElementById("surname").value,
             bDate: formattedBDate,
             email: document.getElementById("email").value,
-            gender: gender ? gender.value : null,
-            role: role ? role.value : null,
+            gender: document.getElementById("gender").value,
+            role: role,
+
             password: document.getElementById("password").value
         });
 
@@ -149,9 +152,10 @@
         });
 
         let url;
-        if (role && role.value === "Owner") {
+        console.log(role);
+        if (role === "ROLE_OWNER") {
             url = "http://localhost:8080/truckparking/rest/createOwner";
-        } else if (role && role.value === "Trucker") {
+        } else if (role === "ROLE_TRUCKER") {
             url = "http://localhost:8080/truckparking/rest/createTrucker";
         }
 

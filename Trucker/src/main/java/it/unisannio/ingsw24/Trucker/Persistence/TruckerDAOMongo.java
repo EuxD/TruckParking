@@ -93,7 +93,7 @@ public class TruckerDAOMongo implements TruckerDAO {
 
     public Trucker createTrucker(Trucker t) {
 //        String newId = UUID.randomUUID().toString();
-        if (!resourcheEmail(t.getEmail())) {
+        if (resourcheEmail(t.getEmail())) {
             int newSeq = getNextSequence();
             String newId = formatId(newSeq);
             t.setId_trucker(newId);

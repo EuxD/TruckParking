@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+
 :root {
     --primary-color: #4EA685;
     --secondary-color: #57B894;
@@ -11,9 +13,6 @@
     --twitter-color: #1DA1F2;
     --insta-color: #E1306C;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
-
 * {
     font-family: 'Poppins', sans-serif;
     margin: 0;
@@ -95,7 +94,31 @@ body {
     border: 0.125rem solid var(--primary-color);
 }
 
-.form button {
+/* Styles for dropdown menus */
+.form select {
+    width: 100%;
+    padding: 1rem 3rem;
+    font-size: 1rem;
+    background-color: var(--gray);
+    border-radius: .5rem;
+    border: 0.125rem solid var(--white);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="none" stroke="black" stroke-width=".5" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem top 50%;
+    background-size: 0.65rem auto;
+    margin-bottom: 1rem; /* Adjust space between dropdown and button */
+}
+
+.form select:focus {
+    border: 0.125rem solid var(--primary-color);
+}
+
+/* Button styles */
+.form button, .form input[type="submit"] {
     cursor: pointer;
     width: 100%;
     padding: .6rem 0;
@@ -105,6 +128,11 @@ body {
     color: var(--white);
     font-size: 1.2rem;
     outline: none;
+    margin-top: 1rem; /* Space between input fields and button */
+}
+
+.form button:hover, .form input[type="submit"]:hover {
+    background-color: var(--secondary-color);
 }
 
 .form p {
@@ -158,6 +186,7 @@ body {
     font-size: 1.5rem;
     transition: .4s ease-in-out;
 }
+
 .radio-group {
     margin-bottom: 15px;
 }
@@ -297,10 +326,6 @@ body {
         transform: none;
         right: 0;
     }
-
-    /* .container.sign-in .col.sign-up {
-        transform: translateY(100%);
-    } */
 
     .container.sign-in .col.sign-in,
     .container.sign-up .col.sign-up {

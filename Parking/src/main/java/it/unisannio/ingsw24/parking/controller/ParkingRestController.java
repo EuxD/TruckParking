@@ -1,6 +1,5 @@
 package it.unisannio.ingsw24.parking.controller;
 
-import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.parking.persistence.ParkingDAOMongo;
 import jakarta.ws.rs.*;
