@@ -56,7 +56,7 @@ public class GatewayRestController {
 
         return Response.ok().entity(trucker).type(MediaType.APPLICATION_JSON).build();
         //FUNZIONA
-    }   // mi recupera anche un utente con ruolo owner, da controllare
+    }
 
     @GET
     @Path("/trucker/ID/{id}")
@@ -140,7 +140,7 @@ public class GatewayRestController {
         }
         return Response.ok().
                 entity(o).type(MediaType.APPLICATION_JSON).build();
-    } //DA controllare, mi recupera anche i Trucker
+    }
 
     @GET
     @Path("/owner/ID/{id}")
@@ -178,7 +178,7 @@ public class GatewayRestController {
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("Owner non trovato").build();
         }
-    } //stessa cosa getEmail
+    }
 
     @DELETE
     @Path("/owner/delete/ID/{id}")

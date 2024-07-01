@@ -4,64 +4,131 @@
     <meta charset="UTF-8">
     <title>Registration</title>
     <link rel="stylesheet" href="styles.css">
-
 </head>
 <body>
-<form onsubmit="return false">
-    <h2>Registration</h2>
+<div id="container" class="container">
+    <!-- FORM SECTION -->
+    <div class="row">
+        <!-- SIGN UP -->
+        <div class="col align-items-center flex-col sign-up">
+            <div class="form-wrapper align-items-center">
+                <div class="form sign-up">
+                    <form id="registrationForm">
+                        <h2>Sign Up</h2>
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input type="text" id="name" name="name" placeholder="Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input type="text" id="surname" name="surname" placeholder="Surname" required>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bx-calendar'></i>
+                            <input type="date" id="bDate" name="bdate" placeholder="gg/mm/yyyy" required>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bx-mail-send'></i>
+                            <input type="email" id="email" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" id="password" name="password" placeholder="Password" required>
+                        </div>
+                        <label>Gender:</label>
+                        <select id="gender" name="gender">
+                            <option value="male"> Male</option>
+                            <option value="female"> Female</option>
+                            <option value="other"> Other</option>
+                        </select>
 
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
+                        <label>Role:</label>
+                        <select id="role" name="role">
+                            <option value="ROLE_TRUCKER"> Trucker </option>
+                            <option value="ROLE_OWNER"> Owner </option>
+                        </select>
 
-    <label for="surname">Surname:</label>
-    <input type="text" id="surname" name="surname" required>
-
-    <label for="bDate">Year of Birth:</label>
-    <input type="date" id="bDate" name="bdate" required>
-
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-
-    <div class="radio-group">
-        <label>Gender:</label>
-        <div class="radio-container">
-            <label for="male"><input type="radio" id="male" name="gender" value="male"> Male</label>
-            <label for="female"><input type="radio" id="female" name="gender" value="female"> Female</label>
-            <label for="other"><input type="radio" id="other" name="gender" value="other"> Other</label>
+                        <input type="submit" value="Sign Up">
+                    </form>
+                    <p>
+                        <span>Already have an account?</span>
+                        <b onclick="toggle()" class="pointer">Sign in here</b>
+                    </p>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div class="radio-group">
-        <label>Role:</label>
-        <div class="radio-container">
-            <label for="trucker"><input type="radio" id="trucker" name="role" value="ROLE_TRUCKER"> Trucker</label>
-            <label for="owner"><input type="radio" id="owner" name="role" value="ROLE_OWNER"> Owner</label>
+        <!-- END SIGN UP -->
+        <!-- SIGN IN -->
+        <div class="col align-items-center flex-col sign-in">
+            <div class="form-wrapper align-items-center">
+                <div class="form sign-in">
+                    <h2>Sign In</h2>
+                    <div class="input-group">
+                        <i class='bx bxs-user'></i>
+                        <input type="text" id="emailLog" name="emailLog" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password" id="passLog" name="passLog" placeholder="Password" required>
+                    </div>
+                    <button id="loginButton">Sign in</button>
+                    <p>
+                        <span>Don't have an account?</span>
+                        <b onclick="toggle()" class="pointer">Sign up here</b>
+                    </p>
+                </div>
+            </div>
         </div>
+        <!-- END SIGN IN -->
     </div>
+    <!-- END FORM SECTION -->
+    <!-- CONTENT SECTION -->
+    <div class="row content-row">
+        <!-- SIGN IN CONTENT -->
+        <div class="col align-items-center flex-col">
+            <div class="text sign-in">
+                <h2>Welcome</h2>
+            </div>
+            <div class="img sign-in"></div>
+        </div>
+        <!-- END SIGN IN CONTENT -->
+        <!-- SIGN UP CONTENT -->
+        <div class="col align-items-center flex-col">
+            <div class="img sign-up"></div>
+            <div class="text sign-up">
+                <h2>Join with us</h2>
+            </div>
+        </div>
+        <!-- END SIGN UP CONTENT -->
+    </div>
+    <!-- END CONTENT SECTION -->
+</div>
+<script >
+    let container = document.getElementById('container')
 
-    <input type="submit" value="Create" onclick="onCreateButtonPressed()">
-</form>
+    toggle = () => {
+        container.classList.toggle('sign-in')
+        container.classList.toggle('sign-up')
+    }
 
-<script>
-    function onCreateButtonPressed() {
+    setTimeout(() => {
+        container.classList.add('sign-in')
+    }, 200)
+
+    document.getElementById('registrationForm').addEventListener('submit', function (event) {
+        event.preventDefault();
         console.log("onCreate");
 
         const gender = document.querySelector('input[name="gender"]:checked');
         const role = document.querySelector('input[name="role"]:checked');
 
-        // Ottieni il valore dalla data di nascita
         const bDateValue = document.getElementById("bDate").value;
-
-        // Formatta la data nel formato "dd/MM/yyyy"
         const formattedBDate = formatDate(bDateValue);
 
         const data = JSON.stringify({
             name: document.getElementById("name").value,
             surname: document.getElementById("surname").value,
-            bDate: formattedBDate, // Utilizza la data formattata
+            bDate: formattedBDate,
             email: document.getElementById("email").value,
             gender: gender ? gender.value : null,
             role: role ? role.value : null,
@@ -74,7 +141,6 @@
             if (this.readyState === XMLHttpRequest.DONE) {
                 if (this.status === 201 || this.status === 200) {
                     alert("Registration Successful");
-                    // document.getElementById('dataForm').reset();  //ripulisce i capi quando schiaccio il bottone
                 } else {
                     console.error("Registration failed: " + this.status);
                     alert("Registration Failed: " + this.status);
@@ -83,18 +149,17 @@
         });
 
         let url;
-        if (role && role.value === "ROLE_OWNER") {
+        if (role && role.value === "Owner") {
             url = "http://localhost:8080/truckparking/rest/createOwner";
-        } else if (role && role.value === "ROLE_TRUCKER") {
+        } else if (role && role.value === "Trucker") {
             url = "http://localhost:8080/truckparking/rest/createTrucker";
-
         }
 
-        xhr.open("POST", url, true); // Utilizza l'URL dinamico in base al ruolo
+        xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(data);
         console.log("sent");
-    }
+    });
 
     function formatDate(dateString) {
         const dateParts = dateString.split("-");
@@ -104,8 +169,47 @@
             const day = dateParts[2];
             return `${day}/${month}/${year}`;
         }
-        return null; // Gestione del fallback nel caso in cui la data non sia nel formato atteso
+        return null;
     }
+
+    // Event listener for login form submission
+    document.getElementById('loginButton').addEventListener('click', function (event) {
+        event.preventDefault();
+
+        const email = document.getElementById('emailLog').value;
+        const password = document.getElementById('passLog').value;
+
+        const loginData = JSON.stringify({
+            email: email,
+            password: password
+        });
+
+        console.log(loginData);
+        const loginXhr = new XMLHttpRequest();
+        loginXhr.addEventListener("readystatechange", function () {
+            if (this.readyState === XMLHttpRequest.DONE) {
+                if (this.status === 200) {
+                    alert("Login Successful");
+                } else {
+                    console.error("Login failed: " + this.status);
+                    alert("Login Failed: " + this.status);
+                }
+            }
+        });
+
+        let loginUrl;
+        if (role && role.value === "Owner") {
+            loginUrl = "http://localhost:8080/truckparking/rest/loginOwner";
+        } else if (role && role.value === "Trucker") {
+            loginUrl = "http://localhost:8080/truckparking/rest/loginTrucker";
+        }
+
+        loginXhr.open("POST", loginUrl, true);
+        loginXhr.setRequestHeader("Content-Type", "application/json");
+        loginXhr.send(loginData);
+        console.log("login sent");
+    });
+
 
 </script>
 </body>

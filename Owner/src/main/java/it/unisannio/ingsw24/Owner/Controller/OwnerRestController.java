@@ -38,9 +38,36 @@ public class OwnerRestController {
         Owner o = ownerDAOMongo.findOwnerById(id);
         if (o == null) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Nessun Owner con quel ID").build();
+                    .entity("Nessun Owner con quel ID")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
         }
         return Response.ok().entity(o).build();
+    }
+
+    @GET
+    @Path("/{email}")
+    public Response getOwnerByEmail(@PathParam("email") String email) {
+        try {
+            Owner o = ownerDAOMongo.findOwnerByEmail(email);
+            return Response.ok()
+                    .entity(o)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
+        } catch (NoSuchElementException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Nessun Owner con quel email")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+
+        } catch (IllegalStateException e) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("Più utenti con la stessa mail")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+
     }
 
     @DELETE
@@ -71,31 +98,6 @@ public class OwnerRestController {
                 .entity(deletedOwner)
                 .type(MediaType.APPLICATION_JSON)
                 .build();
-    }
-
-    @GET
-    @Path("/{email}")
-    public Response getOwnerByEmail(@PathParam("email") String email) {
-        try {
-            Owner o = ownerDAOMongo.findOwnerByEmail(email);
-            return Response.ok()
-                    .entity(o)
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-
-        } catch (NoSuchElementException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Nessun Owner con quel email")
-                    .type(MediaType.TEXT_PLAIN)
-                    .build();
-
-        } catch (IllegalStateException e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("Più utenti con la stessa mail")
-                    .type(MediaType.TEXT_PLAIN)
-                    .build();
-        }
-
     }
 
     @PUT

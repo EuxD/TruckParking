@@ -154,12 +154,30 @@ public class OwnerDAOMongo implements OwnerDAO{
     }
 
     @Override
-    public Owner updateOwner(Owner o) {
+    public Owner updateOwner(Owner ow) {
         try {
-            Document query = new Document(ELEMENT_EMAIL, o.getEmail());
-            Document update = new Document("$set", ownerToDocument(o));
-            collection.updateOne(query, update);
-            return o;
+            Owner o = findOwnerByEmail(ow.getEmail());
+            Document query = new Document(ownerToDocument(o));
+            Document doc = new Document();
+            if(ow.getName() != null){
+                doc.append(ELEMENT_NAME, ow.getName());
+            }
+            if(ow.getSurname() != null){
+                doc.append(ELEMENT_SURNAME, ow.getSurname());
+            }
+            if(ow.getPassword() != null){
+                doc.append(ELEMENT_PASSWORD, ow.getPassword());
+            }
+
+            if(!doc.isEmpty()){
+                Document update = new Document("$set", doc);
+                this.collection.updateOne(query, update);
+            } else {
+                System.out.println("Errore");
+            }
+            return ow;
+
+
         } catch (MongoWriteException e) {
             e.printStackTrace();
         }

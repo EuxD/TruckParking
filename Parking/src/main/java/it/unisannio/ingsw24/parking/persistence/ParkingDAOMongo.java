@@ -95,7 +95,7 @@ public class ParkingDAOMongo implements ParkingDAO{
     @Override
     public Parking createParking(Parking parking) {
         Owner o = checkIDOwner(parking.getId_owner());
-        if(o == null || o.getRole() == "ROLE_TRUCKER"){
+        if(o == null){
             return null;
         }
 
