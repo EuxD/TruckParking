@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Siamo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e8f0f2; /* Colore di sfondo */
+            color: #333; /* Colore del testo principale */
+        }
+        .header {
+            background-color: #4EA685; /* Colore di sfondo dell'header */
+            text-align: center;
+            color: #fff; /* Colore del testo nell'header */
+            padding: 40px 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+            padding: 0;
+            font-size: 3em; /* Dimensione del testo più grande */
+            text-align: center;
+            position: relative; /* Per posizionare il sottofondo */
+            display: inline-block;
+        }
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; /* Spostamento verso il basso per sovrapporre il bordo inferiore */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 10px; /* Altezza del sottofondo */
+            background-color: #4EA685; /* Colore del sottofondo */
+            border-radius: 8px; /* Arrotondamento */
+        }
+        .header h1 span {
+            background-color: #4EA685;
+            padding: 20px 40px;
+            color: #fff;
+            border-radius: 8px; /* Arrotondamento */
+            transition: background 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .header h1:hover span {
+            background-color: #5cbf2a;
+        }
+        .nav-container {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        .nav-links {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: inline-flex;
+        }
+        .nav-links li {
+            margin: 20px 10px 0;
+        }
+        .nav-links li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 15px 30px;
+            background-color: #4EA685;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+        }
+        .nav-links li a:hover {
+            background-color: #5cbf2a;
+            transform: scale(1.1);
+        }
+        .main-content {
+            padding: 40px 20px;
+            text-align: center;
+            animation: slideIn 0.5s ease-in-out;
+        }
+        .main-content h2 {
+            font-size: 2.5em;
+            color: #4EA685;
+        }
+        .main-content p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+        .main-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .extra-content {
+            background-color: #fff;
+            padding: 60px 20px;
+            margin: 40px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: slideIn 0.5s ease-in-out;
+        }
+        .extra-content h3 {
+            font-size: 2em;
+            color: #4EA685;
+            margin-bottom: 20px;
+        }
+        .extra-content p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .extra-content .highlight {
+            color: #5cbf2a;
+            font-weight: bold;
+        }
+        .feature-list {
+            text-align: left;
+            margin-top: 30px;
+        }
+        .feature-list li {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        @keyframes slideIn {
+            0% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <h1><span>Chi Siamo</span></h1>
+    <div class="nav-container">
+        <ul class="nav-links">
+            <li><a href="HomePage.html">Home</a></li>
+            <li><a href="Accesso.html">Registrazione</a></li>
+            <li><a href="#">Prenotazione</a></li>
+        </ul>
+    </div>
+</header>
+<div class="extra-content">
+    <h3>Cosa Offriamo</h3>
+    <p>La nostra piattaforma non si limita alla semplice prenotazione di posti per camion. Offriamo una serie di servizi e vantaggi, tra cui:</p>
+    <ul class="feature-list">
+        <li>Accesso a parcheggi sicuri e convenienti in tutta Italia.</li>
+        <li>Supporto 24/7 per camionisti e proprietari di spazi.</li>
+        <li>Opportunità per privati di guadagnare dalla loro proprietà.</li>
+        <li>Facilità di utilizzo dell'applicazione web per prenotazioni rapide.</li>
+    </ul>
+    <p class="highlight">Unisciti a noi oggi stesso e scopri come possiamo semplificare la tua esperienza di parcheggio!</p>
+</div>
+</body>
+</html>

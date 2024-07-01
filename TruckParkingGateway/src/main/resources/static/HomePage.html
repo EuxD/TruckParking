@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prenotazione Posti Camion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #e8f0f2;
             color: #333;
         }
         .header {
@@ -17,7 +18,7 @@
             text-align: center;
             color: white;
             margin-bottom: 20px;
-            height: 400px; /* Aumentata l'altezza dell'intestazione */
+            height: 400px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -28,9 +29,16 @@
             z-index: 2;
             margin: 0;
             padding: 20px;
-            font-size: 3em; /* Aumentata la dimensione del carattere */
-            background: rgba(0, 128, 0, 0.7); /* Verde scuro */
+            font-size: 3em;
+            background: #4EA685; /* Colore dei tasti */
             border-radius: 10px;
+            transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: #fff; /* Colore del testo */
+        }
+        .header h1:hover {
+            transform: scale(1.05);
+            background: #5cbf2a; /* Colore più scuro per hover */
         }
         .header .blur-image {
             position: absolute;
@@ -45,56 +53,45 @@
             opacity: 0.7;
         }
         .nav-container {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: space-between; /* Aggiunta la spaziatura tra i pulsanti */
+            text-align: center;
             margin-top: 20px;
+            margin-bottom: 40px;
         }
         .nav-links {
             list-style-type: none;
             padding: 0;
             margin: 0;
-            display: flex;
+            display: inline-flex;
         }
         .nav-links li {
-            margin: 0 10px;
+            margin: 20px 10px 0; /* Aggiunto spazio sopra ai pulsanti */
         }
         .nav-links li a {
             color: #fff;
             text-decoration: none;
-            padding: 10px 20px;
-            background-color: #44c767; /* Verde più chiaro */
-            border-radius: 5px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 15px 30px; /* Dimensioni più grandi */
+            background-color: #4EA685;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            display: inline-block;
         }
         .nav-links li a:hover {
-            background-color: #5cbf2a; /* Verde più scuro */
+            background-color: #5cbf2a;
+            transform: scale(1.1); /* Ingrandimento al passaggio del mouse */
         }
-
         h2 {
-            margin-top: 20px; /* Ridotto il margine superiore */
+            margin-top: 20px;
             font-size: 2em;
-            color: #44c767; /* Verde più chiaro */
+            color: #4EA685;
+            animation: slideIn 0.5s ease-in-out;
         }
         p {
             text-align: justify;
             font-size: 1.1em;
             line-height: 1.6;
-        }
-        .btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background-color: #44c767; /* Verde più chiaro */
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            text-align: center;
-            font-size: 1.1em;
-        }
-        .btn:hover {
-            background-color: #5cbf2a; /* Verde più scuro */
+            margin: 10px 0;
+            animation: fadeIn 1s ease-in-out;
         }
         img {
             display: block;
@@ -102,15 +99,41 @@
             max-width: 100%;
             height: auto;
             border-radius: 8px;
+            animation: fadeIn 1s ease-in-out;
         }
         .welcome-section {
-            background: #f4f4f4;
-            padding: 20px;
-            box-shadow: 20px 0 20px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            padding: 20px 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin: 0 auto;
+            width: calc(100% - 40px); /* Esteso alla larghezza completa meno padding */
         }
-        .btn-container {
-            text-align: center;
-            margin-top: 20px;
+        .welcome-section h2, .welcome-section p {
+            margin: 0 0 20px 0;
+        }
+        .container {
+            padding: 0 20px;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes slideIn {
+            0% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -121,9 +144,9 @@
 </header>
 <div class="nav-container">
     <ul class="nav-links">
-        <li><a href="Accesso.html">Register</a></li>
+        <li><a href="Accesso.html">Registrazione</a></li>
         <li><a href="#">Prenotazione</a></li>
-        <li><a href="#">Assistenza</a></li>
+        <li><a href="ChiSiamo.html">Chi siamo</a></li>
     </ul>
 </div>
 <div class="container">
@@ -131,7 +154,7 @@
         <h2>Benvenuti!</h2>
         <p>La nostra applicazione web offre una soluzione pratica per i camionisti che desiderano prenotare un posto sicuro per il loro camion, e per i privati che vogliono mettere a disposizione il proprio terreno e guadagnare.</p>
         <p>Sia che tu sia un camionista in cerca di un parcheggio sicuro, sia che tu sia un privato interessato a monetizzare il tuo spazio disponibile, sei nel posto giusto!</p>
-        <img src="parcheggio.jpeg" alt="Parcheggio per camion">
+        <img src="camion.jpg" alt="Parcheggio per camion">
     </div>
 </div>
 </body>
