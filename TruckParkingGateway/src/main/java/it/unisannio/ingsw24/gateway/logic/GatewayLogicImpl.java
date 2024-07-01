@@ -1,13 +1,15 @@
 package it.unisannio.ingsw24.gateway.logic;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import okhttp3.*;
 
 import java.io.IOException;
-
+import java.lang.reflect.Type;
+import java.util.List;
 
 
 public class GatewayLogicImpl implements GatewayLogic{
@@ -369,8 +371,133 @@ public class GatewayLogicImpl implements GatewayLogic{
         return parking;
     }
 
+    @Override
+    public Parking getParkingById(String id) {
+        try {
+            String URL = String.format(parkingAddress + "/parking/id/" + id);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.code() != 200 ){
+                return null;
+            }
+            Gson gson = new GsonBuilder().create();
+            String body = response.body().string();
+            Parking p = gson.fromJson(body, Parking.class);
+            return p;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean deleteParkingById(String id) {
+        try{
+            String URL = String.format(parkingAddress + "/parking/delete/" + id);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .delete()
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 200) {
+                return false;
+            }
 
 
+        } catch (Exception e) {}
+
+        return true;
+    }
+
+    @Override
+    public List<Parking> getParkingByIdOwner(String id) {
+        try {
+            String URL = String.format(parkingAddress + "/parking/idOwner/" + id);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.code() != 200) {
+                return null;
+            }
+            Gson gson = new GsonBuilder().create();
+            String body = response.body().string();
+
+            // Utilizzare TypeToken per deserializzare un array JSON
+            Type listType = new TypeToken<List<Parking>>() {}.getType();
+            List<Parking> parkings = gson.fromJson(body, listType);
+
+            return parkings;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    @Override
+    public List<Parking> getAllParking() {
+        try {
+            String URL = String.format(parkingAddress + "/parking");
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.code() != 200) {
+                return null;
+            }
+            Gson gson = new GsonBuilder().create();
+            String body = response.body().string();
+
+            // Utilizzare TypeToken per deserializzare un array JSON
+            Type listType = new TypeToken<List<Parking>>() {}.getType();
+            List<Parking> parkings = gson.fromJson(body, listType);
+
+            return parkings;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean updateParking(Parking parking) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Formatta la data nel formato desiderato
+        Gson gson = new GsonBuilder().create();
+        String jsonBody = gson.toJson(parking);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8083/parking/update")
+                .put(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+//        System.out.println(response.code());
+        if (response.code() != 200) {
+            return false;
+        }
+
+        return true;
+    }
 
 
 }

@@ -5,6 +5,7 @@ import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface GatewayLogic {
 
@@ -22,6 +23,11 @@ public interface GatewayLogic {
     Trucker getTruckerByID(String id);
     Trucker updateTrucker(Trucker trucker) throws IOException;
 
+    String parkingAddress = "http://localhost:8083";
     Parking createParking(Parking parking) throws IOException;
-
+    Parking getParkingById(String id);
+    Boolean deleteParkingById(String id);
+    List<Parking> getParkingByIdOwner(String id);
+    List<Parking> getAllParking();
+    Boolean updateParking(Parking parking) throws IOException;
 }

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
+import java.util.List;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,27 +28,34 @@ public class GatewayRestController {
         logic = new GatewayLogicImpl();
     }
 
-    //////////////////////////////// TRUCKER ////////////////////////////////////////
+    //////////////////////////////// TRUCKER
+    //////////////////////////////// ////////////////////////////////////////
 
     @POST
     @Path("/createTrucker")
     public Response createTrucker(@RequestBody Trucker t) throws IOException {
         Trucker trucker = logic.createTrucker(t);
-        if(trucker == null) {
+        if (trucker == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Errore nella creazione del Trucker")
                     .type(MediaType.TEXT_PLAIN)
                     .build();
         }
+
+        // Invio dell'email
+//        EmailService emailService = new EmailService();
+//        String subject = "Registration Successful";
+//        String body = "Dear " + t.getName() + ",\n\nYour registration as a Trucker is successful.";
+//        emailService.sendEmail(t.getEmail(), subject, body);
+
         return Response.ok().build();
-        //FUNZIONA
     }
 
     @GET
     @Path("/trucker/email/{email}")
-    public Response getTruckerByEmail(@PathParam("email") String email){
+    public Response getTruckerByEmail(@PathParam("email") String email) {
         Trucker trucker = logic.getTruckerByEmail(email);
-        if(trucker == null){
+        if (trucker == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Nessun trucker trovato")
                     .type(MediaType.TEXT_HTML)
@@ -55,14 +63,14 @@ public class GatewayRestController {
         }
 
         return Response.ok().entity(trucker).type(MediaType.APPLICATION_JSON).build();
-        //FUNZIONA
+        // FUNZIONA
     }
 
     @GET
     @Path("/trucker/ID/{id}")
-    public Response getTruckerByID(@PathParam("id") String id){
+    public Response getTruckerByID(@PathParam("id") String id) {
         Trucker trucker = logic.getTruckerByID(id);
-        if(trucker == null){
+        if (trucker == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Nessun trucker trovato")
                     .type(MediaType.TEXT_HTML)
@@ -70,14 +78,14 @@ public class GatewayRestController {
         }
 
         return Response.ok().entity(trucker).type(MediaType.APPLICATION_JSON).build();
-        //FUNZIONA
+        // FUNZIONA
     }
 
     @PUT
     @Path("/trucker/update")
     public Response updateTrucker(@RequestBody Trucker trucker) throws IOException {
         Trucker t = logic.updateTrucker(trucker);
-        if(t == null) {
+        if (t == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Errore nella modifica del Trucker")
                     .type(MediaType.TEXT_PLAIN)
@@ -88,65 +96,65 @@ public class GatewayRestController {
 
     @DELETE
     @Path("/trucker/delete/email/{email}")
-    public Response deleteTruckerByEmail(@PathParam("email") String email){
+    public Response deleteTruckerByEmail(@PathParam("email") String email) {
         boolean flag = logic.deleteTruckerByEmail(email);
-        if(flag){
+        if (flag) {
             return Response.ok().entity("Trucker eliminato con successo").type(MediaType.TEXT_PLAIN).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("Trucker non trovato").build();
         }
-        //FUNZIONA
+        // FUNZIONA
     }
 
     @DELETE
     @Path("/trucker/delete/ID/{id}")
-    public Response deleteTruckerByID(@PathParam("id") String id){
+    public Response deleteTruckerByID(@PathParam("id") String id) {
         boolean flag = logic.deleteTruckerByID(id);
-        if(flag){
+        if (flag) {
             return Response.ok().entity("Trucker eliminato con successo").type(MediaType.TEXT_PLAIN).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("Trucker non trovato").build();
         }
-        //FUNZIONA
+        // FUNZIONA
     }
 
-    //////////////////////////////////// OWNER //////////////////////////////////////////
+    //////////////////////////////////// OWNER
+    //////////////////////////////////// //////////////////////////////////////////
 
     @POST
     @Path("/createOwner")
     public Response createOwner(@RequestBody Owner ow) throws IOException {
         Owner owner = logic.createOwner(ow);
-        if(owner == null) {
+        if (owner == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Errore nella creazione dell'Owner")
                     .type(MediaType.TEXT_PLAIN)
                     .build();
         }
         return Response.ok()
-//                .entity(owner.toString())
-//                .type(MediaType.TEXT_HTML)
+                // .entity(owner.toString())
+                // .type(MediaType.TEXT_HTML)
                 .build();
-    } //FUNZIONA
+    } // FUNZIONA
 
     @GET
     @Path("/owner/email/{email}")
     public Response getOwnerByEmail(@PathParam("email") String email) throws IOException {
         Owner o = logic.getOwnerByEmail(email);
-        if(o == null) {
+        if (o == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Owner non trovato")
                     .type(MediaType.TEXT_PLAIN)
                     .build();
         }
-        return Response.ok().
-                entity(o).type(MediaType.APPLICATION_JSON).build();
+        return Response.ok().entity(o).type(MediaType.APPLICATION_JSON).build();
     }
 
     @GET
     @Path("/owner/ID/{id}")
     public Response getOwnerByID(@PathParam("id") String id) throws IOException {
         Owner o = logic.getOwnerById(id);
-        if(o == null) {
+        if (o == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Owner non trovato")
                     .type(MediaType.TEXT_PLAIN)
@@ -154,13 +162,13 @@ public class GatewayRestController {
         }
         return Response.ok()
                 .entity(o).type(MediaType.APPLICATION_JSON).build();
-    } //FUNZIONA
+    } // FUNZIONA
 
     @PUT
     @Path("/owner/update")
     public Response updateOwner(@RequestBody Owner ow) throws IOException {
         Owner o = logic.updateOwner(ow);
-        if(o == null) {
+        if (o == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Errore nella modifica del Trucker")
                     .type(MediaType.TEXT_PLAIN)
@@ -173,7 +181,7 @@ public class GatewayRestController {
     @Path("/owner/delete/email/{email}")
     public Response deleteOwnerByEmail(@PathParam("email") String email) throws IOException {
         boolean flag = logic.deleteOwnerByEmail(email);
-        if(flag){
+        if (flag) {
             return Response.ok().entity("Owner eliminato con successo").type(MediaType.TEXT_PLAIN).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("Owner non trovato").build();
@@ -184,21 +192,107 @@ public class GatewayRestController {
     @Path("/owner/delete/ID/{id}")
     public Response deleteOwnerByID(@PathParam("id") String id) throws IOException {
         boolean flag = logic.deleteOwnerByID(id);
-        if(flag){
+        if (flag) {
             return Response.ok().entity("Owner eliminato con successo").type(MediaType.TEXT_PLAIN).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("Owner non trovato").build();
         }
-    } //FUNZIONA
+    } // FUNZIONA
 
-    //////////////////////////////////// PARKING //////////////////////////////////////////
+    //////////////////////////////////// PARKING////////////////////////////////////
 
     @POST
     @Path("/parking/create")
-    public Response createParking(@RequestBody Parking parking) {
-        return null;
+    public Response createParking(@RequestBody Parking parking) throws IOException {
+        Parking p = logic.createParking(parking);
+        if (p == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Errore nella creazione del parcheggio")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+
+        return Response.status(Response.Status.CREATED)
+                .entity(p)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
+    @GET
+    @Path("/parking")
+    public Response getAllParking() {
+        List<Parking> parkings = logic.getAllParking();
+        if (parkings == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Nessun parcheggio trovato")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+
+        return Response.ok()
+                .entity(parkings)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    @GET
+    @Path("/parking/ID/{id}")
+    public Response getParkingByID(@PathParam("id") String id) {
+        Parking parking = logic.getParkingById(id);
+        if (parking == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Nessun parhceggio con quell'ID")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+
+        return Response.ok()
+                .entity(parking)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    @GET
+    @Path("/parking/ownerID/{id}")
+    public Response getParkingByIDOwner(@PathParam("id") String id) {
+        List<Parking> parkings = logic.getParkingByIdOwner(id);
+        if (parkings == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Nessun parcheggio legato a quell'Owner")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+
+        return Response.ok()
+                .entity(parkings)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    @PUT
+    @Path("/parking/update")
+    public Response updateParking(@RequestBody Parking parking) throws IOException {
+        boolean flag = logic.updateParking(parking);
+        if (flag) {
+            return Response.ok().entity("Parcheggio aggiornato con successo")
+                    .type(MediaType.TEXT_PLAIN).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Parcheggio non trovato")
+                    .type(MediaType.TEXT_PLAIN).build();
+        }
+    }
+
+    @DELETE
+    @Path("/parking/delete/{id}")
+    public Response deleteParking(@PathParam("id") String id) {
+        boolean flag = logic.deleteParkingById(id);
+        if (flag) {
+            return Response.ok().entity("Parcheggio eliminato con successo")
+                    .type(MediaType.TEXT_PLAIN).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Parcheggio non trovato").build();
+        }
+    }
 
 }
-
