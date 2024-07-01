@@ -1,5 +1,6 @@
 package it.unisannio.ingsw24.parking.controller;
 
+import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.parking.persistence.ParkingDAOMongo;
 import jakarta.ws.rs.*;
@@ -91,6 +92,24 @@ public class ParkingRestController {
                 .entity("Parcheggio non trovato")
                 .type(MediaType.TEXT_PLAIN)
                 .build();
+
+    }
+
+    @PUT
+    @Path("/update")
+    public Response updateParking(@RequestBody Parking p) {
+        if(parkingDAOMongo.updateParking(p)){
+            return Response.ok()
+                    .entity("Parking modificato con successo")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+
+        }
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Parking not found")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+
 
     }
 

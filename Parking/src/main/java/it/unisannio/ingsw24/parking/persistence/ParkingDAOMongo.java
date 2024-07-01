@@ -204,5 +204,43 @@ public class ParkingDAOMongo implements ParkingDAO{
         return parkings;
 
     }
+
+    @Override
+    public Boolean updateParking(Parking parking) {
+        try {
+            if (parking.getnPlace() < 0) {
+                System.out.println("Errore: il numero di posti non può essere negativo");
+                return false;
+            }
+
+            if (parking.getRate() != null && parking.getRate() < 0) {
+                System.out.println("Errore: la tariffa non può essere negativa");
+                return false;
+            }
+
+            Document query = new Document(ELEMENT_ID, parking.getId_park());
+            Document doc = new Document();
+            doc.append(ELEMENT_PLACES, parking.getnPlace()); // Include il campo nPlace anche se il valore è 0
+            if (parking.getRate() != null) {
+                doc.append(ELEMENT_RATE, parking.getRate());
+            }
+
+            if (!doc.isEmpty()) {
+                Document update = new Document("$set", doc);
+                System.out.println(update.toString());
+                this.collection.updateOne(query, update);
+                return true;
+            } else {
+                System.out.println("Errore");
+            }
+
+        } catch (MongoWriteException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+
 }
 
