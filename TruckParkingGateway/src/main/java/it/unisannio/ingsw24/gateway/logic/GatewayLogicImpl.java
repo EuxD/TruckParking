@@ -499,5 +499,6 @@ public class GatewayLogicImpl implements GatewayLogic{
         return true;
     }
 
+//////////////////////////////////// BOOKING //////////////////////////////////////////
 
 }

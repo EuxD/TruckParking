@@ -53,5 +53,6 @@ public class Booking {
     public void setpDate(Date pDate) {
         this.pDate = pDate;
     }
+
 }
 

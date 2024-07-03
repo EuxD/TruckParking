@@ -1,5 +1,6 @@
 package it.unisannio.ingsw24.gateway.logic;
 
+import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
@@ -30,4 +31,5 @@ public interface GatewayLogic {
     List<Parking> getParkingByIdOwner(String id);
     List<Parking> getAllParking();
     Boolean updateParking(Parking parking) throws IOException;
+
 }

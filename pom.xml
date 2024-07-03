@@ -15,6 +15,7 @@
     <module>Owner</module>
     <module>TruckParkingGateway</module>
       <module>Parking</module>
+      <module>Parking/Booking</module>
   </modules>
 
   <properties>
