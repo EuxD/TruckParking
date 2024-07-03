@@ -1,4 +1,6 @@
-package it.unisannio.ingsw24.booking.Controller;
+package it.unisannio.ingsw24.booking.persistence;
+
+import it.unisannio.ingsw24.Entities.Booking.Booking;
 
 public interface BookingDAO {
 

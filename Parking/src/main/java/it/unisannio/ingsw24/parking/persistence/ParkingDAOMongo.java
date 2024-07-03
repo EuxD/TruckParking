@@ -10,9 +10,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
@@ -113,8 +111,11 @@ public class ParkingDAOMongo implements ParkingDAO{
         try {
             Document park = parkingToDocument(parking);
             collection.insertOne(park);
+            addParkinginOwner(o,parking.getId_park());
             return parking;
         } catch (MongoWriteException e) {
+            e.printStackTrace();
+        } catch (IOException e){
             e.printStackTrace();
         }
 
@@ -143,6 +144,32 @@ public class ParkingDAOMongo implements ParkingDAO{
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void addParkinginOwner(Owner owner, String parkingId) throws IOException {
+        if (owner.getParks() == null) {
+            owner.setParks(new ArrayList<>());
+        }
+        owner.getParks().add(parkingId);
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Formatta la data nel formato desiderato
+        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        String jsonBody = gson.toJson(owner);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8082/owner/update")
+                .put(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+//        System.out.println(response.code());
+        if (response.code() != 200) {
+            throw new IOException("Errore nell'aggiunta del parcheggio");
+        }
     }
 
     public Parking findParkingById(String id) {

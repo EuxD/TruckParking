@@ -10,8 +10,6 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
@@ -42,17 +40,18 @@ public class GatewayRestController {
                     .build();
         }
 
-        // Invio dell'email
-//        EmailService emailService = new EmailService();
-//        String subject = "Registration Successful";
-//        String body = "Dear " + t.getName() + ",\n\nYour registration as a Trucker is successful.";
-//        emailService.sendEmail(t.getEmail(), subject, body);
+        //Invio dell'email
+        EmailService emailService = new EmailService();
+        String subject = "Registration Successful";
+        String body = "Dear " + t.getName() + ",\n\nYour registration as a Trucker is successful.";
+        emailService.sendEmail(t.getEmail(), subject, body);
 
         return Response.ok().build();
     }
 
     @GET
     @Path("/trucker/email/{email}")
+    @RolesAllowed("ROLE_TRUCKER")
     public Response getTruckerByEmail(@PathParam("email") String email) {
         Trucker trucker = logic.getTruckerByEmail(email);
         if (trucker == null) {
