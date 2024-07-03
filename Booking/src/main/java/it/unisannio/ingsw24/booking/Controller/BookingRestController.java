@@ -7,16 +7,18 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.IOException;
+
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/booking")
-public class BoookingRestController {
+public class BookingRestController {
 
     private BookingDAOMongo bookingDAOMongo = BookingDAOMongo.getIstance();
 
     @POST
     @Path("/create")
-    public Response createBooking(@RequestBody Booking bo) {
+    public Response createBooking(@RequestBody Booking bo) throws IOException {
         Booking booking = bookingDAOMongo.createBooking(bo);
         if(booking == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();

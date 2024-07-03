@@ -2,16 +2,21 @@ package it.unisannio.ingsw24.booking.persistence;
 
 import it.unisannio.ingsw24.Entities.Booking.Booking;
 
+import java.io.IOException;
+
 public interface BookingDAO {
 
     String DATABASE_NAME = "TruckParking";
     String COLLECTION_NAME = "Booking";
     String ELEMENT_ID = "id_booking";
     String ELEMENT_ID_TRUCKER = "id_trucker";
-    String PARKING = "id_parking";
+    String ELEMENT_ID_PARKING = "id_parking";
     String ELEMENT_PDATE = "pDate";
+    String ELEMENT_ORA_INIZIO = "oraInizio";
+    String ELEMENT_ORA_FINE = "oraFine";
+    String ELEMENT_TARIFFA = "tariffa";
 
-    Booking createBooking(Booking booking);
+    Booking createBooking(Booking booking) throws IOException;
     Booking findBookingById(String id);
     Booking deleteBookingById(String id);
 }
