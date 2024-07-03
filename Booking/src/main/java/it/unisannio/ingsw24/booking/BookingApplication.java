@@ -7,20 +7,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
-/**
- * Hello world!
- *
- */
-
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class})
-public class App extends ResourceConfig
+public class BookingApplication extends ResourceConfig
 {
     public static void main( String[] args )
     {
-        SpringApplication.run(App.class);
+        SpringApplication.run(BookingApplication.class);
     }
 
-    public App(){
+    public BookingApplication(){
         register(BookingRestController.class);
     }
 }

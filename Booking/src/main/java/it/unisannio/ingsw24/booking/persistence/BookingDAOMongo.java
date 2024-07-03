@@ -93,7 +93,7 @@ public class BookingDAOMongo implements BookingDAO{
 
     private Trucker checkIdTrucker(String id) throws IOException{
         try {
-            String URL = String.format("http://localhost:8081/truckerID/" + id);
+            String URL = String.format("http://localhost:8081/trucker/ID/" + id);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()

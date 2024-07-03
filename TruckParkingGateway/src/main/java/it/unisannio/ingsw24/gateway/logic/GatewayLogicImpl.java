@@ -106,7 +106,7 @@ public class GatewayLogicImpl implements GatewayLogic{
     @Override
     public Trucker getTruckerByID(String id) {
         try{
-            String URL = String.format(truckerAddress + "/trucker/truckerID/" + id);
+            String URL = String.format(truckerAddress + "/trucker/ID/" + id);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()

@@ -70,7 +70,7 @@ public class TruckerRestController {
     }
 
     @GET
-    @Path("truckerID/{id}")
+    @Path("ID/{id}")
     public Response getTruckerById(@PathParam("id") String id) {
         Trucker t = truckerDAOMongo.findTruckerById(id);
         if (t == null) {
