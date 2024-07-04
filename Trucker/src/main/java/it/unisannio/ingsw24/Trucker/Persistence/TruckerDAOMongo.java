@@ -1,18 +1,23 @@
 package it.unisannio.ingsw24.Trucker.Persistence;
 
-import com.mongodb.MongoException;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
+import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Trucker.utils.EmailAlreadyExistsException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -91,30 +96,30 @@ public class TruckerDAOMongo implements TruckerDAO {
                 .append(ELEMENT_BOOKINGS, t.getBookings());
     }
 
+    @Override
     public Trucker createTrucker(Trucker t) {
-//        String newId = UUID.randomUUID().toString();
-        if (resourcheEmail(t.getEmail())) {
-            int newSeq = getNextSequence();
-            String newId = formatId(newSeq);
-            t.setId_trucker(newId);
-            try {
-                Document trucker = truckerToDocument(t);
-                collection.insertOne(trucker);
-                return t;
-            } catch (MongoWriteException e) {
+        int newSeq = getNextSequence();
+        String newId = formatId(newSeq);
+        t.setId_trucker(newId);
+
+        try {
+            t.setRole("ROLE_TRUCKER");
+            Document trucker = truckerToDocument(t);
+            collection.insertOne(trucker);
+            return t;
+        } catch (MongoWriteException e) {
+            // Verifica se l'eccezione è causata da una violazione dell'unicità
+            if (e.getCode() == 11000) {
+                // Codice errore 11000 indica una violazione dell'indice unico
+                throw new EmailAlreadyExistsException("Esiste già un account legato a questa mail: " + t.getEmail());
+            } else {
+                // Stampa l'eccezione per altri tipi di errore di scrittura
                 e.printStackTrace();
             }
-        } else {
-            throw new EmailAlreadyExistsException("Email già in uso: " + t.getEmail());
         }
         return null;
-    }
 
-    private boolean resourcheEmail(String email) {
-        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
-        return doc == null;
     }
-
 
     @Override
     public Trucker findTruckerById(String id) {
@@ -125,14 +130,17 @@ public class TruckerDAOMongo implements TruckerDAO {
             truckers.add(t);
         }
 
+        if (truckers.size() > 1) {
+            throw new IllegalStateException();
+        }
+
         if (truckers.isEmpty()) {
-            return null;
+            throw new NoSuchElementException();
         }
 
         assert truckers.size() == 1;
         return truckers.get(0);
     }
-
 
     @Override
     public Trucker findTruckerByEmail(String email) {
@@ -144,11 +152,11 @@ public class TruckerDAOMongo implements TruckerDAO {
         }
 
         if (truckers.size() > 1) {
-            throw  new IllegalStateException();
+            throw new IllegalStateException();
         }
 
         if (truckers.isEmpty()) {
-            throw  new NoSuchElementException();
+            throw new NoSuchElementException();
         }
 
         assert truckers.size() == 1;
@@ -156,30 +164,61 @@ public class TruckerDAOMongo implements TruckerDAO {
     }
 
     @Override
-    public Trucker deleteTruckerByEmail(String email) {
-        Document doc = this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE, "ROLE_TRUCKER"))).first();
-        if (doc == null) {
-            return null;
+    public Boolean deleteTruckerByEmail(String email) {
+        List<Trucker> truckers = new ArrayList<>();
+
+        for (Document doc : this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE, "ROLE_TRUCKER")))) {
+            Trucker t = truckerFromDocument(doc);
+            truckers.add(t);
         }
-        this.collection.deleteOne(doc);
-        return truckerFromDocument(doc);
+
+        if (truckers.size() > 1) {
+            throw new IllegalStateException();
+        }
+
+        if (truckers.isEmpty()) {
+            // Nessun trucker trovato con l'email specificata
+            return false;
+        }
+
+        assert truckers.size() == 1;
+        this.collection.deleteOne(truckerToDocument(truckers.get(0)));
+        return true;
     }
 
     @Override
-    public Trucker deleteTruckerByID(String id) {
-        Document doc = this.collection.find(eq(ELEMENT_ID, id)).first();
-        if (doc == null) {
-            return null;
+    public Boolean deleteTruckerByID(String id) {
+        List<Trucker> truckers = new ArrayList<>();
+
+        for (Document doc : this.collection.find(and(eq(ELEMENT_ID, id), eq(ELEMENT_ROLE, "ROLE_TRUCKER")))) {
+            Trucker t = truckerFromDocument(doc);
+            truckers.add(t);
         }
-        this.collection.deleteOne(doc);
-        return truckerFromDocument(doc);
+
+        if (truckers.size() > 1) {
+            throw new IllegalStateException();
+        }
+
+        if (truckers.isEmpty()) {
+            // Nessun trucker trovato con l'id specificato
+            return false;
+        }
+
+        assert truckers.size() == 1;
+        this.collection.deleteOne(truckerToDocument(truckers.get(0)));
+        return true;
     }
 
     @Override
-    public Trucker updateTrucker(Trucker t) {
+    public Trucker updateTrucker(String email, Trucker t) {
         try {
-            Trucker trucker = findTruckerByEmail(t.getEmail());
-            Document query = new Document(truckerToDocument(t));
+            // Crea la query per trovare l'owner con l'email specificata e il ruolo "ROLE_OWNER"
+            Document query = new Document("$and", Arrays.asList(
+                    new Document(ELEMENT_EMAIL, email),
+                    new Document(ELEMENT_ROLE, "ROLE_TRUCKER")
+            ));
+
+            // Prepara i campi da aggiornare
             Document doc = new Document();
             if (t.getName() != null) {
                 doc.append(ELEMENT_NAME, t.getName());
@@ -193,17 +232,22 @@ public class TruckerDAOMongo implements TruckerDAO {
 
             if (!doc.isEmpty()) {
                 Document update = new Document("$set", doc);
-                this.collection.updateOne(query, update);
-            } else {
-                System.out.println("Errore");
-            }
-            return t;
+                UpdateResult result = this.collection.updateOne(query, update);
 
+                // Verifica se l'aggiornamento è andato a buon fine
+                if (result.getMatchedCount() == 0) {
+                    return null; // Nessun documento trovato o aggiornato
+                }
+            } else {
+                // Nessun campo da aggiornare, lancia un'eccezione
+                throw new IllegalArgumentException("Nessun campo valido da aggiornare fornito.");
+            }
+
+            return t;
 
         } catch (MongoWriteException e) {
             e.printStackTrace();
+            throw new RuntimeException("Errore durante l'aggiornamento del trucker: " + e.getMessage());
         }
-        return null;
-
     }
 }

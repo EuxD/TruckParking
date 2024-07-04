@@ -6,10 +6,14 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
+import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import it.unisannio.ingsw24.Owner.utils.EmailAlreadyExistsException;
 import org.bson.Document;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -96,21 +100,27 @@ public class OwnerDAOMongo implements OwnerDAO{
 
     @Override
     public Owner createOwner(Owner ow){
-//        String newId = UUID.randomUUID().toString();
-        if (resourcheEmail(ow.getEmail())) {
-            int newSeq = getNextSequence();
-            String newId = formatId(newSeq);
-            ow.setId_owner(newId);
-            try {
-                Document trucker = ownerToDocument(ow);
-                collection.insertOne(trucker);
-                return ow;
-            } catch (MongoWriteException e) {
+        int newSeq = getNextSequence();
+        String newId = formatId(newSeq);
+        ow.setId_owner(newId);
+
+        try {
+            ow.setRole("ROLE_OWNER");
+            Document owner = ownerToDocument(ow);
+            collection.insertOne(owner);
+            return ow;
+        } catch (MongoWriteException e) {
+            // Verifica se l'eccezione è causata da una violazione dell'unicità
+            if (e.getCode() == 11000) {
+                // Codice errore 11000 indica una violazione dell'indice unico
+                throw new EmailAlreadyExistsException("Esiste già un account legato a questa mail: " + ow.getEmail());
+            } else {
+                // Stampa l'eccezione per altri tipi di errore di scrittura
                 e.printStackTrace();
             }
-
         }
         return null;
+
     }
 
     @Override
@@ -138,83 +148,116 @@ public class OwnerDAOMongo implements OwnerDAO{
     public Owner findOwnerById(String id) {
         List<Owner> owners = new ArrayList<>();
 
-        for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
+        for (Document doc : this.collection.find(and(eq(ELEMENT_ID, id), eq(ELEMENT_ROLE,"ROLE_OWNER")))) {
             Owner o = ownerFromDocument(doc);
             owners.add(o);
         }
 
-        if(owners.isEmpty()){
-            return null;
+        if (owners.size() > 1) {
+            throw new IllegalStateException();
+        }
+
+        if (owners.isEmpty()) {
+            throw new NoSuchElementException();
         }
 
         assert owners.size() == 1;
         return owners.get(0);
-
     }
 
     @Override
-    public Owner updateOwner(Owner ow) {
+    public Boolean deleteOwnerByEmail(String email) {
+        List<Owner> owners = new ArrayList<>();
+
+        for (Document doc : this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE, "ROLE_OWNER")))) {
+            Owner ow = ownerFromDocument(doc);
+            owners.add(ow);
+        }
+
+        if (owners.size() > 1) {
+            throw new IllegalStateException();
+        }
+
+        if (owners.isEmpty()) {
+            // Nessun trucker trovato con l'email specificata
+            return false;
+        }
+
+        assert owners.size() == 1;
+        this.collection.deleteOne(ownerToDocument(owners.get(0)));
+        return true;
+    }
+
+    @Override
+    public Boolean deleteOwnerByID(String id) {
+        List<Owner> owners = new ArrayList<>();
+
+        for (Document doc : this.collection.find(and(eq(ELEMENT_ID, id), eq(ELEMENT_ROLE, "ROLE_OWNER")))) {
+            Owner ow = ownerFromDocument(doc);
+            owners.add(ow);
+        }
+
+        if (owners.size() > 1) {
+            throw new IllegalStateException();
+        }
+
+        if (owners.isEmpty()) {
+            // Nessun trucker trovato con l'id specificato
+            return false;
+        }
+
+        assert owners.size() == 1;
+        this.collection.deleteOne(ownerToDocument(owners.get(0)));
+        return true;
+    }
+
+    @Override
+    public Owner updateOwner(String email, Owner ow) {
         try {
-            Owner o = findOwnerByEmail(ow.getEmail());
-            Document query = new Document(ownerToDocument(o));
+            // Crea la query per trovare l'owner con l'email specificata e il ruolo "ROLE_OWNER"
+            Document query = new Document("$and", Arrays.asList(
+                    new Document(ELEMENT_EMAIL, email),
+                    new Document(ELEMENT_ROLE, "ROLE_OWNER")
+            ));
+
+            // Prepara i campi da aggiornare
             Document doc = new Document();
-            if(ow.getName() != null){
+            if (ow.getName() != null) {
                 doc.append(ELEMENT_NAME, ow.getName());
             }
-            if(ow.getSurname() != null){
+            if (ow.getSurname() != null) {
                 doc.append(ELEMENT_SURNAME, ow.getSurname());
             }
-            if(ow.getPassword() != null){
+            if (ow.getPassword() != null) {
                 doc.append(ELEMENT_PASSWORD, ow.getPassword());
             }
 
-            if(!doc.isEmpty()){
+            if (!doc.isEmpty()) {
                 Document update = new Document("$set", doc);
-                this.collection.updateOne(query, update);
-            } else {
-                System.out.println("Errore");
-            }
-            return ow;
+                UpdateResult result = this.collection.updateOne(query, update);
 
+                // Verifica se l'aggiornamento è andato a buon fine
+                if (result.getMatchedCount() == 0) {
+                    return null; // Nessun documento trovato o aggiornato
+                }
+            } else {
+                // Nessun campo da aggiornare, lancia un'eccezione
+                throw new IllegalArgumentException("Nessun campo valido da aggiornare fornito.");
+            }
+
+            return ow;
 
         } catch (MongoWriteException e) {
             e.printStackTrace();
+            throw new RuntimeException("Errore durante l'aggiornamento dell'owner: " + e.getMessage());
         }
-        return null;
-    }
-
-    @Override
-    public Owner deleteOwnerByEmail(String email) {
-        Document doc = this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE, "ROLE_OWNER"))).first();
-        if (doc == null) {
-            return null;
-        }
-        this.collection.deleteOne(doc);
-        return ownerFromDocument(doc);
     }
 
 
-    @Override
-    public Owner deleteOwnerByID(String id) {
-        Document doc = this.collection.find(eq(ELEMENT_ID, id)).first();
-        if (doc == null) {
-            return null;
-        }
-        this.collection.deleteOne(doc);
-        return ownerFromDocument(doc);
-    }
 
 
-    private boolean resourcheEmail(String email) {
-        Document doc = this.collection.find(eq(ELEMENT_EMAIL, email)).first();
-        if (doc == null) {
-            return true;
-        }
 
-        return false;
-    }
 
-    
 
 
 }

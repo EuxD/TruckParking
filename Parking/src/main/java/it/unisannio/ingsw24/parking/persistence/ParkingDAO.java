@@ -21,6 +21,6 @@ public interface ParkingDAO {
     Boolean deleteParkingById(String id);
     List<Parking> findParkingByIdOwner(String id);
     List<Parking> getAllParking();
-    Boolean updateParking(Parking parking);
+    Boolean updateParking(String id, Parking parking);
 
 }

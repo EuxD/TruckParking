@@ -16,8 +16,6 @@ public class GatewayLogicImpl implements GatewayLogic{
 
     private final String ownerAddress;
     private final String truckerAddress;
-//    private final Gson gson;
-
 
     public GatewayLogicImpl(){
         String ownerHost = System.getenv("OWNER_HOST");
@@ -132,7 +130,7 @@ public class GatewayLogicImpl implements GatewayLogic{
     } //FUNZIONA
 
     @Override
-    public Trucker updateTrucker(Trucker trucker) throws IOException {
+    public Trucker updateTrucker(String email, Trucker trucker) throws IOException {
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -142,7 +140,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8081/trucker/update")
+                .url("http://localhost:8081/trucker/update" + email)
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -159,7 +157,7 @@ public class GatewayLogicImpl implements GatewayLogic{
     @Override
     public Boolean deleteTruckerByEmail(String email) {
         try{
-            String URL = String.format(truckerAddress + "/trucker/deleteTrucker?email=" + email);
+            String URL = String.format(truckerAddress + "/trucker/delete/" + email);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
@@ -320,7 +318,7 @@ public class GatewayLogicImpl implements GatewayLogic{
     }
 
     @Override
-    public Owner updateOwner(Owner owner) throws IOException {
+    public Owner updateOwner(String email, Owner owner) throws IOException {
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -330,7 +328,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8082/owner/update")
+                .url("http://localhost:8082/owner/update/" + email)
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -396,28 +394,6 @@ public class GatewayLogicImpl implements GatewayLogic{
     }
 
     @Override
-    public Boolean deleteParkingById(String id) {
-        try{
-            String URL = String.format(parkingAddress + "/parking/delete/" + id);
-            OkHttpClient client = new OkHttpClient();
-
-            Request request = new Request.Builder()
-                    .url(URL)
-                    .delete()
-                    .build();
-
-            Response response = client.newCall(request).execute();
-            if(response.code() != 200) {
-                return false;
-            }
-
-
-        } catch (Exception e) {}
-
-        return true;
-    }
-
-    @Override
     public List<Parking> getParkingByIdOwner(String id) {
         try {
             String URL = String.format(parkingAddress + "/parking/idOwner/" + id);
@@ -444,7 +420,6 @@ public class GatewayLogicImpl implements GatewayLogic{
         }
         return null;
     }
-
 
     @Override
     public List<Parking> getAllParking() {
@@ -475,7 +450,29 @@ public class GatewayLogicImpl implements GatewayLogic{
     }
 
     @Override
-    public Boolean updateParking(Parking parking) throws IOException {
+    public Boolean deleteParkingById(String id) {
+        try{
+            String URL = String.format(parkingAddress + "/parking/delete/" + id);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .delete()
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 200) {
+                return false;
+            }
+
+
+        } catch (Exception e) {}
+
+        return true;
+    }
+
+    @Override
+    public Boolean updateParking(String id, Parking parking) throws IOException {
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -485,7 +482,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8083/parking/update")
+                .url("http://localhost:8083/parking/update/" + id)
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();

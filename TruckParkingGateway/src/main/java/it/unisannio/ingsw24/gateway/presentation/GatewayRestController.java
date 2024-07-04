@@ -26,8 +26,7 @@ public class GatewayRestController {
         logic = new GatewayLogicImpl();
     }
 
-    //////////////////////////////// TRUCKER
-    //////////////////////////////// ////////////////////////////////////////
+    //////////////////////////////// TRUCKER ////////////////////////////////
 
     @POST
     @Path("/createTrucker")
@@ -81,9 +80,9 @@ public class GatewayRestController {
     }
 
     @PUT
-    @Path("/trucker/update")
-    public Response updateTrucker(@RequestBody Trucker trucker) throws IOException {
-        Trucker t = logic.updateTrucker(trucker);
+    @Path("/trucker/update/{email}")
+    public Response updateTrucker(@PathParam("email") String email, @RequestBody Trucker trucker) throws IOException {
+        Trucker t = logic.updateTrucker(email, trucker);
         if (t == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Errore nella modifica del Trucker")
@@ -117,8 +116,7 @@ public class GatewayRestController {
         // FUNZIONA
     }
 
-    //////////////////////////////////// OWNER
-    //////////////////////////////////// //////////////////////////////////////////
+    //////////////////////////////////// OWNER ////////////////////////////////////
 
     @POST
     @Path("/createOwner")
@@ -130,10 +128,14 @@ public class GatewayRestController {
                     .type(MediaType.TEXT_PLAIN)
                     .build();
         }
-        return Response.ok()
-                // .entity(owner.toString())
-                // .type(MediaType.TEXT_HTML)
-                .build();
+
+        //Invio dell'email
+        EmailService emailService = new EmailService();
+        String subject = "Registration Successful";
+        String body = "Dear " + ow.getName() + ",\n\nYour registration as a Owner is successful.";
+        emailService.sendEmail(ow.getEmail(), subject, body);
+
+        return Response.ok().build();
     } // FUNZIONA
 
     @GET
@@ -164,9 +166,9 @@ public class GatewayRestController {
     } // FUNZIONA
 
     @PUT
-    @Path("/owner/update")
-    public Response updateOwner(@RequestBody Owner ow) throws IOException {
-        Owner o = logic.updateOwner(ow);
+    @Path("/owner/update/{email}")
+    public Response updateOwner(@PathParam("email") String email, @RequestBody Owner ow) throws IOException {
+        Owner o = logic.updateOwner(email, ow);
         if (o == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Errore nella modifica del Trucker")
@@ -198,7 +200,7 @@ public class GatewayRestController {
         }
     } // FUNZIONA
 
-    //////////////////////////////////// PARKING////////////////////////////////////
+    //////////////////////////////////// PARKING ////////////////////////////////////
 
     @POST
     @Path("/parking/create")
@@ -269,9 +271,9 @@ public class GatewayRestController {
     }
 
     @PUT
-    @Path("/parking/update")
-    public Response updateParking(@RequestBody Parking parking) throws IOException {
-        boolean flag = logic.updateParking(parking);
+    @Path("/parking/update/{id_owner}")
+    public Response updateParking(@PathParam("id_owner") String id, @RequestBody Parking parking) throws IOException {
+        boolean flag = logic.updateParking(id, parking);
         if (flag) {
             return Response.ok().entity("Parcheggio aggiornato con successo")
                     .type(MediaType.TEXT_PLAIN).build();

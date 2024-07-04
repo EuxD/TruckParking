@@ -22,9 +22,10 @@ public interface OwnerDAO {
     Owner createOwner(Owner owner);
     Owner findOwnerByEmail(String email);
     Owner findOwnerById(String id);
-    Owner deleteOwnerByEmail(String email);
-    Owner updateOwner(Owner o);
-    Owner deleteOwnerByID(String id);
+    Boolean deleteOwnerByEmail(String email);
+    Boolean deleteOwnerByID(String id);
+    Owner updateOwner(String email, Owner o);
+
 }
 
 

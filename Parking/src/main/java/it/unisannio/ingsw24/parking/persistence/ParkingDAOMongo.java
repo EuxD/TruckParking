@@ -8,6 +8,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import okhttp3.*;
@@ -160,7 +161,7 @@ public class ParkingDAOMongo implements ParkingDAO{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8082/owner/update")
+                .url("http://localhost:8082/owner/update/" + owner.getEmail())
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -172,6 +173,7 @@ public class ParkingDAOMongo implements ParkingDAO{
         }
     }
 
+    @Override
     public Parking findParkingById(String id) {
         List<Parking> park = new ArrayList<>();
 
@@ -180,23 +182,39 @@ public class ParkingDAOMongo implements ParkingDAO{
             park.add(p);
         }
 
+        if(park.size() > 1){
+            throw new IllegalStateException();
+        }
+
         if(park.isEmpty()){
-            return null;
+            throw new NoSuchElementException();
         }
 
         assert park.size() == 1;
         return park.get(0);
     }
 
+    @Override
     public Boolean deleteParkingById(String id){
-        Document doc = this.collection.find(eq(ELEMENT_ID, id)).first();
-        if(doc != null){
-            this.collection.deleteOne(doc);
-            return true;
-        }
-        return false;
-    }
+        List<Parking> parkings = new ArrayList<>();
 
+        for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
+            Parking p = parkingFromDocument(doc);
+            parkings.add(p);
+        }
+
+        if(parkings.size() > 1){
+            throw new IllegalStateException();
+        }
+
+        if(parkings.isEmpty()){
+            return false;
+        }
+
+        assert parkings.size() == 1;
+        this.collection.deleteOne(parkingToDocument(parkings.get(0)));
+        return true;
+    }
 
     @Override
     public List<Parking> findParkingByIdOwner(String id) {
@@ -233,7 +251,7 @@ public class ParkingDAOMongo implements ParkingDAO{
     }
 
     @Override
-    public Boolean updateParking(Parking parking) {
+    public Boolean updateParking(String id, Parking parking) {
         try {
             if (parking.getnPlace() < 0) {
                 System.out.println("Errore: il numero di posti non può essere negativo");
@@ -245,7 +263,7 @@ public class ParkingDAOMongo implements ParkingDAO{
                 return false;
             }
 
-            Document query = new Document(ELEMENT_ID, parking.getId_park());
+            Document query = new Document(ELEMENT_ID, id);
             Document doc = new Document();
             doc.append(ELEMENT_PLACES, parking.getnPlace()); // Include il campo nPlace anche se il valore è 0
             if (parking.getRate() != null) {
@@ -254,19 +272,23 @@ public class ParkingDAOMongo implements ParkingDAO{
 
             if (!doc.isEmpty()) {
                 Document update = new Document("$set", doc);
-                System.out.println(update.toString());
-                this.collection.updateOne(query, update);
-                return true;
+                UpdateResult result = this.collection.updateOne(query, update);
+
+                // Verifica se l'aggiornamento è andato a buon fine
+                if (result.getMatchedCount() == 0) {
+                    return false; // Nessun documento trovato o aggiornato
+                }
             } else {
-                System.out.println("Errore");
+                // Nessun campo da aggiornare, lancia un'eccezione
+                throw new IllegalArgumentException("Nessun campo valido da aggiornare fornito.");
             }
+
+            return true;
 
         } catch (MongoWriteException e) {
             e.printStackTrace();
+            throw new RuntimeException("Errore durante l'aggiornamento del parking: " + e.getMessage());
         }
-
-        return false;
-
     }
 
 

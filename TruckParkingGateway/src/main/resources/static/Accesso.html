@@ -123,6 +123,13 @@
 
 
         const bDateValue = document.getElementById("bDate").value;
+
+        if (!validateAge(bDateValue, role)) {
+            const ageRequirement = role === "ROLE_TRUCKER" ? 21 : 18;
+            alert(`You must be at least ${ageRequirement} years old to register as a ${role === "ROLE_TRUCKER" ? "Trucker" : "Owner"}.`);
+            return;
+        }
+
         const formattedBDate = formatDate(bDateValue);
 
 
@@ -174,6 +181,27 @@
             return `${day}/${month}/${year}`;
         }
         return null;
+    }
+
+    function calculateAge(birthDate) {
+        const birth = new Date(birthDate);
+        const today = new Date();
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDifference = today.getMonth() - birth.getMonth();
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    function validateAge(birthDate, role) {
+        const age = calculateAge(birthDate);
+        if (role === "ROLE_TRUCKER") {
+            return age >= 21;
+        } else if (role === "ROLE_OWNER") {
+            return age >= 18;
+        }
+        return false;
     }
 
     // Event listener for login form submission

@@ -20,12 +20,12 @@ public interface TruckerDAO {
 
 
 
-    Trucker findTruckerByEmail(String email);
     Trucker createTrucker(Trucker t);
+    Trucker findTruckerByEmail(String email);
     Trucker findTruckerById(String id);
-    Trucker deleteTruckerByEmail(String email);
-    Trucker deleteTruckerByID(String email);
-    Trucker updateTrucker(Trucker t);
+    Boolean deleteTruckerByEmail(String email);
+    Boolean deleteTruckerByID(String email);
+    Trucker updateTrucker(String email, Trucker t);
 
 
 }

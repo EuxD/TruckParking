@@ -15,14 +15,14 @@ public interface GatewayLogic {
     Owner getOwnerByEmail(String email) throws IOException;
     Owner getOwnerById(String id) throws IOException;
     Boolean deleteOwnerByID(String id) throws IOException;
-    Owner updateOwner(Owner owner) throws IOException;
+    Owner updateOwner(String email, Owner owner) throws IOException;
 
     Trucker createTrucker(Trucker trucker) throws IOException;
     Boolean deleteTruckerByEmail(String email);
     Boolean deleteTruckerByID(String id);
     Trucker getTruckerByEmail(String email);
     Trucker getTruckerByID(String id);
-    Trucker updateTrucker(Trucker trucker) throws IOException;
+    Trucker updateTrucker(String email, Trucker trucker) throws IOException;
 
     String parkingAddress = "http://localhost:8083";
     Parking createParking(Parking parking) throws IOException;
@@ -30,6 +30,6 @@ public interface GatewayLogic {
     Boolean deleteParkingById(String id);
     List<Parking> getParkingByIdOwner(String id);
     List<Parking> getAllParking();
-    Boolean updateParking(Parking parking) throws IOException;
+    Boolean updateParking(String id_owner, Parking parking) throws IOException;
 
 }
