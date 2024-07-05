@@ -50,7 +50,6 @@ public class GatewayRestController {
 
     @GET
     @Path("/trucker/email/{email}")
-    @RolesAllowed("ROLE_TRUCKER")
     public Response getTruckerByEmail(@PathParam("email") String email) {
         Trucker trucker = logic.getTruckerByEmail(email);
         if (trucker == null) {
@@ -65,6 +64,7 @@ public class GatewayRestController {
     }
 
     @GET
+    @RolesAllowed({"TRUCKER"})
     @Path("/trucker/ID/{id}")
     public Response getTruckerByID(@PathParam("id") String id) {
         Trucker trucker = logic.getTruckerByID(id);

@@ -35,7 +35,7 @@ public class TruckerDAOMongo implements TruckerDAO {
     private final MongoDatabase database;
     private final MongoCollection<Document> collection;
     private static final String COUNTER_ID = "counter";
-    private static final String PREFIX = "U";
+    private static final String PREFIX = "Tr";
     private static final int ID_LENGTH = 2;
 
     public TruckerDAOMongo() {

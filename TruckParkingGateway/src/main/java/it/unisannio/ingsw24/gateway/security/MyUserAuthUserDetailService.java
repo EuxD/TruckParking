@@ -91,7 +91,7 @@ public class MyUserAuthUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println("email= " + email);
+        System.out.println("email = " + email);
 
         AppUser user = getUser(email);
         if (user == null) {

@@ -31,7 +31,7 @@ public class OwnerDAOMongo implements OwnerDAO{
     private final MongoCollection<Document> collection;
     private static OwnerDAOMongo ownerDAOMongo = null;
     private static final String COUNTER_ID = "counter";
-    private static final String PREFIX = "U";
+    private static final String PREFIX = "Ow";
     private static final int ID_LENGTH = 2;
 
     public static OwnerDAOMongo getIstance(){

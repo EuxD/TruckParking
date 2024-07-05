@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 public interface TruckerDAO {
 
     String DATABASE_NAME = "TruckParking";
-    String COLLECTION_NAME = "Users";
+    String COLLECTION_NAME = "Trucker";
     String ELEMENT_ID = "id_trucker";
     String ELEMENT_NAME = "name";
     String ELEMENT_SURNAME = "surname";
