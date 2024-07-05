@@ -18,18 +18,18 @@ public class SecurityConfig {
     private final MyUserAuthUserDetailService userDetailService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         http.csrf().disable();
 
 //        http.authorizeHttpRequests().anyRequest().permitAll();
 
-        http.authorizeRequests().requestMatchers("/truckparking/rest/trucker/**")
-                .authenticated().and().httpBasic();
+        http.authorizeRequests().requestMatchers("/truckparking/rest/trucker/**").authenticated().and().httpBasic();
+        http.authorizeHttpRequests().requestMatchers("/truckparking/rest/owner/**").authenticated().and().httpBasic();
+
 
         http.authorizeRequests().requestMatchers("/HomePage.html").permitAll();
         http.authorizeRequests().requestMatchers("/Accesso.html").permitAll();
-        http.authorizeRequests().requestMatchers("/ChiSiamo" +
-                ".html").permitAll();
+        http.authorizeRequests().requestMatchers("/ChiSiamo.html").permitAll();
 
 
         return http.build();

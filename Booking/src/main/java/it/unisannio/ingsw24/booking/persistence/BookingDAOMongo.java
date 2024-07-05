@@ -89,7 +89,7 @@ public class BookingDAOMongo implements BookingDAO{
                 .append(ELEMENT_PDATE, b.getpDate())
                 .append(ELEMENT_ORA_INIZIO, b.getOra_inizio())
                 .append(ELEMENT_ORA_FINE, b.getOra_fine())
-                .append(ELEMENT_TARIFFA, b.getTariffa());
+                .append(ELEMENT_TARIFFA, b.getTotal());
     }
 
     private Trucker checkIdTrucker(String id) throws IOException{
@@ -181,6 +181,38 @@ public class BookingDAOMongo implements BookingDAO{
 
         assert bookings.size() == 1;
         return bookings.get(0);
+    }
+
+    @Override
+    public List<Booking> getBookingByIdTrucker(String id_trucker){
+        List<Booking> bookings = new ArrayList<>();
+
+        for(Document doc : this.collection.find(eq(ELEMENT_ID_TRUCKER, id_trucker))){
+            Booking b = bookingFromDocument(doc);
+            bookings.add(b);
+        }
+
+        if(bookings.isEmpty()){
+            throw new IllegalStateException();
+        }
+
+        return bookings;
+    }
+
+    @Override
+    public List<Booking> getBookingByIdParking(String id_parking){
+        List<Booking> bookings = new ArrayList<>();
+
+        for(Document doc : this.collection.find(eq(ELEMENT_ID_PARKING, id_parking))){
+            Booking b = bookingFromDocument(doc);
+            bookings.add(b);
+        }
+
+        if(bookings.isEmpty()){
+            throw new IllegalStateException();
+        }
+
+        return bookings;
     }
 
     @Override

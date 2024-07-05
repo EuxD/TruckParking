@@ -1,8 +1,13 @@
 package it.unisannio.ingsw24.booking.persistence;
 
 import it.unisannio.ingsw24.Entities.Booking.Booking;
+import org.bson.Document;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public interface BookingDAO {
 
@@ -19,4 +24,8 @@ public interface BookingDAO {
     Booking createBooking(Booking booking) throws IOException;
     Booking findBookingById(String id);
     Booking deleteBookingById(String id);
+    List<Booking> getBookingByIdParking(String id_parking);
+    List<Booking> getBookingByIdTrucker(String id_trucker);
+
+
 }

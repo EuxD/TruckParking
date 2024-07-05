@@ -13,27 +13,27 @@ public class Booking {
     private Date ora_inizio;
     @JsonFormat(pattern = "HH:mm")
     private Date ora_fine;
-    private Double tariffa;
+    private Double total;
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date pDate;
 
-    public Booking(String idPren,String trucker,String parking,Date pDate, Date ora_inizio, Date ora_fine, Double tariffa){
+    public Booking(String idPren,String trucker,String parking,Date pDate, Date ora_inizio, Date ora_fine, Double total){
         this.id_booking=idPren;
         this.id_trucker=trucker;
         this.id_parking=parking;
         this.pDate=pDate;
         this.ora_inizio=ora_inizio;
         this.ora_fine=ora_fine;
-        this.tariffa=tariffa;
+        this.total=total;
     }
 
-    public Booking(String trucker,String parking,Date pDate, Date ora_inizio, Date ora_fine, Double tariffa){
+    public Booking(String trucker,String parking,Date pDate, Date ora_inizio, Date ora_fine, Double total){
         this.id_trucker=trucker;
         this.id_parking=parking;
         this.pDate=pDate;
         this.ora_inizio=ora_inizio;
         this.ora_fine=ora_fine;
-        this.tariffa=tariffa;
+        this.total=total;
     }
 
     public Booking(){
@@ -78,12 +78,12 @@ public class Booking {
 
     public Date getOra_fine() {return this.ora_fine;}
 
-    public Double getTariffa() {return this.tariffa;}
+    public Double getTotal() {return this.total;}
 
     public void setOra_fine(Date ora_fine) {this.ora_fine = ora_fine;}
 
     public void setOra_inizio(Date ora_inizio) {this.ora_inizio = ora_inizio;}
 
-    public void setTariffa(Double tariffa) {this.tariffa = tariffa;}
+    public void setTotal(Double total) {this.total = total;}
 }
 
