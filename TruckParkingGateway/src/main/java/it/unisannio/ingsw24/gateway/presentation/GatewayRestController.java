@@ -2,6 +2,7 @@ package it.unisannio.ingsw24.gateway.presentation;
 
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
+import it.unisannio.ingsw24.Entities.Persona;
 import it.unisannio.ingsw24.Entities.Trucker.*;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogic;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogicImpl;
@@ -10,6 +11,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
@@ -47,6 +49,19 @@ public class GatewayRestController {
 
         return Response.ok().build();
     }
+
+//    @POST
+//    @Path("/login")
+//    public Response login(Persona p){
+//        boolean success = logic.authenticateUser(p.getEmail(), p.getPassword());
+//        if(success){
+//            return Response.ok().entity("Login successful").build();
+//        } else {
+//            return Response.status(Response.Status.UNAUTHORIZED)
+//                    .entity("Credenziali invalide")
+//                    .build();
+//        }
+//    }
 
     @GET
     @Path("/trucker/email/{email}")

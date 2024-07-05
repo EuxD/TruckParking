@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Owner extends Persona implements AppUser {
+public class Owner extends Persona {
 
     private String id_owner;
     private List<String> parks;

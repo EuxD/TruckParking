@@ -43,6 +43,25 @@ public class GatewayLogicImpl implements GatewayLogic{
         truckerAddress = "http://" + truckerHost + ":" + truckerPort;
     }
 
+//    @Override
+//    public Boolean authenticateUser(String email, String pass) {
+//        try {
+//            // Ottieni l'utente da Owner o Trucker
+//            Owner owner = getOwnerByEmail(email);
+//            Trucker trucker = getTruckerByEmail(email);
+//
+//            // Confronta la password dell'Owner o del Trucker
+//            if (owner != null) {
+//                return pass.equals(owner.getPassword());
+//            } else if (trucker != null) {
+//                return pass.equals(trucker.getPassword());
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
+
 
     //////////////////////////////////// TRUCKER ///////////////////////////////////////////////////
 

@@ -3,6 +3,7 @@ package it.unisannio.ingsw24.gateway.security;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import it.unisannio.ingsw24.Entities.Persona;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.user.AppUser;
@@ -53,7 +54,7 @@ public class MyUserAuthUserDetailService implements UserDetailsService {
         truckerAddress = "http://" + truckerHost + ":" + truckerPort;
     }
 
-    private AppUser getUser(String email) {
+    private Persona getUser(String email) {
         try {
             OkHttpClient client = new OkHttpClient();
             Gson gson = new GsonBuilder()
@@ -93,7 +94,7 @@ public class MyUserAuthUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         System.out.println("email = " + email);
 
-        AppUser user = getUser(email);
+        Persona user = getUser(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }

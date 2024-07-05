@@ -18,26 +18,26 @@ public class SecurityConfig {
     private final MyUserAuthUserDetailService userDetailService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
+                http.authorizeHttpRequests()
 
-//        http.authorizeHttpRequests().anyRequest().permitAll();
-
-        http.authorizeRequests().requestMatchers("/truckparking/rest/trucker/**").authenticated().and().httpBasic();
-        http.authorizeHttpRequests().requestMatchers("/truckparking/rest/owner/**").authenticated().and().httpBasic();
-
-
-        http.authorizeRequests().requestMatchers("/HomePage.html").permitAll();
-        http.authorizeRequests().requestMatchers("/Accesso.html").permitAll();
-        http.authorizeRequests().requestMatchers("/ChiSiamo.html").permitAll();
-
+                                .requestMatchers("/truckparking/rest/trucker/**").hasRole("TRUCKER")
+                                .requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER")
+                                .requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER")
+                                .requestMatchers("/truckparking/rest/booking/**").hasRole("TRUCKER")
+                                .anyRequest().authenticated().and().httpBasic();
+//                )
+//                .formLogin(formLogin ->
+//                        formLogin
+//                                .loginPage("/Accesso.html")  // Assicurati che questo URL sia corretto e accessibile
+//                                .loginProcessingUrl("/Accesso.html")  // URL di invio della richiesta di login
+//                                .defaultSuccessUrl("/HomePage.html", true)  // URL di successo del login
+//                                .permitAll()
+//                )
+//                .csrf(csrf -> csrf.disable());
 
         return http.build();
-    }
-
-
-    public SecurityConfig(MyUserAuthUserDetailService userDetailService){
-        this.userDetailService = userDetailService;
     }
 
     @Bean
@@ -51,5 +51,9 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new PasswordEncoderPlain();
+    }
+
+    public SecurityConfig(MyUserAuthUserDetailService userDetailService){
+        this.userDetailService = userDetailService;
     }
 }

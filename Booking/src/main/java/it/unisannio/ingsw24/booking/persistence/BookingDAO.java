@@ -26,6 +26,7 @@ public interface BookingDAO {
     Booking deleteBookingById(String id);
     List<Booking> getBookingByIdParking(String id_parking);
     List<Booking> getBookingByIdTrucker(String id_trucker);
+    List<Booking> getAllBooking();
 
 
 }

@@ -7,7 +7,7 @@ import it.unisannio.ingsw24.Entities.user.AppUser;
 import java.util.Date;
 import java.util.List;
 
-public class Trucker extends Persona implements AppUser {
+public class Trucker extends Persona {
 
     private String id_trucker;
     private List<String> bookings;

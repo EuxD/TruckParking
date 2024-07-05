@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Registration</title>
+    <title>Registration & Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -25,7 +25,7 @@
                         </div>
                         <div class="input-group">
                             <i class='bx bx-calendar'></i>
-                            <input type="date" id="bDate" name="bdate" placeholder="gg/mm/yyyy" required>
+                            <input type="date" id="bDate" name="bdate" placeholder="dd/mm/yyyy" required>
                         </div>
                         <div class="input-group">
                             <i class='bx bx-mail-send'></i>
@@ -37,15 +37,15 @@
                         </div>
                         <label><h4>Gender:</h4></label>
                         <select id="gender" name="gender">
-                            <option value="male"> Male</option>
-                            <option value="female"> Female</option>
-                            <option value="other"> Other</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
                         </select>
 
                         <label><h4>Role:</h4></label>
                         <select id="role" name="role">
-                            <option value="ROLE_TRUCKER"> Trucker </option>
-                            <option value="ROLE_OWNER"> Owner </option>
+                            <option value="ROLE_TRUCKER">Trucker</option>
+                            <option value="ROLE_OWNER">Owner</option>
                         </select>
 
                         <input type="submit" value="Sign Up">
@@ -103,25 +103,22 @@
     </div>
     <!-- END CONTENT SECTION -->
 </div>
-<script >
-    let container = document.getElementById('container')
+<script>
+    let container = document.getElementById('container');
 
-    toggle = () => {
-        container.classList.toggle('sign-in')
-        container.classList.toggle('sign-up')
-    }
+    const toggle = () => {
+        container.classList.toggle('sign-in');
+        container.classList.toggle('sign-up');
+    };
 
     setTimeout(() => {
-        container.classList.add('sign-in')
-    }, 200)
+        container.classList.add('sign-in');
+    }, 200);
 
     document.getElementById('registrationForm').addEventListener('submit', function (event) {
         event.preventDefault();
-        console.log("onCreate");
 
         const role = document.getElementById("role").value;
-
-
         const bDateValue = document.getElementById("bDate").value;
 
         if (!validateAge(bDateValue, role)) {
@@ -132,8 +129,6 @@
 
         const formattedBDate = formatDate(bDateValue);
 
-
-
         const data = JSON.stringify({
             name: document.getElementById("name").value,
             surname: document.getElementById("surname").value,
@@ -141,7 +136,6 @@
             email: document.getElementById("email").value,
             gender: document.getElementById("gender").value,
             role: role,
-
             password: document.getElementById("password").value
         });
 
@@ -159,7 +153,6 @@
         });
 
         let url;
-        console.log(role);
         if (role === "ROLE_OWNER") {
             url = "http://localhost:8080/truckparking/rest/createOwner";
         } else if (role === "ROLE_TRUCKER") {
@@ -169,7 +162,6 @@
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(data);
-        console.log("sent");
     });
 
     function formatDate(dateString) {
@@ -222,6 +214,7 @@
             if (this.readyState === XMLHttpRequest.DONE) {
                 if (this.status === 200) {
                     alert("Login Successful");
+                    window.location.href = "/HomePage.html"; // Redirect to home or dashboard page after successful login
                 } else {
                     console.error("Login failed: " + this.status);
                     alert("Login Failed: " + this.status);
@@ -229,20 +222,13 @@
             }
         });
 
-        let loginUrl;
-        if (role && role.value === "Owner") {
-            loginUrl = "http://localhost:8080/truckparking/rest/loginOwner";
-        } else if (role && role.value === "Trucker") {
-            loginUrl = "http://localhost:8080/truckparking/rest/loginTrucker";
-        }
+        // Assuming the backend has endpoints for login
+        const loginUrl = "http://localhost:8080/truckparking/rest/login"; // Adjust URL if needed
 
         loginXhr.open("POST", loginUrl, true);
         loginXhr.setRequestHeader("Content-Type", "application/json");
         loginXhr.send(loginData);
-        console.log("login sent");
     });
-
-
 </script>
 </body>
 </html>

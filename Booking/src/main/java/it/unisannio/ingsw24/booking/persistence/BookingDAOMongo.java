@@ -16,8 +16,7 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.*;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.*;
 
 public class BookingDAOMongo implements BookingDAO{
     private String host = System.getenv("HOST");
@@ -138,6 +137,33 @@ public class BookingDAOMongo implements BookingDAO{
         return null;
     }
 
+    private void addBookingToTrucker(Trucker trucker, String bookingId) throws IOException{
+        if(trucker.getBookings() == null){
+            trucker.setBookings(new ArrayList<>());
+        }
+
+        trucker.getBookings().add(bookingId);
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Formatta la data nel formato desiderato
+        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        String jsonBody = gson.toJson(trucker);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8081/trucker/update/" + trucker.getEmail())
+                .put(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+        if(response.code() != 200){
+            throw new IOException("Errore nell'aggiunta della prenotazione");
+        }
+    }
+
+
     @Override
     public Booking createBooking(Booking booking) throws IOException{
         Trucker t = checkIdTrucker(booking.getId_trucker());
@@ -155,6 +181,7 @@ public class BookingDAOMongo implements BookingDAO{
         try {
             Document b = bookingToDocument(booking);
             collection.insertOne(b);
+            addBookingToTrucker(t, booking.getId_booking());
             return booking;
         } catch (MongoWriteException e) {
             e.printStackTrace();
@@ -210,6 +237,22 @@ public class BookingDAOMongo implements BookingDAO{
 
         if(bookings.isEmpty()){
             throw new IllegalStateException();
+        }
+
+        return bookings;
+    }
+
+    @Override
+    public List<Booking> getAllBooking(){
+        List<Booking> bookings = new ArrayList<>();
+
+        for (Document doc : this.collection.find(ne("_id",COUNTER_ID))){
+            Booking b = bookingFromDocument(doc);
+            bookings.add(b);
+        }
+
+        if(bookings.isEmpty()){
+            throw new NoSuchElementException();
         }
 
         return bookings;
