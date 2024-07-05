@@ -86,7 +86,7 @@ public class ParkingDAOMongo implements ParkingDAO{
                 document.getString(ELEMENT_CITY),
                 document.getString(ELEMENT_ID_OWNER),
                 document.getInteger(ELEMENT_PLACES),
-                document.getDouble(ELEMENT_RATE));
+                document.getDouble(ELEMENT_TARIFFA));
     }
 
 
@@ -96,7 +96,7 @@ public class ParkingDAOMongo implements ParkingDAO{
                 .append(ELEMENT_CITY, p.getCity())
                 .append(ELEMENT_ID_OWNER, p.getId_owner())
                 .append(ELEMENT_PLACES, p.getnPlace())
-                .append(ELEMENT_RATE, p.getRate());
+                .append(ELEMENT_TARIFFA, p.getTariffa());
     }
 
     @Override
@@ -258,7 +258,7 @@ public class ParkingDAOMongo implements ParkingDAO{
                 return false;
             }
 
-            if (parking.getRate() != null && parking.getRate() < 0) {
+            if (parking.getTariffa() != null && parking.getTariffa() < 0) {
                 System.out.println("Errore: la tariffa non può essere negativa");
                 return false;
             }
@@ -266,8 +266,8 @@ public class ParkingDAOMongo implements ParkingDAO{
             Document query = new Document(ELEMENT_ID, id);
             Document doc = new Document();
             doc.append(ELEMENT_PLACES, parking.getnPlace()); // Include il campo nPlace anche se il valore è 0
-            if (parking.getRate() != null) {
-                doc.append(ELEMENT_RATE, parking.getRate());
+            if (parking.getTariffa() != null) {
+                doc.append(ELEMENT_TARIFFA, parking.getTariffa());
             }
 
             if (!doc.isEmpty()) {

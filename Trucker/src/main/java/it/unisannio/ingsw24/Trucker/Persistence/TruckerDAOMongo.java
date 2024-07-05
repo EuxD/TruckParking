@@ -104,6 +104,7 @@ public class TruckerDAOMongo implements TruckerDAO {
 
         try {
             t.setRole("ROLE_TRUCKER");
+
             Document trucker = truckerToDocument(t);
             collection.insertOne(trucker);
             return t;
@@ -120,6 +121,12 @@ public class TruckerDAOMongo implements TruckerDAO {
         return null;
 
     }
+
+    // controllo età Trucker
+    /*
+    private void checkDate(Date data){
+
+    }*/
 
     @Override
     public Trucker findTruckerById(String id) {

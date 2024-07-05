@@ -21,9 +21,9 @@ public class BookingRestController {
     public Response createBooking(@RequestBody Booking bo) throws IOException {
         Booking booking = bookingDAOMongo.createBooking(bo);
         if(booking == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Nessun Booking con quel ID").type(MediaType.APPLICATION_JSON).build();
         }
-        return Response.status(Response.Status.CREATED).build();
+        return Response.status(Response.Status.CREATED).entity("Il Booking è stato creato").type(MediaType.APPLICATION_JSON).build();
     }
 
     @GET

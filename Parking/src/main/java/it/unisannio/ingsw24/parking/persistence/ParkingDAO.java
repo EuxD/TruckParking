@@ -14,7 +14,7 @@ public interface ParkingDAO {
     String ELEMENT_CITY = "city";
     String ELEMENT_ID_OWNER = "id_owner";
     String ELEMENT_PLACES = "nPlace";
-    String ELEMENT_RATE = "rate";
+    String ELEMENT_TARIFFA = "tariffa";
 
     Parking createParking(Parking parking);
     Parking findParkingById(String id);

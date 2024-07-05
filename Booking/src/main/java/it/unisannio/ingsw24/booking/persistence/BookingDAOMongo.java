@@ -14,6 +14,7 @@ import okhttp3.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
+import java.util.*;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -163,7 +164,23 @@ public class BookingDAOMongo implements BookingDAO{
 
     @Override
     public Booking findBookingById(String id) {
-        return null;
+        List<Booking> bookings = new ArrayList<>();
+
+        for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
+            Booking b = bookingFromDocument(doc);
+            bookings.add(b);
+        }
+
+        if(bookings.size() > 1){
+            throw new IllegalStateException();
+        }
+
+        if(bookings.isEmpty()){
+            throw new NoSuchElementException();
+        }
+
+        assert bookings.size() == 1;
+        return bookings.get(0);
     }
 
     @Override

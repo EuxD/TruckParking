@@ -7,25 +7,25 @@ public class Parking {
     private String city;
     private String id_owner;
     private int nPlace;    //posti disponibili
-    private Double rate;
+    private Double tariffa;
 
     public Parking() {}
 
-    public Parking(String idpark, String address, String city, String owner, int nPlace, Double rate) {
+    public Parking(String idpark, String address, String city, String owner, int nPlace, Double tariffa) {
         this.id_park = idpark;
         this.address = address;
         this.city = city;
         this.id_owner = owner;
         this.nPlace = nPlace;
-        this.rate = rate;
+        this.tariffa = Parking.this.tariffa;
     }
 
-    public Parking(String address, String city, String owner, int nPlace, Double rate) {
+    public Parking(String address, String city, String owner, int nPlace, Double tariffa) {
         this.address = address;
         this.city = city;
         this.id_owner = owner;
         this.nPlace = nPlace;
-        this.rate = rate;
+        this.tariffa = Parking.this.tariffa;
     }
 
     public String getId_park() {
@@ -68,12 +68,12 @@ public class Parking {
         this.nPlace = nPlace;
     }
 
-    public Double getRate() {
-        return rate;
+    public Double getTariffa() {
+        return tariffa;
     }
 
-    public void setRate(Double rate) {
-        this.rate = rate;
+    public void setTariffa(Double tariffa) {
+        this.tariffa = tariffa;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Parking {
                 ", city='" + city + '\'' +
                 ", id_owner='" + id_owner + '\'' +
                 ", nPlace=" + nPlace +
-                ", rate=" + rate +
+                ", tariffa=" + tariffa +
                 '}';
     }
 }
