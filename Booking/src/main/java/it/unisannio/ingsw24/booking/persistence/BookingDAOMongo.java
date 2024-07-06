@@ -163,6 +163,32 @@ public class BookingDAOMongo implements BookingDAO{
         }
     }
 
+    private void removeBookingToTrucker(Trucker trucker, String boookingID) throws IOException{
+        if(trucker.getBookings() == null || !trucker.getBookings().contains(boookingID)){
+            throw new IOException("Prenotazione non trovata");
+        }
+
+        trucker.getBookings().remove(boookingID);
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Formatta la data nel formato desiderato
+        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        String jsonBody = gson.toJson(trucker);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8081/trucker/update/" + trucker.getEmail())
+                .put(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+        if(response.code() != 200){
+            throw new IOException("Errore nella rimozione della prenotazione");
+        }
+    }
+
     private void checkNPlaceParking(String id_park, int nPlace){
         List<Booking> bookings = getBookingByIdParking(id_park);
 
@@ -274,7 +300,59 @@ public class BookingDAOMongo implements BookingDAO{
     }
 
     @Override
-    public Booking deleteBookingById(String id) {
-        return null;
+    public Boolean deleteBookingById(String id) throws IOException {
+        // Trova la prenotazione nel database usando l'ID della prenotazione
+        Document query = new Document("id_booking", id);
+        Document bookingDoc = collection.find(query).first();
+
+        if (bookingDoc == null) {
+            return false; // Prenotazione non trovata
+        }
+
+        // Converte il documento in un oggetto Booking
+        Booking booking = bookingFromDocument(bookingDoc);
+
+        // Trova il camionista associato alla prenotazione
+        Trucker trucker = checkIdTrucker(booking.getId_trucker());
+        if (trucker == null) {
+            return false;
+        }
+
+        // Trova il parcheggio associato alla prenotazione
+        Parking parking = checkIdParking(booking.getId_parking());
+        if (parking == null) {
+            return false;
+        }
+
+        try {
+            // Rimuovi la prenotazione dalla collezione
+            collection.deleteOne(query);
+
+            // Rimuovi l'ID della prenotazione dalla lista delle prenotazioni del camionista
+            removeBookingToTrucker(trucker, id);
+
+            // Incrementa il numero di posti disponibili nel parcheggio
+            incrementParkingPlaces(parking.getId_park(), 1);
+
+            return true;
+        } catch (MongoWriteException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            throw e;
+        }
+
+        return false;
     }
+
+    private void incrementParkingPlaces(String parkingId, int increment) {
+        // Implementa la logica per incrementare i posti disponibili nel parcheggio
+        Document query = new Document("id_park", parkingId);
+        Document update = new Document("$inc", new Document("nPlace", increment));
+        collection.updateOne(query, update);
+    }
+
+
+
 }
+
+

@@ -27,7 +27,7 @@ public interface BookingDAO {
     List<Booking> getBookingByIdTrucker(String id_trucker);
     List<Booking> getAllBooking();
 
-    Booking deleteBookingById(String id);
+    Boolean deleteBookingById(String id) throws IOException;
 
 
 

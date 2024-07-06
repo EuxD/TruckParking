@@ -53,4 +53,28 @@ public class BookingRestController {
         return Response.ok().entity(o).build();
     }
 
+    @DELETE
+    @Path("/deleteID/{id}")
+    public Response deleteBookingById(@PathParam("id") String id) {
+        try{
+            if (bookingDAOMongo.deleteBookingById(id)) {
+                return Response.ok()
+                        .entity("Booking eliminato con successo")
+                        .type(MediaType.TEXT_PLAIN)
+                        .build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Nessun Booking trovato con questo ID: " + id)
+                        .type(MediaType.TEXT_PLAIN)
+                        .build();
+            }
+        }catch(IllegalStateException | IOException e) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("Errore: " + e.getMessage())
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+
+        }
+    }
+
 }
