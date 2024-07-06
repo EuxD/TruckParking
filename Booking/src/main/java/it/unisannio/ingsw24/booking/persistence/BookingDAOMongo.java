@@ -331,9 +331,6 @@ public class BookingDAOMongo implements BookingDAO{
             // Rimuovi l'ID della prenotazione dalla lista delle prenotazioni del camionista
             removeBookingToTrucker(trucker, id);
 
-            // Incrementa il numero di posti disponibili nel parcheggio
-            incrementParkingPlaces(parking.getId_park(), 1);
-
             return true;
         } catch (MongoWriteException e) {
             e.printStackTrace();
@@ -344,12 +341,6 @@ public class BookingDAOMongo implements BookingDAO{
         return false;
     }
 
-    private void incrementParkingPlaces(String parkingId, int increment) {
-        // Implementa la logica per incrementare i posti disponibili nel parcheggio
-        Document query = new Document("id_park", parkingId);
-        Document update = new Document("$inc", new Document("nPlace", increment));
-        collection.updateOne(query, update);
-    }
 
 
 
