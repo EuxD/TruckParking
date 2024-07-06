@@ -15,18 +15,20 @@ public interface BookingDAO {
     String COLLECTION_NAME = "Booking";
     String ELEMENT_ID = "id_booking";
     String ELEMENT_ID_TRUCKER = "id_trucker";
-    String ELEMENT_ID_PARKING = "id_parking";
+    String ELEMENT_ID_PARKING = "id_park";
     String ELEMENT_PDATE = "pDate";
-    String ELEMENT_ORA_INIZIO = "oraInizio";
-    String ELEMENT_ORA_FINE = "oraFine";
-    String ELEMENT_TARIFFA = "tariffa";
+    String ELEMENT_ORA_INIZIO = "ora_inizio";
+    String ELEMENT_ORA_FINE = "ora_fine";
+    String ELEMENT_TOTALE = "total";
 
     Booking createBooking(Booking booking) throws IOException;
     Booking findBookingById(String id);
-    Booking deleteBookingById(String id);
     List<Booking> getBookingByIdParking(String id_parking);
     List<Booking> getBookingByIdTrucker(String id_trucker);
     List<Booking> getAllBooking();
+
+    Booking deleteBookingById(String id);
+
 
 
 }

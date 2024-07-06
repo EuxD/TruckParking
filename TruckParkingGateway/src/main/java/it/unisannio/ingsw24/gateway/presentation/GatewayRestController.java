@@ -47,7 +47,8 @@ public class GatewayRestController {
         String body = "Dear " + t.getName() + ",\n\nYour registration as a Trucker is successful.";
         emailService.sendEmail(t.getEmail(), subject, body);
 
-        return Response.ok().build();
+        return Response.ok().entity("Registrazione avvenuta con successo").type(MediaType.TEXT_PLAIN)
+                .build();
     }
 
 //    @POST
@@ -150,7 +151,7 @@ public class GatewayRestController {
         String body = "Dear " + ow.getName() + ",\n\nYour registration as a Owner is successful.";
         emailService.sendEmail(ow.getEmail(), subject, body);
 
-        return Response.ok().build();
+        return Response.ok().entity("Registrazione avvenuta con successo").type(MediaType.TEXT_PLAIN).build();
     } // FUNZIONA
 
     @GET
@@ -229,8 +230,8 @@ public class GatewayRestController {
         }
 
         return Response.status(Response.Status.CREATED)
-                .entity(p)
-                .type(MediaType.APPLICATION_JSON)
+                .entity("Parcheggio registrato con successo")
+                .type(MediaType.TEXT_PLAIN)
                 .build();
     }
 

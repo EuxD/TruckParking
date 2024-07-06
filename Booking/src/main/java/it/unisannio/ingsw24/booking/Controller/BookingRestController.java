@@ -19,11 +19,25 @@ public class BookingRestController {
     @POST
     @Path("/create")
     public Response createBooking(@RequestBody Booking bo) throws IOException {
-        Booking booking = bookingDAOMongo.createBooking(bo);
-        if(booking == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Nessun Booking con quel ID").type(MediaType.APPLICATION_JSON).build();
+        try {
+            Booking booking = bookingDAOMongo.createBooking(bo);
+            if (booking == null) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Impossibile creare la prenotazione")
+                        .type(MediaType.TEXT_PLAIN)
+                        .build();
+            }
+            return Response.status(Response.Status.CREATED)
+                    .entity("Prenotazione effettuata con successo")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+
+        } catch (IllegalStateException e){
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
         }
-        return Response.status(Response.Status.CREATED).entity("Il Booking è stato creato").type(MediaType.APPLICATION_JSON).build();
     }
 
     @GET

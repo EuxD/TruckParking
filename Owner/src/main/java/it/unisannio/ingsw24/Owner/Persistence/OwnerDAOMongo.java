@@ -232,6 +232,10 @@ public class OwnerDAOMongo implements OwnerDAO{
                 doc.append(ELEMENT_PASSWORD, ow.getPassword());
             }
 
+            if(ow.getParks() != null){
+                doc.append(ELEMENT_PARKS, ow.getParks());
+            }
+
             if (!doc.isEmpty()) {
                 Document update = new Document("$set", doc);
                 UpdateResult result = this.collection.updateOne(query, update);

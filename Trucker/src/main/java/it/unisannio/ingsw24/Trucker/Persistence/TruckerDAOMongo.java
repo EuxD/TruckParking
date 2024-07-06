@@ -237,6 +237,10 @@ public class TruckerDAOMongo implements TruckerDAO {
                 doc.append(ELEMENT_PASSWORD, t.getPassword());
             }
 
+            if(t.getBookings() != null){
+                doc.append(ELEMENT_BOOKINGS, t.getBookings());
+            }
+
             if (!doc.isEmpty()) {
                 Document update = new Document("$set", doc);
                 UpdateResult result = this.collection.updateOne(query, update);

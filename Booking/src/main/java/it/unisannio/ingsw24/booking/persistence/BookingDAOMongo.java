@@ -78,7 +78,7 @@ public class BookingDAOMongo implements BookingDAO{
                 document.getDate(ELEMENT_PDATE),
                 document.getDate(ELEMENT_ORA_INIZIO),
                 document.getDate(ELEMENT_ORA_FINE),
-                document.getDouble(ELEMENT_TARIFFA));
+                document.getDouble(ELEMENT_TOTALE));
     }
 
     private static Document bookingToDocument(Booking b) {
@@ -88,7 +88,7 @@ public class BookingDAOMongo implements BookingDAO{
                 .append(ELEMENT_PDATE, b.getpDate())
                 .append(ELEMENT_ORA_INIZIO, b.getOra_inizio())
                 .append(ELEMENT_ORA_FINE, b.getOra_fine())
-                .append(ELEMENT_TARIFFA, b.getTotal());
+                .append(ELEMENT_TOTALE, b.getTotal());
     }
 
     private Trucker checkIdTrucker(String id) throws IOException{
@@ -163,6 +163,17 @@ public class BookingDAOMongo implements BookingDAO{
         }
     }
 
+    private void checkNPlaceParking(String id_park, int nPlace){
+        List<Booking> bookings = getBookingByIdParking(id_park);
+
+        if(bookings.size() >= nPlace){
+            throw new IllegalStateException("Non è più possibile effetturare prenotazioni per questo parcheggio");
+        }
+
+
+
+    }
+
 
     @Override
     public Booking createBooking(Booking booking) throws IOException{
@@ -179,12 +190,16 @@ public class BookingDAOMongo implements BookingDAO{
         String newId = formatId(newSeq);
         booking.setId_booking(newId);
         try {
+            checkNPlaceParking(p.getId_park(), p.getnPlace());
             Document b = bookingToDocument(booking);
             collection.insertOne(b);
             addBookingToTrucker(t, booking.getId_booking());
             return booking;
         } catch (MongoWriteException e) {
             e.printStackTrace();
+
+        } catch (IllegalStateException e){
+            throw e;
         }
         return null;
     }
@@ -235,9 +250,9 @@ public class BookingDAOMongo implements BookingDAO{
             bookings.add(b);
         }
 
-        if(bookings.isEmpty()){
-            throw new IllegalStateException();
-        }
+//        if(bookings.isEmpty()){
+//            return null;
+//        }
 
         return bookings;
     }
