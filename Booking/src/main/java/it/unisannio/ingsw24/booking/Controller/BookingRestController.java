@@ -8,6 +8,8 @@ import jakarta.ws.rs.core.Response;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -53,8 +55,61 @@ public class BookingRestController {
         return Response.ok().entity(o).build();
     }
 
+    @GET
+    @Path("truckerID/{id}")
+    public Response getBookingByIdTrucker(@PathParam("id") String id) {
+        try {
+            List<Booking> bookings = bookingDAOMongo.getBookingByIdTrucker(id);
+            return Response.ok()
+                    .entity(bookings)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (NoSuchElementException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Nessuna prenotazione legata a questo trucker")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+
+
+    }
+
+    @GET
+    @Path("/parkingID/{id}")
+    public Response getBookingByIdParking(@PathParam("id") String id) {
+        try {
+            List<Booking> bookings = bookingDAOMongo.getBookingByIdParking(id);
+            return Response.ok()
+                    .entity(bookings)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (NoSuchElementException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Nessuna prenotazione legata a questo parcheggio")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+
+    }
+
+    @GET
+    public Response getAllBookings() {
+        try {
+            List<Booking> bookings = bookingDAOMongo.getAllBooking();
+            return Response.ok()
+                    .entity(bookings)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (NoSuchElementException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Non ci sonon prenotazioni")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+    }
+
     @DELETE
-    @Path("/deleteID/{id}")
+    @Path("/delete/{id}")
     public Response deleteBookingById(@PathParam("id") String id) {
         try{
             if (bookingDAOMongo.deleteBookingById(id)) {

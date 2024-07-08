@@ -2,6 +2,8 @@ package it.unisannio.ingsw24.Entities.Booking;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Booking {
@@ -9,12 +11,12 @@ public class Booking {
     private String id_booking;
     private String id_trucker;
     private String id_parking;
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private Date ora_inizio;
-    @JsonFormat(pattern = "HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private Date ora_fine;
     private Double total;
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date pDate;
 
     public Booking(String idPren,String trucker,String parking,Date pDate, Date ora_inizio, Date ora_fine, Double total){
@@ -73,17 +75,26 @@ public class Booking {
     }
 
     public Date getOra_inizio() {
-        return this.ora_inizio;
+        return ora_inizio;
     }
 
-    public Date getOra_fine() {return this.ora_fine;}
+    public void setOra_inizio(Date ora_inizio) {
+        this.ora_inizio = ora_inizio;
+    }
+
+    public Date getOra_fine() {
+        return ora_fine;
+    }
+
+    public void setOra_fine(Date ora_fine) {
+        this.ora_fine = ora_fine;
+    }
 
     public Double getTotal() {return this.total;}
 
-    public void setOra_fine(Date ora_fine) {this.ora_fine = ora_fine;}
 
-    public void setOra_inizio(Date ora_inizio) {this.ora_inizio = ora_inizio;}
 
     public void setTotal(Double total) {this.total = total;}
+
 }
 

@@ -4,6 +4,7 @@ import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import org.apache.el.parser.BooleanNode;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,6 +34,14 @@ public interface GatewayLogic {
     Boolean updateParking(String id_owner, Parking parking) throws IOException;
 
 //    Boolean authenticateUser(String email, String pass);
+
+    String bookingAddress = "http://localhost:8084";
+    Booking createBooking(Booking b);
+    Booking getBookingById(String id);
+    List<Booking> getBookingByIdTrucker(String id_trucker);
+    List<Booking> getBookingByIdParking(String id_parking);
+    List<Booking> getAllBooking();
+    Boolean deleteBookingById(String id);
 
 
 }

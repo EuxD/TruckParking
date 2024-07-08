@@ -200,6 +200,24 @@ public class BookingDAOMongo implements BookingDAO{
 
     }
 
+    private Double calcoloTariffaTotale(Date ora_inizio, Date ora_fine, String id_parking) throws IOException {
+        Parking p = checkIdParking(id_parking);
+        System.out.println(p.getTariffa());
+
+        // Calcolo della differenza di tempo in millisecondi
+        long durationInMillis = ora_fine.getTime() - ora_inizio.getTime();
+
+        // Conversione della differenza di tempo in minuti
+        long durationInMinutes = durationInMillis / (1000 * 60);
+
+        // Conversione della differenza di tempo in ore decimali
+        double hours = durationInMinutes / 60.0;
+
+        // Calcolo del totale da pagare
+        return hours * p.getTariffa();
+
+    }
+
 
     @Override
     public Booking createBooking(Booking booking) throws IOException{
@@ -217,6 +235,8 @@ public class BookingDAOMongo implements BookingDAO{
         booking.setId_booking(newId);
         try {
             checkNPlaceParking(p.getId_park(), p.getnPlace());
+            double total = calcoloTariffaTotale(booking.getOra_inizio(), booking.getOra_fine(), p.getId_park());
+            booking.setTotal(total);
             Document b = bookingToDocument(booking);
             collection.insertOne(b);
             addBookingToTrucker(t, booking.getId_booking());
@@ -261,7 +281,7 @@ public class BookingDAOMongo implements BookingDAO{
         }
 
         if(bookings.isEmpty()){
-            throw new IllegalStateException();
+            throw new NoSuchElementException();
         }
 
         return bookings;
@@ -317,12 +337,12 @@ public class BookingDAOMongo implements BookingDAO{
         if (trucker == null) {
             return false;
         }
-
-        // Trova il parcheggio associato alla prenotazione
-        Parking parking = checkIdParking(booking.getId_parking());
-        if (parking == null) {
-            return false;
-        }
+//
+//        // Trova il parcheggio associato alla prenotazione
+//        Parking parking = checkIdParking(booking.getId_parking());
+//        if (parking == null) {
+//            return false;
+//        }
 
         try {
             // Rimuovi la prenotazione dalla collezione

@@ -1,5 +1,6 @@
 package it.unisannio.ingsw24.gateway.presentation;
 
+import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Persona;
@@ -7,6 +8,8 @@ import it.unisannio.ingsw24.Entities.Trucker.*;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogic;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogicImpl;
 
+import it.unisannio.ingsw24.gateway.utils.BookingCreateException;
+import it.unisannio.ingsw24.gateway.utils.BookingNotFoundException;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -312,6 +315,93 @@ public class GatewayRestController {
         }
     }
 
+    //////////////////////////////////// BOOKING ////////////////////////////////////
+
+    @POST
+    @Path("/booking/create")
+    public Response createBooking(@RequestBody Booking booking){
+        try{
+            Booking b = logic.createBooking(booking);
+            return Response.status(Response.Status.CREATED)
+                    .entity(b)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (BookingCreateException e){
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
 
 
+    }
+
+    @GET
+    @Path("/booking/ID/{id}")
+    public Response getBookingById(@PathParam("id") String id_booking){
+        try{
+            Booking b = logic.getBookingById(id_booking);
+            return Response.ok()
+                    .entity(b)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (BookingNotFoundException e){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/booking/truckerID/{id}")
+    public Response getBookingByIdTrucker(@PathParam("id") String id_trucker) {
+        try {
+            List<Booking> bookings = logic.getBookingByIdTrucker(id_trucker);
+            return Response.ok()
+                    .entity(bookings)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
+        } catch (BookingNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/booking/parkingID/{id}")
+    public Response getBookingByIdParking(@PathParam("id") String id_park){
+        try{
+            List<Booking> bookings = logic.getBookingByIdParking(id_park);
+            return Response.ok()
+                    .entity(bookings)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+
+        } catch (BookingNotFoundException e){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+    }
+
+    @DELETE
+    @Path("/booking/delete/{id}")
+    public Response deleteBookingById(@PathParam("id") String id_booking){
+        boolean flag = logic.deleteBookingById(id_booking);
+        if (flag) {
+            return Response.ok().entity("Parcheggio eliminato con successo")
+                        .type(MediaType.TEXT_PLAIN).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Parcheggio non trovato").build();
+        }
+    }
 }
+
+
+

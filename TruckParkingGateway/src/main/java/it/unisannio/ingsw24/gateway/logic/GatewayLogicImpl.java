@@ -2,13 +2,19 @@ package it.unisannio.ingsw24.gateway.logic;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import it.unisannio.ingsw24.gateway.utils.BookingCreateException;
+import it.unisannio.ingsw24.gateway.utils.BookingNotFoundException;
 import okhttp3.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -517,4 +523,161 @@ public class GatewayLogicImpl implements GatewayLogic{
 
 //////////////////////////////////// BOOKING //////////////////////////////////////////
 
+
+    @Override
+    public Booking createBooking(Booking b){
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Configura Gson per gestire LocalDate e LocalTime
+        Gson gson = new GsonBuilder()
+                .setDateFormat("dd/MM/yyyy HH:mm") // Imposta il formato delle date e ore
+                .create();
+        String jsonBody = gson.toJson(b);
+
+        try {
+            RequestBody body = RequestBody.create(jsonBody, mediaType);
+            Request request = new Request.Builder()
+                    .url("http://localhost:8084/booking/create")
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 201){
+                throw new BookingCreateException("Fallimento nella creazione della prenotazione");
+            }
+
+            return b;
+
+        } catch (IOException e){
+            throw new BookingCreateException("Errore nella creazione della prenotazione");
+        }
+    }
+
+    @Override
+    public Booking getBookingById(String id) {
+        try{
+            String URL = String.format(bookingAddress + "/booking/ID/" + id);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 200){
+                throw new BookingNotFoundException("Nessuna prenotazione con questo ID: "+id);
+            }
+            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").setDateFormat("HH:mm").create();
+            String body = response.body().toString();
+            return gson.fromJson(body,Booking.class);
+        } catch (IOException e){
+            throw new RuntimeException("Errore nella richiesta di ricerca");
+        }
+    }
+
+    @Override
+    public List<Booking> getBookingByIdTrucker(String id_trucker) {
+        try {
+            String URL = String.format(bookingAddress + "/booking/truckerID/" + id_trucker);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.code() != 200) {
+                throw new BookingNotFoundException("Non ci sono prenotazioni legate a questo Trucker");
+            }
+            Gson gson = new GsonBuilder().create();
+            String body = response.body().string();
+
+            // Utilizzare TypeToken per deserializzare un array JSON
+            Type listType = new TypeToken<List<Booking>>() {}.getType();
+            List<Booking> bookings = gson.fromJson(body, listType);
+
+            return bookings;
+        } catch (IOException e) {
+            throw new RuntimeException("Errore nella richiesta di ricerca");
+        }
+    }
+
+    @Override
+    public List<Booking> getBookingByIdParking(String id_parking) {
+        try {
+            String URL = String.format(bookingAddress + "/booking/parkingID/" + id_parking);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.code() != 200) {
+                throw new BookingNotFoundException("Nessuna prenotazione legata a questo parcheggio");
+            }
+            Gson gson = new GsonBuilder().create();
+            String body = response.body().string();
+
+            // Utilizzare TypeToken per deserializzare un array JSON
+            Type listType = new TypeToken<List<Booking>>() {}.getType();
+            List<Booking> bookings = gson.fromJson(body, listType);
+
+            return bookings;
+        } catch (IOException e) {
+            throw new RuntimeException("Errore nella richiesta di ricerca");
+        }
+    }
+
+    @Override
+    public List<Booking> getAllBooking() {
+        try {
+            String URL = String.format(bookingAddress + "/booking");
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.code() != 200) {
+                throw new BookingNotFoundException("Non ci sono prenotazioni");
+            }
+            Gson gson = new GsonBuilder().create();
+            String body = response.body().string();
+
+            // Utilizzare TypeToken per deserializzare un array JSON
+            Type listType = new TypeToken<List<Booking>>() {}.getType();
+            List<Booking> bookings = gson.fromJson(body, listType);
+
+            return bookings;
+        } catch (IOException e) {
+            throw new RuntimeException("Errore nella richiesta di ricerca delle prenotazioni");
+        }
+    }
+
+    @Override
+    public Boolean deleteBookingById(String id){
+        try{
+            String URL = String.format(bookingAddress + "/booking/delete/" + id);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .delete()
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.code() != 200) {
+                return false;
+            }
+
+
+        } catch (Exception e) {e.printStackTrace();}
+
+        return true;
+    }
 }

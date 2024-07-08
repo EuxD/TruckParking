@@ -17,7 +17,7 @@ public class Parking {
         this.city = city;
         this.id_owner = owner;
         this.nPlace = nPlace;
-        this.tariffa = Parking.this.tariffa;
+        this.tariffa = tariffa;
     }
 
     public Parking(String address, String city, String owner, int nPlace, Double tariffa) {
@@ -25,7 +25,7 @@ public class Parking {
         this.city = city;
         this.id_owner = owner;
         this.nPlace = nPlace;
-        this.tariffa = Parking.this.tariffa;
+        this.tariffa = tariffa;
     }
 
     public String getId_park() {
