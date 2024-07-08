@@ -3,6 +3,7 @@ package it.unisannio.ingsw24.Entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.mongodb.core.index.Indexed;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
@@ -10,8 +11,8 @@ public abstract class Persona {
 
     private String name;
     private String surname;
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date bDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private LocalDate bDate;
     @Indexed(unique = true)
     private String email;
     private String gender;
@@ -20,7 +21,7 @@ public abstract class Persona {
 
     public Persona(){}
 
-    public Persona(String name, String surname, Date bDate, String mail, String gender, String role, String password) {
+    public Persona(String name, String surname, LocalDate bDate, String mail, String gender, String role, String password) {
         this.name = name;
         this.surname = surname;
         this.bDate = bDate;
@@ -63,11 +64,11 @@ public abstract class Persona {
         this.gender = gender;
     }
 
-    public Date getbDate() {
+    public LocalDate getbDate() {
         return bDate;
     }
 
-    public void setbDate(Date bDate) {
+    public void setbDate(LocalDate bDate) {
         this.bDate = bDate;
     }
 

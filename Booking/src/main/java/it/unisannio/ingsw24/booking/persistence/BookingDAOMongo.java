@@ -13,12 +13,18 @@ import org.bson.Document;
 import okhttp3.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.ne;
 
-public class BookingDAOMongo implements BookingDAO{
+public class BookingDAOMongo implements BookingDAO {
     private String host = System.getenv("HOST");
     private String port = System.getenv("PORT");
     private static String URI;
@@ -31,18 +37,18 @@ public class BookingDAOMongo implements BookingDAO{
     private static final String PREFIX = "B";
     private static final int ID_LENGTH = 2;
 
-    public static BookingDAOMongo getIstance(){
-        if(bookingDAOMongo == null){
+    public static BookingDAOMongo getIstance() {
+        if (bookingDAOMongo == null) {
             bookingDAOMongo = new BookingDAOMongo();
         }
         return bookingDAOMongo;
     }
 
-    public BookingDAOMongo(){
-        if(host == null){
+    public BookingDAOMongo() {
+        if (host == null) {
             host = "172.31.6.11";
         }
-        if(port == null){
+        if (port == null) {
             port = "27017";
         }
         URI = "mongodb://" + host + ":" + port;
@@ -71,27 +77,29 @@ public class BookingDAOMongo implements BookingDAO{
         return result.getInteger("seq") + 1;
     }
 
-    private static Booking bookingFromDocument(Document document){
-        return new Booking(document.getString(ELEMENT_ID),
+    private static Booking bookingFromDocument(Document document) {
+        return new Booking(
+                document.getString(ELEMENT_ID),
                 document.getString(ELEMENT_ID_TRUCKER),
                 document.getString(ELEMENT_ID_PARKING),
-                document.getDate(ELEMENT_PDATE),
-                document.getDate(ELEMENT_ORA_INIZIO),
-                document.getDate(ELEMENT_ORA_FINE),
-                document.getDouble(ELEMENT_TOTALE));
+                LocalDate.parse(document.getString(ELEMENT_PDATE)),
+                LocalTime.parse(document.getString(ELEMENT_ORA_INIZIO)),
+                LocalTime.parse(document.getString(ELEMENT_ORA_FINE)),
+                document.getDouble(ELEMENT_TOTALE)
+        );
     }
 
     private static Document bookingToDocument(Booking b) {
         return new Document(ELEMENT_ID, b.getId_booking())
                 .append(ELEMENT_ID_TRUCKER, b.getId_trucker())
                 .append(ELEMENT_ID_PARKING, b.getId_parking())
-                .append(ELEMENT_PDATE, b.getpDate())
-                .append(ELEMENT_ORA_INIZIO, b.getOra_inizio())
-                .append(ELEMENT_ORA_FINE, b.getOra_fine())
+                .append(ELEMENT_PDATE, b.getpDate().toString())
+                .append(ELEMENT_ORA_INIZIO, b.getOra_inizio().toString())
+                .append(ELEMENT_ORA_FINE, b.getOra_fine().toString())
                 .append(ELEMENT_TOTALE, b.getTotal());
     }
 
-    private Trucker checkIdTrucker(String id) throws IOException{
+    private Trucker checkIdTrucker(String id) throws IOException {
         try {
             String URL = String.format("http://localhost:8081/trucker/ID/" + id);
             OkHttpClient client = new OkHttpClient();
@@ -101,7 +109,7 @@ public class BookingDAOMongo implements BookingDAO{
                     .get()
                     .build();
             Response response = client.newCall(request).execute();
-            if (response.code() != 200 ){
+            if (response.code() != 200) {
                 return null;
             }
             Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
@@ -114,7 +122,7 @@ public class BookingDAOMongo implements BookingDAO{
         return null;
     }
 
-    private Parking checkIdParking(String id) throws IOException{
+    private Parking checkIdParking(String id) throws IOException {
         try {
             String URL = String.format("http://localhost:8083/parking/id/" + id);
             OkHttpClient client = new OkHttpClient();
@@ -124,7 +132,7 @@ public class BookingDAOMongo implements BookingDAO{
                     .get()
                     .build();
             Response response = client.newCall(request).execute();
-            if (response.code() != 200 ){
+            if (response.code() != 200) {
                 return null;
             }
             Gson gson = new GsonBuilder().create();
@@ -137,8 +145,8 @@ public class BookingDAOMongo implements BookingDAO{
         return null;
     }
 
-    private void addBookingToTrucker(Trucker trucker, String bookingId) throws IOException{
-        if(trucker.getBookings() == null){
+    private void addBookingToTrucker(Trucker trucker, String bookingId) throws IOException {
+        if (trucker.getBookings() == null) {
             trucker.setBookings(new ArrayList<>());
         }
 
@@ -158,13 +166,13 @@ public class BookingDAOMongo implements BookingDAO{
                 .build();
 
         Response response = client.newCall(request).execute();
-        if(response.code() != 200){
+        if (response.code() != 200) {
             throw new IOException("Errore nell'aggiunta della prenotazione");
         }
     }
 
-    private void removeBookingToTrucker(Trucker trucker, String boookingID) throws IOException{
-        if(trucker.getBookings() == null || !trucker.getBookings().contains(boookingID)){
+    private void removeBookingToTrucker(Trucker trucker, String boookingID) throws IOException {
+        if (trucker.getBookings() == null || !trucker.getBookings().contains(boookingID)) {
             throw new IOException("Prenotazione non trovata");
         }
 
@@ -184,136 +192,117 @@ public class BookingDAOMongo implements BookingDAO{
                 .build();
 
         Response response = client.newCall(request).execute();
-        if(response.code() != 200){
+        if (response.code() != 200) {
             throw new IOException("Errore nella rimozione della prenotazione");
         }
     }
 
-    private void checkNPlaceParking(String id_park, int nPlace){
+    private void checkNPlaceParking(String id_park, int nPlace) {
         List<Booking> bookings = getBookingByIdParking(id_park);
 
-        if(bookings.size() >= nPlace){
+        if (bookings.size() >= nPlace) {
             throw new IllegalStateException("Non è più possibile effetturare prenotazioni per questo parcheggio");
         }
-
-
-
     }
 
-    private Double calcoloTariffaTotale(Date ora_inizio, Date ora_fine, String id_parking) throws IOException {
+    private Double calcoloTariffaTotale(LocalTime ora_inizio, LocalTime ora_fine, String id_parking) throws IOException {
         Parking p = checkIdParking(id_parking);
         System.out.println(p.getTariffa());
 
-        // Calcolo della differenza di tempo in millisecondi
-        long durationInMillis = ora_fine.getTime() - ora_inizio.getTime();
-
-        // Conversione della differenza di tempo in minuti
-        long durationInMinutes = durationInMillis / (1000 * 60);
+        // Calcolo della differenza di tempo in minuti
+        long durationInMinutes = java.time.Duration.between(ora_inizio, ora_fine).toMinutes();
 
         // Conversione della differenza di tempo in ore decimali
         double hours = durationInMinutes / 60.0;
 
         // Calcolo del totale da pagare
         return hours * p.getTariffa();
-
     }
 
-
     @Override
-    public Booking createBooking(Booking booking) throws IOException{
+    public Booking createBooking(Booking booking) throws IOException {
         Trucker t = checkIdTrucker(booking.getId_trucker());
-        if(t == null){
+        if (t == null) {
             return null;
         }
 
         Parking p = checkIdParking(booking.getId_parking());
-        if(p == null){
+        if (p == null) {
             return null;
         }
-        int newSeq = getNextSequence();
-        String newId = formatId(newSeq);
-        booking.setId_booking(newId);
-        try {
-            checkNPlaceParking(p.getId_park(), p.getnPlace());
-            double total = calcoloTariffaTotale(booking.getOra_inizio(), booking.getOra_fine(), p.getId_park());
-            booking.setTotal(total);
-            Document b = bookingToDocument(booking);
-            collection.insertOne(b);
-            addBookingToTrucker(t, booking.getId_booking());
-            return booking;
-        } catch (MongoWriteException e) {
-            e.printStackTrace();
 
-        } catch (IllegalStateException e){
-            throw e;
+        checkNPlaceParking(booking.getId_parking(), p.getnPlace());
+
+        Double totale = calcoloTariffaTotale(booking.getOra_inizio(), booking.getOra_fine(), booking.getId_parking());
+        booking.setTotal(totale);
+
+        String bookingId = formatId(getNextSequence());
+        booking.setId_booking(bookingId);
+
+        try {
+            collection.insertOne(bookingToDocument(booking));
+            addBookingToTrucker(t, bookingId);
+        } catch (MongoWriteException e) {
+            if (e.getError().getCategory().equals(com.mongodb.ErrorCategory.DUPLICATE_KEY)) {
+
+                throw new IOException("Errore nella creazione della prenotazione: ID duplicato.");
+            } else {
+                throw new IOException("Errore nella creazione della prenotazione.");
+            }
         }
-        return null;
+
+        return booking;
     }
 
     @Override
     public Booking findBookingById(String id) {
-        List<Booking> bookings = new ArrayList<>();
+        Document query = new Document(ELEMENT_ID, id);
+        Document bookingDoc = collection.find(query).first();
 
-        for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
-            Booking b = bookingFromDocument(doc);
-            bookings.add(b);
+        if (bookingDoc == null) {
+            throw new NoSuchElementException("Prenotazione non trovata con ID: " + id);
         }
 
-        if(bookings.size() > 1){
-            throw new IllegalStateException();
-        }
-
-        if(bookings.isEmpty()){
-            throw new NoSuchElementException();
-        }
-
-        assert bookings.size() == 1;
-        return bookings.get(0);
+        return bookingFromDocument(bookingDoc);
     }
 
     @Override
-    public List<Booking> getBookingByIdTrucker(String id_trucker){
+    public List<Booking> getBookingByIdTrucker(String id_trucker) {
         List<Booking> bookings = new ArrayList<>();
 
-        for(Document doc : this.collection.find(eq(ELEMENT_ID_TRUCKER, id_trucker))){
-            Booking b = bookingFromDocument(doc);
-            bookings.add(b);
+        for (Document doc : this.collection.find(eq(ELEMENT_ID_TRUCKER, id_trucker))) {
+            bookings.add(bookingFromDocument(doc));
         }
 
-        if(bookings.isEmpty()){
-            throw new NoSuchElementException();
+        if (bookings.isEmpty()) {
+            throw new NoSuchElementException("Nessuna prenotazione trovata per il camionista con ID: " + id_trucker);
         }
 
         return bookings;
     }
 
     @Override
-    public List<Booking> getBookingByIdParking(String id_parking){
+    public List<Booking> getBookingByIdParking(String id_parking) {
+        System.out.println(id_parking);
         List<Booking> bookings = new ArrayList<>();
 
-        for(Document doc : this.collection.find(eq(ELEMENT_ID_PARKING, id_parking))){
-            Booking b = bookingFromDocument(doc);
-            bookings.add(b);
+        for (Document doc : this.collection.find(eq(ELEMENT_ID_PARKING, id_parking))) {
+            bookings.add(bookingFromDocument(doc));
         }
-
-//        if(bookings.isEmpty()){
-//            return null;
-//        }
 
         return bookings;
     }
 
     @Override
-    public List<Booking> getAllBooking(){
+    public List<Booking> getAllBooking() {
         List<Booking> bookings = new ArrayList<>();
 
-        for (Document doc : this.collection.find(ne("_id",COUNTER_ID))){
-            Booking b = bookingFromDocument(doc);
-            bookings.add(b);
+        for (Document doc : this.collection.find(ne("_id", COUNTER_ID))) {
+            bookings.add(bookingFromDocument(doc));
         }
 
-        if(bookings.isEmpty()){
-            throw new NoSuchElementException();
+        if (bookings.isEmpty()) {
+            throw new NoSuchElementException("Nessuna prenotazione trovata.");
         }
 
         return bookings;
@@ -321,49 +310,29 @@ public class BookingDAOMongo implements BookingDAO{
 
     @Override
     public Boolean deleteBookingById(String id) throws IOException {
-        // Trova la prenotazione nel database usando l'ID della prenotazione
-        Document query = new Document("id_booking", id);
+        Document query = new Document(ELEMENT_ID, id);
         Document bookingDoc = collection.find(query).first();
 
         if (bookingDoc == null) {
             return false; // Prenotazione non trovata
         }
 
-        // Converte il documento in un oggetto Booking
         Booking booking = bookingFromDocument(bookingDoc);
-
-        // Trova il camionista associato alla prenotazione
         Trucker trucker = checkIdTrucker(booking.getId_trucker());
+
         if (trucker == null) {
             return false;
         }
-//
-//        // Trova il parcheggio associato alla prenotazione
-//        Parking parking = checkIdParking(booking.getId_parking());
-//        if (parking == null) {
-//            return false;
-//        }
 
         try {
-            // Rimuovi la prenotazione dalla collezione
             collection.deleteOne(query);
-
-            // Rimuovi l'ID della prenotazione dalla lista delle prenotazioni del camionista
             removeBookingToTrucker(trucker, id);
-
             return true;
         } catch (MongoWriteException e) {
             e.printStackTrace();
-        } catch (IllegalStateException e) {
-            throw e;
+            throw new IOException("Errore nella rimozione della prenotazione.");
         }
-
-        return false;
     }
-
-
-
-
 }
 
 

@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -22,7 +23,6 @@ public class ParkingRestController {
     @POST
     @Path("/create")
     public Response createParking(@RequestBody Parking p) {
-        System.out.println(p.getnPlace());
         Parking parking = parkingDAOMongo.createParking(p);
         if(parking == null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -105,6 +105,8 @@ public class ParkingRestController {
                     .entity("Errore nel database: "+ e.getMessage())
                     .type(MediaType.TEXT_PLAIN)
                     .build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
     }

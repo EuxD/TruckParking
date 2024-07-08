@@ -12,6 +12,9 @@ import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Owner.utils.EmailAlreadyExistsException;
 import org.bson.Document;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +36,8 @@ public class OwnerDAOMongo implements OwnerDAO{
     private static final String COUNTER_ID = "counter";
     private static final String PREFIX = "Ow";
     private static final int ID_LENGTH = 2;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 
     public static OwnerDAOMongo getIstance(){
         if(ownerDAOMongo == null){
@@ -75,10 +80,13 @@ public class OwnerDAOMongo implements OwnerDAO{
     }
 
     private static Owner ownerFromDocument(Document document){
+
+        LocalDate bDate = LocalDate.parse(document.getString(ELEMENT_BDATE), FORMATTER);
+
         return new Owner(document.getString(ELEMENT_ID),
                 document.getString(ELEMENT_NAME),
                 document.getString(ELEMENT_SURNAME),
-                document.getDate(ELEMENT_BDATE),
+                bDate,
                 document.getString(ELEMENT_EMAIL),
                 document.getString(ELEMENT_GENDER),
                 document.getString(ELEMENT_ROLE),
@@ -87,16 +95,18 @@ public class OwnerDAOMongo implements OwnerDAO{
     }
 
     private static Document ownerToDocument(Owner ow) {
+
         return new Document(ELEMENT_ID, ow.getId_owner())
                 .append(ELEMENT_NAME, ow.getName())
                 .append(ELEMENT_SURNAME, ow.getSurname())
-                .append(ELEMENT_BDATE, ow.getbDate())
+                .append(ELEMENT_BDATE, ow.getbDate().format(FORMATTER))
                 .append(ELEMENT_EMAIL, ow.getEmail())
                 .append(ELEMENT_GENDER, ow.getGender())
                 .append(ELEMENT_ROLE, ow.getRole())
                 .append(ELEMENT_PASSWORD, ow.getPassword())
                 .append(ELEMENT_PARKS, ow.getParks());
     }
+
 
     @Override
     public Owner createOwner(Owner ow){

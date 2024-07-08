@@ -2,7 +2,7 @@ package it.unisannio.ingsw24.Entities.Parking;
 
 public class Parking {
 
-    private String id_park;
+    private String id_parking;
     private String address;
     private String city;
     private String id_owner;
@@ -12,7 +12,7 @@ public class Parking {
     public Parking() {}
 
     public Parking(String idpark, String address, String city, String owner, int nPlace, Double tariffa) {
-        this.id_park = idpark;
+        this.id_parking = idpark;
         this.address = address;
         this.city = city;
         this.id_owner = owner;
@@ -28,12 +28,12 @@ public class Parking {
         this.tariffa = tariffa;
     }
 
-    public String getId_park() {
-        return id_park;
+    public String getId_parking() {
+        return id_parking;
     }
 
-    public void setId_park(String id_park) {
-        this.id_park = id_park;
+    public void setId_parking(String id_parking) {
+        this.id_parking = id_parking;
     }
 
     public String getAddress() {

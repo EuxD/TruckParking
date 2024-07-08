@@ -11,6 +11,7 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
+import it.unisannio.ingsw24.parking.config.LocalDateAdapter;
 import okhttp3.*;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -91,7 +93,7 @@ public class ParkingDAOMongo implements ParkingDAO{
 
 
     private static Document parkingToDocument(Parking p) {
-        return new Document(ELEMENT_ID, p.getId_park())
+        return new Document(ELEMENT_ID, p.getId_parking())
                 .append(ELEMENT_ADDRESS, p.getAddress())
                 .append(ELEMENT_CITY, p.getCity())
                 .append(ELEMENT_ID_OWNER, p.getId_owner())
@@ -108,11 +110,11 @@ public class ParkingDAOMongo implements ParkingDAO{
 
         int newSeq = getNextSequence();
         String newId = formatId(newSeq);
-        parking.setId_park(newId);
+        parking.setId_parking(newId);
         try {
             Document park = parkingToDocument(parking);
             collection.insertOne(park);
-            addParkinginOwner(o,parking.getId_park());
+            addParkinginOwner(o,parking.getId_parking());
             return parking;
         } catch (MongoWriteException e) {
             e.printStackTrace();
@@ -137,8 +139,12 @@ public class ParkingDAOMongo implements ParkingDAO{
             if (response.code() != 200 ){
                 return null;
             }
-            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .create();
+
             String body = response.body().string();
+            System.out.println(body);
             Owner o = gson.fromJson(body, Owner.class);
             return o;
         } catch (IOException e) {
@@ -156,7 +162,38 @@ public class ParkingDAOMongo implements ParkingDAO{
         MediaType mediaType = MediaType.parse("application/json");
 
         // Formatta la data nel formato desiderato
-        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .create();
+        String jsonBody = gson.toJson(owner);
+        System.out.println(jsonBody);
+
+        RequestBody body = RequestBody.create(mediaType, jsonBody);
+        Request request = new Request.Builder()
+                .url("http://localhost:8082/owner/update/" + owner.getEmail())
+                .put(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Response response = client.newCall(request).execute();
+        if (response.code() != 200) {
+            throw new IOException("Errore nell'aggiunta del parcheggio");
+        }
+    }
+
+    private void removeParkingToOwner(Owner owner, String parkID) throws IOException {
+        if (owner.getParks() == null || !owner.getParks().contains(parkID)) {
+            throw new IOException("Parcheggio non trovato");
+        }
+
+        owner.getParks().remove(parkID);
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // Formatta la data nel formato desiderato
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .create();
         String jsonBody = gson.toJson(owner);
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
@@ -167,11 +204,12 @@ public class ParkingDAOMongo implements ParkingDAO{
                 .build();
 
         Response response = client.newCall(request).execute();
-//        System.out.println(response.code());
         if (response.code() != 200) {
-            throw new IOException("Errore nell'aggiunta del parcheggio");
+            throw new IOException("Errore nella rimozione della prenotazione");
         }
     }
+
+
 
     @Override
     public Parking findParkingById(String id) {
@@ -195,11 +233,13 @@ public class ParkingDAOMongo implements ParkingDAO{
     }
 
     @Override
-    public Boolean deleteParkingById(String id){
+    public Boolean deleteParkingById(String id) throws IOException {
+        String id_owner = "";
         List<Parking> parkings = new ArrayList<>();
 
         for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
             Parking p = parkingFromDocument(doc);
+            id_owner = p.getId_owner();
             parkings.add(p);
         }
 
@@ -212,6 +252,8 @@ public class ParkingDAOMongo implements ParkingDAO{
         }
 
         assert parkings.size() == 1;
+        Owner o = checkIDOwner(id_owner);
+        removeParkingToOwner(o,id);
         this.collection.deleteOne(parkingToDocument(parkings.get(0)));
         return true;
     }

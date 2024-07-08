@@ -20,6 +20,7 @@ public interface TruckerDAO {
 
 
 
+
     Trucker createTrucker(Trucker t);
     Trucker findTruckerByEmail(String email);
     Trucker findTruckerById(String id);

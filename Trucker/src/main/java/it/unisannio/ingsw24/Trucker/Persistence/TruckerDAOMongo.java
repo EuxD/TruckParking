@@ -16,6 +16,8 @@ import jakarta.ws.rs.core.Response;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +39,8 @@ public class TruckerDAOMongo implements TruckerDAO {
     private static final String COUNTER_ID = "counter";
     private static final String PREFIX = "Tr";
     private static final int ID_LENGTH = 2;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 
     public TruckerDAOMongo() {
         if (host == null) {
@@ -72,10 +76,13 @@ public class TruckerDAOMongo implements TruckerDAO {
     }
 
     private static Trucker truckerFromDocument(Document document) {
+
+        LocalDate bDate = LocalDate.parse(document.getString(ELEMENT_BDATE), FORMATTER);
+
         return new Trucker(document.getString(ELEMENT_ID),
                 document.getString(ELEMENT_NAME),
                 document.getString(ELEMENT_SURNAME),
-                document.getDate(ELEMENT_BDATE),
+                bDate,
                 document.getString(ELEMENT_EMAIL),
                 document.getString(ELEMENT_GENDER),
                 document.getString(ELEMENT_ROLE),
@@ -88,7 +95,7 @@ public class TruckerDAOMongo implements TruckerDAO {
         return new Document(ELEMENT_ID, t.getId_trucker())
                 .append(ELEMENT_NAME, t.getName())
                 .append(ELEMENT_SURNAME, t.getSurname())
-                .append(ELEMENT_BDATE, t.getbDate())
+                .append(ELEMENT_BDATE, t.getbDate().format(FORMATTER))
                 .append(ELEMENT_EMAIL, t.getEmail())
                 .append(ELEMENT_GENDER, t.getGender())
                 .append(ELEMENT_ROLE, t.getRole())

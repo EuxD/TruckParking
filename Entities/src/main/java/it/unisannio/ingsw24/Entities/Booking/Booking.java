@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 public class Booking {
@@ -12,14 +14,14 @@ public class Booking {
     private String id_trucker;
     private String id_parking;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    private Date ora_inizio;
+    private LocalTime ora_inizio;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    private Date ora_fine;
+    private LocalTime ora_fine;
     private Double total;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    private Date pDate;
+    private LocalDate pDate;
 
-    public Booking(String idPren,String trucker,String parking,Date pDate, Date ora_inizio, Date ora_fine, Double total){
+    public Booking(String idPren,String trucker,String parking,LocalDate pDate, LocalTime ora_inizio, LocalTime ora_fine, Double total){
         this.id_booking=idPren;
         this.id_trucker=trucker;
         this.id_parking=parking;
@@ -29,7 +31,7 @@ public class Booking {
         this.total=total;
     }
 
-    public Booking(String trucker,String parking,Date pDate, Date ora_inizio, Date ora_fine, Double total){
+    public Booking(String trucker,String parking,LocalDate pDate, LocalTime ora_inizio, LocalTime ora_fine, Double total){
         this.id_trucker=trucker;
         this.id_parking=parking;
         this.pDate=pDate;
@@ -66,27 +68,27 @@ public class Booking {
         this.id_parking = id_parking;
     }
 
-    public Date getpDate() {
+    public LocalDate getpDate() {
         return pDate;
     }
 
-    public void setpDate(Date pDate) {
+    public void setpDate(LocalDate pDate) {
         this.pDate = pDate;
     }
 
-    public Date getOra_inizio() {
+    public LocalTime getOra_inizio() {
         return ora_inizio;
     }
 
-    public void setOra_inizio(Date ora_inizio) {
+    public void setOra_inizio(LocalTime ora_inizio) {
         this.ora_inizio = ora_inizio;
     }
 
-    public Date getOra_fine() {
+    public LocalTime getOra_fine() {
         return ora_fine;
     }
 
-    public void setOra_fine(Date ora_fine) {
+    public void setOra_fine(LocalTime ora_fine) {
         this.ora_fine = ora_fine;
     }
 

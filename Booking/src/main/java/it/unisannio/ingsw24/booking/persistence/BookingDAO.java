@@ -15,7 +15,7 @@ public interface BookingDAO {
     String COLLECTION_NAME = "Booking";
     String ELEMENT_ID = "id_booking";
     String ELEMENT_ID_TRUCKER = "id_trucker";
-    String ELEMENT_ID_PARKING = "id_park";
+    String ELEMENT_ID_PARKING = "id_parking";
     String ELEMENT_PDATE = "pDate";
     String ELEMENT_ORA_INIZIO = "ora_inizio";
     String ELEMENT_ORA_FINE = "ora_fine";

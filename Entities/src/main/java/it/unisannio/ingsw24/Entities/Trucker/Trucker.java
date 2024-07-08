@@ -4,6 +4,7 @@ package it.unisannio.ingsw24.Entities.Trucker;
 import it.unisannio.ingsw24.Entities.Persona;
 import it.unisannio.ingsw24.Entities.user.AppUser;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -14,18 +15,18 @@ public class Trucker extends Persona {
 
     public Trucker(){}
 
-    public Trucker(String id,String name, String surname, Date bDate, String mail, String gender, String role, String password ,List<String> bookings) {
+    public Trucker(String id, String name, String surname, LocalDate bDate, String mail, String gender, String role, String password , List<String> bookings) {
         super(name, surname, bDate, mail, gender, role, password);
         this.id_trucker = id;
         this.bookings = bookings;
     }
 
-    public Trucker(String name, String surname, Date bDate, String mail, String gender, String role, String password ,List<String> bookings) {
+    public Trucker(String name, String surname, LocalDate bDate, String mail, String gender, String role, String password ,List<String> bookings) {
         super(name, surname, bDate, mail, gender, role, password);
         this.bookings = bookings;
     }
 
-    public Trucker(String id,String name, String surname, Date bDate, String mail, String gender, String role, String password) {
+    public Trucker(String id,String name, String surname, LocalDate bDate, String mail, String gender, String role, String password) {
         super(name, surname, bDate, mail, gender, role, password);
         this.id_trucker = id;
     }

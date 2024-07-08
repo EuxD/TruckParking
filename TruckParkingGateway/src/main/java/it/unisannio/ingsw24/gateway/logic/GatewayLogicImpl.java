@@ -12,9 +12,12 @@ import okhttp3.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 
@@ -529,9 +532,15 @@ public class GatewayLogicImpl implements GatewayLogic{
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
 
-        // Configura Gson per gestire LocalDate e LocalTime
         Gson gson = new GsonBuilder()
-                .setDateFormat("dd/MM/yyyy HH:mm") // Imposta il formato delle date e ore
+                .registerTypeAdapter(LocalDate.class, (JsonDeserializer<LocalDate>) (json, type, context) ->
+                        LocalDate.parse(json.getAsString(), DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, type, context) ->
+                        new JsonPrimitive(src.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))
+                .registerTypeAdapter(LocalTime.class, (JsonDeserializer<LocalTime>) (json, type, context) ->
+                        LocalTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("HH:mm")))
+                .registerTypeAdapter(LocalTime.class, (JsonSerializer<LocalTime>) (src, type, context) ->
+                        new JsonPrimitive(src.format(DateTimeFormatter.ofPattern("HH:mm"))))
                 .create();
         String jsonBody = gson.toJson(b);
 
@@ -554,6 +563,7 @@ public class GatewayLogicImpl implements GatewayLogic{
             throw new BookingCreateException("Errore nella creazione della prenotazione");
         }
     }
+
 
     @Override
     public Booking getBookingById(String id) {
