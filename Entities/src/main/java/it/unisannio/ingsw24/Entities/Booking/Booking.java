@@ -21,26 +21,26 @@ public class Booking {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate pDate;
 
-    public Booking(String idPren,String trucker,String parking,LocalDate pDate, LocalTime ora_inizio, LocalTime ora_fine, Double total){
-        this.id_booking=idPren;
-        this.id_trucker=trucker;
-        this.id_parking=parking;
-        this.pDate=pDate;
-        this.ora_inizio=ora_inizio;
-        this.ora_fine=ora_fine;
-        this.total=total;
+    public Booking(String idPren, String trucker, String parking, LocalDate pDate, LocalTime ora_inizio, LocalTime ora_fine, Double total) {
+        this.id_booking = idPren;
+        this.id_trucker = trucker;
+        this.id_parking = parking;
+        this.pDate = pDate;
+        this.ora_inizio = ora_inizio;
+        this.ora_fine = ora_fine;
+        this.total = total;
     }
 
-    public Booking(String trucker,String parking,LocalDate pDate, LocalTime ora_inizio, LocalTime ora_fine, Double total){
-        this.id_trucker=trucker;
-        this.id_parking=parking;
-        this.pDate=pDate;
-        this.ora_inizio=ora_inizio;
-        this.ora_fine=ora_fine;
-        this.total=total;
+    public Booking(String trucker, String parking, LocalDate pDate, LocalTime ora_inizio, LocalTime ora_fine, Double total) {
+        this.id_trucker = trucker;
+        this.id_parking = parking;
+        this.pDate = pDate;
+        this.ora_inizio = ora_inizio;
+        this.ora_fine = ora_fine;
+        this.total = total;
     }
 
-    public Booking(){
+    public Booking() {
 
     }
 
@@ -92,11 +92,14 @@ public class Booking {
         this.ora_fine = ora_fine;
     }
 
-    public Double getTotal() {return this.total;}
+    public Double getTotal() {
+        return this.total;
+    }
 
 
-
-    public void setTotal(Double total) {this.total = total;}
+    public void setTotal(Double total) {
+        this.total = total;
+    }
 
 }
 

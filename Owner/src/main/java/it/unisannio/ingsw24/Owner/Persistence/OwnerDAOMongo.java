@@ -14,6 +14,7 @@ import org.bson.Document;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,12 +82,10 @@ public class OwnerDAOMongo implements OwnerDAO{
 
     private static Owner ownerFromDocument(Document document){
 
-        LocalDate bDate = LocalDate.parse(document.getString(ELEMENT_BDATE), FORMATTER);
-
         return new Owner(document.getString(ELEMENT_ID),
                 document.getString(ELEMENT_NAME),
                 document.getString(ELEMENT_SURNAME),
-                bDate,
+                LocalDate.parse(document.getString(ELEMENT_BDATE),FORMATTER),
                 document.getString(ELEMENT_EMAIL),
                 document.getString(ELEMENT_GENDER),
                 document.getString(ELEMENT_ROLE),
@@ -107,18 +106,34 @@ public class OwnerDAOMongo implements OwnerDAO{
                 .append(ELEMENT_PARKS, ow.getParks());
     }
 
+    private boolean checkbDate(LocalDate dateOfBirth) {
+        if (dateOfBirth == null) {
+            return false;
+        }
+        if(dateOfBirth.isAfter(LocalDate.now())){
+            return false;
+        }
+        int age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+        return age >= 18;
+    }
+
 
     @Override
     public Owner createOwner(Owner ow){
-        int newSeq = getNextSequence();
-        String newId = formatId(newSeq);
-        ow.setId_owner(newId);
-
         try {
+            if (!checkbDate(ow.getbDate())) {
+                throw new IllegalArgumentException("Data di nascita non valida");
+            }
+
+            int newSeq = getNextSequence();
+            String newId = formatId(newSeq);
+            ow.setId_owner(newId);
             ow.setRole("ROLE_OWNER");
+
             Document owner = ownerToDocument(ow);
             collection.insertOne(owner);
             return ow;
+
         } catch (MongoWriteException e) {
             // Verifica se l'eccezione è causata da una violazione dell'unicità
             if (e.getCode() == 11000) {

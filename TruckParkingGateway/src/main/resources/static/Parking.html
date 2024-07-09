@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crea Parcheggio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #4CAF50;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: calc(100% - 22px); /* 100% minus padding */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .address-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .address-group label {
+            margin-bottom: 5px;
+        }
+
+        .address-group .address-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .address-group .address-container input {
+            width: 100%;
+        }
+
+        .address-group .address-container .civico {
+            width: 100px; /* Larghezza specifica per il civico */
+            margin-left: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<h1>Crea Parcheggio</h1>
+<form onsubmit="return false">
+    <div class="form-group address-group">
+        <label for="address">Indirizzo:</label>
+        <div class="address-container">
+            <input type="text" id="address" name="address" required>
+            <input type="text" id="civico" name="civico" class="civico" placeholder="Civico" required>
+        </div>
+        <input type="hidden" id="full_address" name="full_address">
+    </div>
+    <div class="form-group">
+        <label for="city">Città:</label>
+        <input type="text" id="city" name="city" required>
+    </div>
+    <div class="form-group">
+        <label for="id_trucker">ID Trucker:</label>
+        <input type="text" id="id_trucker" name="id_trucker" required>
+    </div>
+    <div class="form-group">
+        <label for="id_parking">ID Parcheggio:</label>
+        <input type="text" id="id_parking" name="id_parking" required>
+    </div>
+    <div class="form-group">
+        <label for="num_spots">Numero di Posti:</label>
+        <select id="num_spots" name="num_spots" required>
+            <option value="" disabled selected>Scegli il numero di posti</option>
+            <!-- Opzioni da 1 a 10 -->
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="tariff">Tariffa:</label>
+        <input type="number" id="tariff" name="tariff" step="0.01" min="0" required>
+    </div>
+    <div class="form-group">
+        <button type="submit" value="Create" onclick="onCreateButtonPressed()">Crea Parcheggio</button>
+    </div>
+</form>
+
+<script>
+    function onCreateButtonPressed() {
+        console.log("onCreate");
+
+        // Recupera i valori dai campi del modulo
+        const address = document.getElementById("address").value;
+        const civico = document.getElementById("civico").value;
+        const city = document.getElementById("city").value;
+        const idTrucker = document.getElementById("id_trucker").value;
+        const idParking = document.getElementById("id_parking").value;
+        const numSpots = document.getElementById("num_spots").value;
+        const tariff = document.getElementById("tariff").value;
+
+        // Combina l'indirizzo e il civico in un'unica stringa
+        const fullAddress = `${address} ${civico}`;
+
+        // Crea un oggetto con i dati del modulo
+        const data = JSON.stringify({
+            "address": fullAddress,   // Usa la stringa combinata per l'indirizzo
+            "city": city,
+            "id_trucker": idTrucker,
+            "id_parking": idParking,
+            "nPlace": numSpots,
+            "tariff": tariff
+        });
+
+        console.log(data);
+
+        // Crea una nuova richiesta XMLHttpRequest
+        const xhr = new XMLHttpRequest();
+
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === XMLHttpRequest.DONE) {
+                if (this.status === 201) {
+                    alert("Parcheggio registrato con successo");
+                } else {
+                    alert("Errore nella creazione del parcheggio");
+                }
+            }
+        });
+
+        xhr.open("POST", "http://localhost:8080/truckparking/rest/parking/create", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+
+        console.log("sent");
+    }
+</script>
+</body>
+</html>

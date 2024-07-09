@@ -43,6 +43,11 @@ public class OwnerRestController {
             return Response.status(Response.Status.CONFLICT)
                     .entity(e.getMessage())
                     .type(MediaType.TEXT_PLAIN).build();
+        } catch (IllegalArgumentException e){
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
         }
     }
 

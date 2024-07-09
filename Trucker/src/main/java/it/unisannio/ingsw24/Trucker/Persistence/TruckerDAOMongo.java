@@ -17,6 +17,7 @@ import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,12 +78,10 @@ public class TruckerDAOMongo implements TruckerDAO {
 
     private static Trucker truckerFromDocument(Document document) {
 
-        LocalDate bDate = LocalDate.parse(document.getString(ELEMENT_BDATE), FORMATTER);
-
         return new Trucker(document.getString(ELEMENT_ID),
                 document.getString(ELEMENT_NAME),
                 document.getString(ELEMENT_SURNAME),
-                bDate,
+                LocalDate.parse(document.getString(ELEMENT_BDATE),FORMATTER),
                 document.getString(ELEMENT_EMAIL),
                 document.getString(ELEMENT_GENDER),
                 document.getString(ELEMENT_ROLE),
@@ -103,13 +102,27 @@ public class TruckerDAOMongo implements TruckerDAO {
                 .append(ELEMENT_BOOKINGS, t.getBookings());
     }
 
+    private boolean checkbDate(LocalDate dateOfBirth) {
+        if (dateOfBirth == null) {
+            return false;
+        }
+        if(dateOfBirth.isAfter(LocalDate.now())){
+            return false;
+        }
+        int age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+        return age >= 20;
+    }
+
     @Override
     public Trucker createTrucker(Trucker t) {
-        int newSeq = getNextSequence();
-        String newId = formatId(newSeq);
-        t.setId_trucker(newId);
-
         try {
+            if (!checkbDate(t.getbDate())) {
+                throw new IllegalArgumentException("Data di nascita non valida");
+            }
+
+            int newSeq = getNextSequence();
+            String newId = formatId(newSeq);
+            t.setId_trucker(newId);
             t.setRole("ROLE_TRUCKER");
 
             Document trucker = truckerToDocument(t);

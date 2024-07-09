@@ -14,6 +14,12 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,6 +35,31 @@ public class GatewayRestController {
 
     public GatewayRestController() {
         logic = new GatewayLogicImpl();
+    }
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @POST
+    @Path("/login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response login(Persona persona) {
+        try {
+            // Autenticazione
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(persona.getEmail(), persona.getPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Se l'autenticazione ha successo, puoi restituire un messaggio di successo
+            return Response.ok().entity("Login successful").build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Invalid credentials")
+                    .build();
+        }
     }
 
     //////////////////////////////// TRUCKER ////////////////////////////////
@@ -53,19 +84,6 @@ public class GatewayRestController {
         return Response.ok().entity("Registrazione avvenuta con successo").type(MediaType.TEXT_PLAIN)
                 .build();
     }
-
-//    @POST
-//    @Path("/login")
-//    public Response login(Persona p){
-//        boolean success = logic.authenticateUser(p.getEmail(), p.getPassword());
-//        if(success){
-//            return Response.ok().entity("Login successful").build();
-//        } else {
-//            return Response.status(Response.Status.UNAUTHORIZED)
-//                    .entity("Credenziali invalide")
-//                    .build();
-//        }
-//    }
 
     @GET
     @Path("/trucker/email/{email}")

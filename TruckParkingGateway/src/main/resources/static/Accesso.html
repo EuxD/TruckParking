@@ -196,25 +196,21 @@
         return false;
     }
 
-    // Event listener for login form submission
     document.getElementById('loginButton').addEventListener('click', function (event) {
         event.preventDefault();
 
         const email = document.getElementById('emailLog').value;
         const password = document.getElementById('passLog').value;
 
-        const loginData = JSON.stringify({
-            email: email,
-            password: password
-        });
+        const loginData = new URLSearchParams();
+        loginData.append('username', email);
+        loginData.append('password', password);
 
-        console.log(loginData);
         const loginXhr = new XMLHttpRequest();
         loginXhr.addEventListener("readystatechange", function () {
             if (this.readyState === XMLHttpRequest.DONE) {
                 if (this.status === 200) {
                     alert("Login Successful");
-                    window.location.href = "/HomePage.html"; // Redirect to home or dashboard page after successful login
                 } else {
                     console.error("Login failed: " + this.status);
                     alert("Login Failed: " + this.status);
@@ -222,12 +218,11 @@
             }
         });
 
-        // Assuming the backend has endpoints for login
-        const loginUrl = "http://localhost:8080/truckparking/rest/login"; // Adjust URL if needed
-
+        // Adjust URL to match your login endpoint
+        const loginUrl = "http://localhost:8080/truckparking/rest/login"; // URL to match the login processing URL
         loginXhr.open("POST", loginUrl, true);
-        loginXhr.setRequestHeader("Content-Type", "application/json");
-        loginXhr.send(loginData);
+        loginXhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        loginXhr.send(loginData.toString());
     });
 </script>
 </body>

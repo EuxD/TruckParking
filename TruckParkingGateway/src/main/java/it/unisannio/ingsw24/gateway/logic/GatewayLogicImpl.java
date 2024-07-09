@@ -540,7 +540,6 @@ public class GatewayLogicImpl implements GatewayLogic{
 
 //////////////////////////////////// BOOKING //////////////////////////////////////////
 
-
     @Override
     public Booking createBooking(Booking b){
         OkHttpClient client = new OkHttpClient();
