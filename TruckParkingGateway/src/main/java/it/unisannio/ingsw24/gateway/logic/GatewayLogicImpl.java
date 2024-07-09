@@ -6,18 +6,16 @@ import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import it.unisannio.ingsw24.gateway.config.LocalDateAdapter;
+import it.unisannio.ingsw24.gateway.config.LocalTimeAdapter;
 import it.unisannio.ingsw24.gateway.utils.BookingCreateException;
 import it.unisannio.ingsw24.gateway.utils.BookingNotFoundException;
 import okhttp3.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 
@@ -81,7 +79,9 @@ public class GatewayLogicImpl implements GatewayLogic{
         MediaType mediaType = MediaType.parse("application/json");
 
         // Formatta la data nel formato desiderato
-        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .create();
         String jsonBody = gson.toJson(trucker);
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
@@ -118,7 +118,9 @@ public class GatewayLogicImpl implements GatewayLogic{
             }
 
 
-            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .create();
             String body = response.body().string();
 //            System.out.println(body);
             Trucker t = gson.fromJson(body, Trucker.class);
@@ -146,7 +148,9 @@ public class GatewayLogicImpl implements GatewayLogic{
             }
 
 
-            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .create();
             String body = response.body().string();
 //            System.out.println(body);
             Trucker t = gson.fromJson(body, Trucker.class);
@@ -163,7 +167,9 @@ public class GatewayLogicImpl implements GatewayLogic{
         MediaType mediaType = MediaType.parse("application/json");
 
         // Formatta la data nel formato desiderato
-        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .create();
         String jsonBody = gson.toJson(trucker);
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
@@ -235,7 +241,9 @@ public class GatewayLogicImpl implements GatewayLogic{
         MediaType mediaType = MediaType.parse("application/json");
 
         // Formatta la data nel formato desiderato
-        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .create();
         String jsonBody = gson.toJson(owner);
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
@@ -267,7 +275,9 @@ public class GatewayLogicImpl implements GatewayLogic{
             if (response.code() != 200 ){
                 return null;
             }
-            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .create();
             String body = response.body().string();
             Owner o = gson.fromJson(body, Owner.class);
             return o;
@@ -291,7 +301,9 @@ public class GatewayLogicImpl implements GatewayLogic{
             if (response.code() != 200 ){
                 return null;
             }
-            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .create();
             String body = response.body().string();
             Owner o = gson.fromJson(body, Owner.class);
             return o;
@@ -351,7 +363,9 @@ public class GatewayLogicImpl implements GatewayLogic{
         MediaType mediaType = MediaType.parse("application/json");
 
         // Formatta la data nel formato desiderato
-        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .create();
         String jsonBody = gson.toJson(owner);
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
@@ -533,14 +547,8 @@ public class GatewayLogicImpl implements GatewayLogic{
         MediaType mediaType = MediaType.parse("application/json");
 
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class, (JsonDeserializer<LocalDate>) (json, type, context) ->
-                        LocalDate.parse(json.getAsString(), DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-                .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, type, context) ->
-                        new JsonPrimitive(src.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))
-                .registerTypeAdapter(LocalTime.class, (JsonDeserializer<LocalTime>) (json, type, context) ->
-                        LocalTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("HH:mm")))
-                .registerTypeAdapter(LocalTime.class, (JsonSerializer<LocalTime>) (src, type, context) ->
-                        new JsonPrimitive(src.format(DateTimeFormatter.ofPattern("HH:mm"))))
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
                 .create();
         String jsonBody = gson.toJson(b);
 
@@ -557,7 +565,11 @@ public class GatewayLogicImpl implements GatewayLogic{
                 throw new BookingCreateException("Fallimento nella creazione della prenotazione");
             }
 
-            return b;
+            // Deserialize the response to get the full Booking object
+            String responseBody = response.body().string();
+            Booking createdBooking = gson.fromJson(responseBody, Booking.class);
+
+            return createdBooking;
 
         } catch (IOException e){
             throw new BookingCreateException("Errore nella creazione della prenotazione");
@@ -580,8 +592,11 @@ public class GatewayLogicImpl implements GatewayLogic{
             if(response.code() != 200){
                 throw new BookingNotFoundException("Nessuna prenotazione con questo ID: "+id);
             }
-            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").setDateFormat("HH:mm").create();
-            String body = response.body().toString();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                    .create();
+            String body = response.body().string();
             return gson.fromJson(body,Booking.class);
         } catch (IOException e){
             throw new RuntimeException("Errore nella richiesta di ricerca");
@@ -602,7 +617,10 @@ public class GatewayLogicImpl implements GatewayLogic{
             if (response.code() != 200) {
                 throw new BookingNotFoundException("Non ci sono prenotazioni legate a questo Trucker");
             }
-            Gson gson = new GsonBuilder().create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                    .create();
             String body = response.body().string();
 
             // Utilizzare TypeToken per deserializzare un array JSON
@@ -629,7 +647,10 @@ public class GatewayLogicImpl implements GatewayLogic{
             if (response.code() != 200) {
                 throw new BookingNotFoundException("Nessuna prenotazione legata a questo parcheggio");
             }
-            Gson gson = new GsonBuilder().create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                    .create();
             String body = response.body().string();
 
             // Utilizzare TypeToken per deserializzare un array JSON
@@ -656,7 +677,10 @@ public class GatewayLogicImpl implements GatewayLogic{
             if (response.code() != 200) {
                 throw new BookingNotFoundException("Non ci sono prenotazioni");
             }
-            Gson gson = new GsonBuilder().create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                    .create();
             String body = response.body().string();
 
             // Utilizzare TypeToken per deserializzare un array JSON

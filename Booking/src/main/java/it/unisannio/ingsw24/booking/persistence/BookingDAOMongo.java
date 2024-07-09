@@ -9,6 +9,8 @@ import com.mongodb.client.model.Updates;
 import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
+import it.unisannio.ingsw24.booking.config.LocalDateAdapter;
+import it.unisannio.ingsw24.booking.config.LocalTimeAdapter;
 import org.bson.Document;
 import okhttp3.*;
 import com.google.gson.Gson;
@@ -17,6 +19,7 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -36,6 +39,9 @@ public class BookingDAOMongo implements BookingDAO {
     private static final String COUNTER_ID = "counter";
     private static final String PREFIX = "B";
     private static final int ID_LENGTH = 2;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+
 
     public static BookingDAOMongo getIstance() {
         if (bookingDAOMongo == null) {
@@ -82,9 +88,9 @@ public class BookingDAOMongo implements BookingDAO {
                 document.getString(ELEMENT_ID),
                 document.getString(ELEMENT_ID_TRUCKER),
                 document.getString(ELEMENT_ID_PARKING),
-                LocalDate.parse(document.getString(ELEMENT_PDATE)),
-                LocalTime.parse(document.getString(ELEMENT_ORA_INIZIO)),
-                LocalTime.parse(document.getString(ELEMENT_ORA_FINE)),
+                LocalDate.parse(document.getString(ELEMENT_PDATE), FORMATTER),
+                LocalTime.parse(document.getString(ELEMENT_ORA_INIZIO), TIME_FORMATTER),
+                LocalTime.parse(document.getString(ELEMENT_ORA_FINE), TIME_FORMATTER),
                 document.getDouble(ELEMENT_TOTALE)
         );
     }
@@ -93,9 +99,9 @@ public class BookingDAOMongo implements BookingDAO {
         return new Document(ELEMENT_ID, b.getId_booking())
                 .append(ELEMENT_ID_TRUCKER, b.getId_trucker())
                 .append(ELEMENT_ID_PARKING, b.getId_parking())
-                .append(ELEMENT_PDATE, b.getpDate().toString())
-                .append(ELEMENT_ORA_INIZIO, b.getOra_inizio().toString())
-                .append(ELEMENT_ORA_FINE, b.getOra_fine().toString())
+                .append(ELEMENT_PDATE, b.getpDate().format(FORMATTER))
+                .append(ELEMENT_ORA_INIZIO, b.getOra_inizio().format(TIME_FORMATTER))
+                .append(ELEMENT_ORA_FINE, b.getOra_fine().format(TIME_FORMATTER))
                 .append(ELEMENT_TOTALE, b.getTotal());
     }
 
@@ -112,7 +118,12 @@ public class BookingDAOMongo implements BookingDAO {
             if (response.code() != 200) {
                 return null;
             }
-            Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                    .create();
+
             String body = response.body().string();
             Trucker t = gson.fromJson(body, Trucker.class);
             return t;
@@ -121,6 +132,7 @@ public class BookingDAOMongo implements BookingDAO {
         }
         return null;
     }
+
 
     private Parking checkIdParking(String id) throws IOException {
         try {
@@ -155,7 +167,10 @@ public class BookingDAOMongo implements BookingDAO {
         MediaType mediaType = MediaType.parse("application/json");
 
         // Formatta la data nel formato desiderato
-        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                .create();
         String jsonBody = gson.toJson(trucker);
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
@@ -181,7 +196,10 @@ public class BookingDAOMongo implements BookingDAO {
         MediaType mediaType = MediaType.parse("application/json");
 
         // Formatta la data nel formato desiderato
-        Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                .create();
         String jsonBody = gson.toJson(trucker);
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
@@ -198,6 +216,7 @@ public class BookingDAOMongo implements BookingDAO {
     }
 
     private void checkNPlaceParking(String id_park, int nPlace) {
+        System.out.println(id_park + ", " +nPlace);
         List<Booking> bookings = getBookingByIdParking(id_park);
 
         if (bookings.size() >= nPlace) {
@@ -240,7 +259,8 @@ public class BookingDAOMongo implements BookingDAO {
         booking.setId_booking(bookingId);
 
         try {
-            collection.insertOne(bookingToDocument(booking));
+            Document doc = bookingToDocument(booking);
+            collection.insertOne(doc);
             addBookingToTrucker(t, bookingId);
         } catch (MongoWriteException e) {
             if (e.getError().getCategory().equals(com.mongodb.ErrorCategory.DUPLICATE_KEY)) {
@@ -256,14 +276,23 @@ public class BookingDAOMongo implements BookingDAO {
 
     @Override
     public Booking findBookingById(String id) {
-        Document query = new Document(ELEMENT_ID, id);
-        Document bookingDoc = collection.find(query).first();
+        List<Booking> bookings = new ArrayList<>();
 
-        if (bookingDoc == null) {
-            throw new NoSuchElementException("Prenotazione non trovata con ID: " + id);
+        for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
+            Booking b = bookingFromDocument(doc);
+            bookings.add(b);
         }
 
-        return bookingFromDocument(bookingDoc);
+        if(bookings.size() > 1){
+            throw new IllegalStateException();
+        }
+
+        if(bookings.isEmpty()){
+            throw new NoSuchElementException();
+        }
+
+        assert bookings.size() == 1;
+        return bookings.get(0);
     }
 
     @Override
@@ -289,6 +318,10 @@ public class BookingDAOMongo implements BookingDAO {
         for (Document doc : this.collection.find(eq(ELEMENT_ID_PARKING, id_parking))) {
             bookings.add(bookingFromDocument(doc));
         }
+
+//        if(bookings.isEmpty()){
+//            throw new NoSuchElementException();
+//        }
 
         return bookings;
     }

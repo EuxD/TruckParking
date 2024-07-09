@@ -1,6 +1,7 @@
 package it.unisannio.ingsw24.booking.Controller;
 
 import it.unisannio.ingsw24.Entities.Booking.Booking;
+import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.booking.persistence.BookingDAOMongo;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -30,8 +31,8 @@ public class BookingRestController {
                         .build();
             }
             return Response.status(Response.Status.CREATED)
-                    .entity("Prenotazione effettuata con successo")
-                    .type(MediaType.TEXT_PLAIN)
+                    .entity(booking)
+                    .type(MediaType.APPLICATION_JSON)
                     .build();
 
         } catch (IllegalStateException e){
@@ -45,14 +46,18 @@ public class BookingRestController {
     @GET
     @Path("ID/{id}")
     public Response getBookingById(@PathParam("id") String id) {
-        Booking o = bookingDAOMongo.findBookingById(id);
-        if (o == null) {
+        try{
+            Booking b = bookingDAOMongo.findBookingById(id);
+            return Response.ok()
+                    .entity(b)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (NoSuchElementException e){
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Nessun Owner con quel ID")
+                    .entity("Nessuna prenotazione con questo ID: " + id)
                     .type(MediaType.TEXT_PLAIN)
                     .build();
         }
-        return Response.ok().entity(o).build();
     }
 
     @GET

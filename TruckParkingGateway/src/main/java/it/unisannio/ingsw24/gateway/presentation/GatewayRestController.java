@@ -394,11 +394,11 @@ public class GatewayRestController {
     public Response deleteBookingById(@PathParam("id") String id_booking){
         boolean flag = logic.deleteBookingById(id_booking);
         if (flag) {
-            return Response.ok().entity("Parcheggio eliminato con successo")
+            return Response.ok().entity("Prenotazione eliminata con successo")
                         .type(MediaType.TEXT_PLAIN).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Parcheggio non trovato").build();
+                    .entity("Prenotazione non trovata").build();
         }
     }
 }

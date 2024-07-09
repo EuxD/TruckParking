@@ -6,11 +6,16 @@ import com.google.gson.JsonSyntaxException;
 import it.unisannio.ingsw24.Entities.Persona;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
-import it.unisannio.ingsw24.Entities.user.AppUser;
+
+import it.unisannio.ingsw24.gateway.config.LocalDateAdapter;
+import it.unisannio.ingsw24.gateway.config.LocalTimeAdapter;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -58,7 +63,8 @@ public class MyUserAuthUserDetailService implements UserDetailsService {
         try {
             OkHttpClient client = new OkHttpClient();
             Gson gson = new GsonBuilder()
-                    .setDateFormat("dd/MM/yyyy")
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
                     .create();
 
             // Controlla se l'utente è un trucker
