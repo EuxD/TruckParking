@@ -17,32 +17,19 @@ public class SecurityConfig {
 
     private final MyUserAuthUserDetailService userDetailService;
 
+    public SecurityConfig(MyUserAuthUserDetailService userDetailService) {
+        this.userDetailService = userDetailService;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Disabilita la protezione CSRF
-        http.csrf().disable();
+        http.authorizeHttpRequests().anyRequest().permitAll();
 
-        // Configurazione delle autorizzazioni delle richieste
-        http.authorizeHttpRequests()
-                .requestMatchers("/truckparking/rest/trucker/delete/**").hasRole("TRUCKER")
-                .requestMatchers("/truckparking/rest/trucker/update/**").hasRole("TRUCKER")
-                .requestMatchers("/truckparking/rest/trucker/email/**").hasRole("TRUCKER")
-                .requestMatchers("/truckparking/rest/booking/**").hasRole("TRUCKER")
-                .requestMatchers("/truckparking/rest/trucker/ID/**").permitAll()
-
-                .requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER")
-                .requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER")
-
-                .requestMatchers("viewTrucker.html").permitAll()
-                .requestMatchers("HomePage.html").permitAll()
-                .requestMatchers("Accesso.html").permitAll()
-                .requestMatchers("ChiSiamo.html").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic();
 
         return http.build();
+
     }
+
 
 
 
@@ -59,7 +46,5 @@ public class SecurityConfig {
         return new PasswordEncoderPlain();
     }
 
-    public SecurityConfig(MyUserAuthUserDetailService userDetailService){
-        this.userDetailService = userDetailService;
-    }
+
 }

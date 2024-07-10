@@ -96,7 +96,7 @@
 </head>
 <body>
 <h1>Crea Parcheggio</h1>
-<form onsubmit="return false">
+<form id="createParkingForm">
     <div class="form-group address-group">
         <label for="address">Indirizzo:</label>
         <div class="address-container">
@@ -110,12 +110,8 @@
         <input type="text" id="city" name="city" required>
     </div>
     <div class="form-group">
-        <label for="id_trucker">ID Trucker:</label>
-        <input type="text" id="id_trucker" name="id_trucker" required>
-    </div>
-    <div class="form-group">
-        <label for="id_parking">ID Parcheggio:</label>
-        <input type="text" id="id_parking" name="id_parking" required>
+        <label for="id_owner">ID Owner:</label>
+        <input type="text" id="id_owner" name="id_owner" required>
     </div>
     <div class="form-group">
         <label for="num_spots">Numero di Posti:</label>
@@ -139,47 +135,38 @@
         <input type="number" id="tariff" name="tariff" step="0.01" min="0" required>
     </div>
     <div class="form-group">
-        <button type="submit" value="Create" onclick="onCreateButtonPressed()">Crea Parcheggio</button>
+        <input type="submit" value="Crea Parcheggio">
     </div>
 </form>
 
 <script>
-    function onCreateButtonPressed() {
-        console.log("onCreate");
 
-        // Recupera i valori dai campi del modulo
+    document.getElementById('createParkingForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
         const address = document.getElementById("address").value;
         const civico = document.getElementById("civico").value;
-        const city = document.getElementById("city").value;
-        const idTrucker = document.getElementById("id_trucker").value;
-        const idParking = document.getElementById("id_parking").value;
-        const numSpots = document.getElementById("num_spots").value;
-        const tariff = document.getElementById("tariff").value;
 
-        // Combina l'indirizzo e il civico in un'unica stringa
         const fullAddress = `${address} ${civico}`;
 
-        // Crea un oggetto con i dati del modulo
+
         const data = JSON.stringify({
-            "address": fullAddress,   // Usa la stringa combinata per l'indirizzo
-            "city": city,
-            "id_trucker": idTrucker,
-            "id_parking": idParking,
-            "nPlace": numSpots,
-            "tariff": tariff
+            address : fullAddress,
+            city : document.getElementById("city").value,
+            idOwner : document.getElementById("id_owner").value,
+            nPlace : document.getElementById("num_spots").value,
+            tariff : document.getElementById("tariff").value
         });
 
         console.log(data);
-
-        // Crea una nuova richiesta XMLHttpRequest
         const xhr = new XMLHttpRequest();
-
         xhr.addEventListener("readystatechange", function () {
             if (this.readyState === XMLHttpRequest.DONE) {
-                if (this.status === 201) {
-                    alert("Parcheggio registrato con successo");
+                if (this.status === 201 || this.status === 200) {
+                    alert("Parcheggio creato con successo");
                 } else {
-                    alert("Errore nella creazione del parcheggio");
+                    console.error("Errore nella creazione del parcheggio: " + this.status);
+                    alert("Errore nella creazione del parcheggio: " + this.status);
                 }
             }
         });
@@ -187,9 +174,8 @@
         xhr.open("POST", "http://localhost:8080/truckparking/rest/parking/create", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(data);
+    });
 
-        console.log("sent");
-    }
 </script>
 </body>
 </html>

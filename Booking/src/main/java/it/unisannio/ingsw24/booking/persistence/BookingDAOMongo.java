@@ -18,6 +18,7 @@ import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -216,7 +217,6 @@ public class BookingDAOMongo implements BookingDAO {
     }
 
     private void checkNPlaceParking(String id_park, int nPlace) {
-        System.out.println(id_park + ", " +nPlace);
         List<Booking> bookings = getBookingByIdParking(id_park);
 
         if (bookings.size() >= nPlace) {
@@ -240,6 +240,12 @@ public class BookingDAOMongo implements BookingDAO {
 
     @Override
     public Booking createBooking(Booking booking) throws IOException {
+
+        // Verifica che la data della prenotazione non sia precedente alla data odierna
+        if (booking.getpDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("La data della prenotazione non può essere antecedente alla data odierna.");
+        }
+
         Trucker t = checkIdTrucker(booking.getId_trucker());
         if (t == null) {
             return null;
@@ -339,6 +345,44 @@ public class BookingDAOMongo implements BookingDAO {
         }
 
         return bookings;
+    }
+
+    @Override
+    public Boolean deleteExpiredBookings() throws IOException {
+        // Ottieni la data e l'ora correnti
+        LocalDateTime now = LocalDateTime.now();
+
+        // Crea un filtro per trovare tutte le prenotazioni con data e ora scaduti
+        Document query = new Document(ELEMENT_PDATE, new Document("$lt", now.toLocalDate().toString()))
+                .append(ELEMENT_ORA_FINE, new Document("$lt", now.toLocalTime().toString()));
+
+        // Trova tutte le prenotazioni che corrispondono al filtro
+        List<Document> expiredBookings = collection.find(query).into(new ArrayList<>());
+
+        if (expiredBookings.isEmpty()) {
+            return false;
+        }
+
+        // Rimuove ogni prenotazione scaduta
+        for (Document expiredBooking : expiredBookings) {
+            String bookingId = expiredBooking.getString(ELEMENT_ID);
+            try {
+                // Elimina la prenotazione dalla collezione
+                collection.deleteOne(new Document(ELEMENT_ID, bookingId));
+
+                // Recupera il camionista associato alla prenotazione per aggiornare la lista delle prenotazioni
+                Booking booking = bookingFromDocument(expiredBooking);
+                Trucker trucker = checkIdTrucker(booking.getId_trucker());
+                if (trucker != null) {
+                    removeBookingToTrucker(trucker, bookingId);
+                }
+            } catch (IOException e) {
+                // Gestisce eccezioni durante la rimozione del booking
+                throw new IOException("Errore nella rimozione della prenotazione scaduta con ID: " + expiredBooking.getString(ELEMENT_ID), e);
+            }
+        }
+
+        return true;
     }
 
     @Override

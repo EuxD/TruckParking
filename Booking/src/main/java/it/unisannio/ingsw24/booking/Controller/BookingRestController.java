@@ -6,9 +6,12 @@ import it.unisannio.ingsw24.booking.persistence.BookingDAOMongo;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.bson.Document;
+import org.springframework.boot.autoconfigure.session.RedisSessionProperties;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -136,5 +139,31 @@ public class BookingRestController {
 
         }
     }
+
+    @DELETE
+    @Path("/delete/expired")
+    public Response deleteExpiredBookings() {
+        try {
+            boolean result = bookingDAOMongo.deleteExpiredBookings();
+            if (result) {
+                return Response.ok()
+                        .entity("Prenotazioni scadute eliminate con successo")
+                        .type(MediaType.TEXT_PLAIN)
+                        .build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Nessuna prenotazione scaduta trovata.")
+                        .type(MediaType.TEXT_PLAIN)
+                        .build();
+            }
+        } catch (IOException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Errore nell'eliminazione delle prenotazioni scadute: " + e.getMessage())
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+    }
+
+
 
 }

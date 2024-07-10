@@ -42,24 +42,24 @@ public class GatewayRestController {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @POST
-    @Path("/login")
-    public Response login(Persona persona) {
-        try {
-            // Autenticazione
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(persona.getEmail(), persona.getPassword())
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            // Se l'autenticazione ha successo, puoi restituire un messaggio di successo
-            return Response.ok().entity("Login successful").build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Invalid credentials")
-                    .build();
-        }
-    }
+//    @POST
+//    @Path("/login")
+//    public Response login(Persona persona) {
+//        try {
+//            // Autenticazione
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(persona.getEmail(), persona.getPassword())
+//            );
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//            // Se l'autenticazione ha successo, puoi restituire un messaggio di successo
+//            return Response.ok().entity("Login successful").build();
+//        } catch (Exception e) {
+//            return Response.status(Response.Status.UNAUTHORIZED)
+//                    .entity("Invalid credentials")
+//                    .build();
+//        }
+//    }
 
     //////////////////////////////// TRUCKER ////////////////////////////////
 
@@ -339,10 +339,19 @@ public class GatewayRestController {
     public Response createBooking(@RequestBody Booking booking){
         try{
             Booking b = logic.createBooking(booking);
+
+            //Invio dell'email
+            EmailService emailService = new EmailService();
+            String subject = "Prenotazione aeffettuata con successo";
+            String body = "";
+            emailService.sendEmail(logic.getTruckerByID(booking.getId_trucker()).getEmail(),body,subject);
+
             return Response.status(Response.Status.CREATED)
                     .entity(b)
                     .type(MediaType.APPLICATION_JSON)
                     .build();
+
+
         } catch (BookingCreateException e){
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(e.getMessage())
