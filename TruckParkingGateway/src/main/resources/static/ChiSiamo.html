@@ -10,50 +10,60 @@
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #e8f0f2; /* Colore di sfondo */
-            color: #333; /* Colore del testo principale */
+            background-color: #e8f0f2;
+            color: #333;
         }
         .header {
-            background-color: #4EA685; /* Colore di sfondo dell'header */
+            position: relative;
             text-align: center;
-            color: #fff; /* Colore del testo nell'header */
-            padding: 40px 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: white;
+            margin-bottom: 20px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
         .header h1 {
+            position: relative;
+            z-index: 2;
             margin: 0;
-            padding: 0;
-            font-size: 3em; /* Dimensione del testo più grande */
-            text-align: center;
-            position: relative; /* Per posizionare il sottofondo */
-            display: inline-block;
-        }
-        .header h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px; /* Spostamento verso il basso per sovrapporre il bordo inferiore */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: 10px; /* Altezza del sottofondo */
-            background-color: #4EA685; /* Colore del sottofondo */
-            border-radius: 8px; /* Arrotondamento */
-        }
-        .header h1 span {
-            background-color: #4EA685;
-            padding: 20px 40px;
-            color: #fff;
-            border-radius: 8px; /* Arrotondamento */
-            transition: background 0.3s ease;
+            padding: 20px;
+            font-size: 3em;
+            background: #4EA685;
+            border-radius: 10px;
+            transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: #fff;
         }
-        .header h1:hover span {
-            background-color: #5cbf2a;
+        .header h1:hover {
+            transform: scale(1.05);
+            background: #5cbf2a;
+        }
+        .header .blur-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('parcheggi-camion3.jpg') no-repeat center center;
+            background-size: cover;
+            filter: blur(8px);
+            z-index: 1;
+            opacity: 0.7;
+        }
+        .header .logo {
+            position: relative;
+            z-index: 2;
+            max-width: 150px;
+            margin: 20px 0;
         }
         .nav-container {
             text-align: center;
             margin-top: 20px;
             margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
         }
         .nav-links {
             list-style-type: none;
@@ -62,7 +72,7 @@
             display: inline-flex;
         }
         .nav-links li {
-            margin: 20px 10px 0;
+            margin: 0 10px;
         }
         .nav-links li a {
             color: #fff;
@@ -143,7 +153,8 @@
 </head>
 <body>
 <header class="header">
-    <h1><span>Chi Siamo</span></h1>
+    <div class="blur-image"></div>
+    <h1>Chi Siamo</h1>
     <div class="nav-container">
         <ul class="nav-links">
             <li><a href="HomePage.html">Home</a></li>

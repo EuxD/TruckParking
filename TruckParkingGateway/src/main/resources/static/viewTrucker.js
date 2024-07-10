@@ -18,7 +18,7 @@ function buildList(truckers) {
     resultsDiv.innerHTML = ""; // Clear previous results
 
     const ol = document.createElement("ol");
-    ol.style.setProperty("--length", "3");
+    ol.style.setProperty("--length", truckers.length);
     resultsDiv.appendChild(ol);
 
     for (var i = 0; i < truckers.length; i++) {
@@ -41,18 +41,25 @@ function buildListItem(trucker, number) {
     li.appendChild(currentElement);
 
     currentElement = document.createElement("h5");
+    currentElement.innerText = "Date of Birth: " + trucker.bDate;
+    li.appendChild(currentElement);
+
+    currentElement = document.createElement("h5");
     currentElement.setAttribute("class", "role-class");
     currentElement.innerText = "Role: " + trucker.role;
     li.appendChild(currentElement);
 
-    // Add more details if needed
+    currentElement = document.createElement("h5");
+    currentElement.innerText = "ID: " + trucker.id_trucker;
+    currentElement.style.fontWeight = "bold"; // Applico un font-weight in più per evidenziare l'ID
+    li.appendChild(currentElement);
 
     return li;
 }
 
 function handleTruckerRequestByEmail(email) {
     var xhttp = new XMLHttpRequest();
-    var url = 'http://localhost:8080/truckparking/rest/trucker/email/'+ email;
+    var url = 'http://localhost:8080/truckparking/rest/trucker/email/' + email;
     xhttp.open("GET", url, false);
     xhttp.send();
 
