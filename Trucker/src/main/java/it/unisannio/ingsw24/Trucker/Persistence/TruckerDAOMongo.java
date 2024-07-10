@@ -173,7 +173,7 @@ public class TruckerDAOMongo implements TruckerDAO {
     public Trucker findTruckerByEmail(String email) {
         List<Trucker> truckers = new ArrayList<>();
 
-        for (Document doc : this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE, "ROLE_TRUCKER")))) {
+        for (Document doc : this.collection.find(eq(ELEMENT_EMAIL, email))) {
             Trucker t = truckerFromDocument(doc);
             truckers.add(t);
         }

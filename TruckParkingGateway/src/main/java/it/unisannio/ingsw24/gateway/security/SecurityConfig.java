@@ -19,26 +19,32 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // Disabilita la protezione CSRF
         http.csrf().disable();
-                http.authorizeHttpRequests()
 
-                                .requestMatchers("/truckparking/rest/trucker/**").hasRole("TRUCKER")
-                                .requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER")
-                                .requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER")
-                                .requestMatchers("/truckparking/rest/booking/**").hasRole("TRUCKER")
-                                .anyRequest().authenticated().and().httpBasic();
-//                )
-//                .formLogin(formLogin ->
-//                        formLogin
-//                                .loginPage("/Accesso.html")  // Assicurati che questo URL sia corretto e accessibile
-//                                .loginProcessingUrl("/Accesso.html")  // URL di invio della richiesta di login
-//                                .defaultSuccessUrl("/HomePage.html", true)  // URL di successo del login
-//                                .permitAll()
-//                )
-//                .csrf(csrf -> csrf.disable());
+        // Configurazione delle autorizzazioni delle richieste
+        http.authorizeHttpRequests()
+                .requestMatchers("/truckparking/rest/trucker/delete/**").hasRole("TRUCKER")
+                .requestMatchers("/truckparking/rest/trucker/update/**").hasRole("TRUCKER")
+                .requestMatchers("/truckparking/rest/trucker/email/**").hasRole("TRUCKER")
+                .requestMatchers("/truckparking/rest/booking/**").hasRole("TRUCKER")
+                .requestMatchers("/truckparking/rest/trucker/ID/**").permitAll()
+
+                .requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER")
+                .requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER")
+
+                .requestMatchers("viewTrucker.html").permitAll()
+                .requestMatchers("HomePage.html").permitAll()
+                .requestMatchers("Accesso.html").permitAll()
+                .requestMatchers("ChiSiamo.html").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .httpBasic();
 
         return http.build();
     }
+
+
 
     @Bean
     public AuthenticationManager customAuthenticationManager(HttpSecurity http) throws Exception {

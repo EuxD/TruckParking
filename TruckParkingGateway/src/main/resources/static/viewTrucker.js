@@ -30,9 +30,21 @@ function buildListItem(trucker, number) {
     const li = document.createElement("li");
     li.style.setProperty("--i", String(number));
 
+
+
     var currentElement = document.createElement("h5");
     currentElement.setAttribute("class", "name-class");
     currentElement.innerText = "Name: " + trucker.name;
+    li.appendChild(currentElement);
+
+    currentElement = document.createElement("h5");
+    currentElement.innerText = "Surname: " + trucker.surname;
+    currentElement.style.fontWeight = "bold";
+    li.appendChild(currentElement);
+
+    currentElement = document.createElement("h5");
+    currentElement.innerText = "ID: " + trucker.id_trucker;
+    currentElement.style.fontWeight = "bold"; // Applico un font-weight in più per evidenziare l'ID
     li.appendChild(currentElement);
 
     currentElement = document.createElement("h5");
@@ -49,10 +61,7 @@ function buildListItem(trucker, number) {
     currentElement.innerText = "Role: " + trucker.role;
     li.appendChild(currentElement);
 
-    currentElement = document.createElement("h5");
-    currentElement.innerText = "ID: " + trucker.id_trucker;
-    currentElement.style.fontWeight = "bold"; // Applico un font-weight in più per evidenziare l'ID
-    li.appendChild(currentElement);
+
 
     return li;
 }

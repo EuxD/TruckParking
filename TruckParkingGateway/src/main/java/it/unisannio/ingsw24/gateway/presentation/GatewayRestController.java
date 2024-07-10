@@ -44,7 +44,6 @@ public class GatewayRestController {
 
     @POST
     @Path("/login")
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response login(Persona persona) {
         try {
             // Autenticazione
