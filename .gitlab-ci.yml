@@ -1,37 +1,16 @@
 stages:
   - build
 
-build_entities:
+build:
   stage: build
   image:
     name: maven:3.8.2-openjdk-17
     pull_policy: if-not-present
   script:
-    - echo "Compilando e installando Entities..."
-    - cd Entities
+    - echo "Compilando e installando il progetto multi-modulo..."
     - mvn clean install
-    - cd ..
   artifacts:
     paths:
-      - Entities/target/*.jar
+      - target/*.jar
   only:
     - main
-
-build_trucker:
-  stage: build
-  image:
-    name: maven:3.8.2-openjdk-17
-    pull_policy: if-not-present
-  dependencies:
-    - build_entities
-  script:
-    - echo "Compilando e installando Trucker..."
-    - cd Trucker
-    - mvn clean install
-    - cd ..
-  artifacts:
-    paths:
-      - Trucker/target/*.jar
-workflow:
-  rules:
-    - if: $CI_COMMIT_BRANCH == 'main'
