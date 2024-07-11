@@ -12,31 +12,37 @@ build:
     - echo "setting environment.."
 
   script:
-    - echo "Compiling the Booking microservice.."
-    - cd Booking
-    - mvn clean install
-    - cd ..
-    - echo "Compiling the Entities microservice.."
+    - echo "Compiling and installing Entities.."
     - cd Entities
     - mvn clean install
     - cd ..
-    - echo "Compiling the Owner microservice.."
+
+    - echo "Compiling and installing Owner.."
     - cd Owner
     - mvn clean install
     - cd ..
-    - echo "Compiling the Parking microservice.."
+
+    - echo "Compiling and installing Parking.."
     - cd Parking
     - mvn clean install
     - cd ..
-    - echo "Compiling the Trucker microservice.."
+
+    - echo "Compiling and installing Trucker.."
     - cd Trucker
     - mvn clean install
     - cd ..
-    - echo "Compiling the TruckParkingGateway microservice.."
+
+    - echo "Compiling and installing TruckParkingGateway.."
     - cd TruckParkingGateway
     - mvn clean install
     - cd ..
-    - echo "Done compiling all microservices."
+
+    - echo "Compiling Booking.."
+    - cd Booking
+    - mvn clean install
+    - cd ..
+    - echo "Done compiling."
+
   artifacts:
     paths:
       - Booking/target/*.jar
