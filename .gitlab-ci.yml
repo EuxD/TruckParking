@@ -22,23 +22,23 @@ build:
     - mvn clean install
     - cd ..
 
-    - echo "Compiling and installing Parking.."
-    - cd Parking
-    - mvn clean install
-    - cd ..
-
     - echo "Compiling and installing Trucker.."
     - cd Trucker
     - mvn clean install
     - cd ..
 
-    - echo "Compiling and installing TruckParkingGateway.."
-    - cd TruckParkingGateway
+    - echo "Compiling and installing Parking.."
+    - cd Parking
     - mvn clean install
     - cd ..
 
     - echo "Compiling Booking.."
     - cd Booking
+    - mvn clean install
+    - cd ..
+
+    - echo "Compiling and installing TruckParkingGateway.."
+    - cd TruckParkingGateway
     - mvn clean install
     - cd ..
     - echo "Done compiling."
