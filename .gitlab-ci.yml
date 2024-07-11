@@ -1,3 +1,19 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image:
+    name: maven:3.8.2-openjdk-17
+    pull_policy: if-not-present
+  script:
+    - echo "Compilando e installando il progetto multi-modulo..."
+    - mvn clean install
+  artifacts:
+    paths:
+      - target/*.jar
+
 deploy:
   stage: deploy
   image:
@@ -18,3 +34,8 @@ deploy:
     # Avvia il JAR in background e redirige l'output
     - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/TRUCKPARKING.jar > /home/$SSH_USER/out.log 2>&1 &'
     - echo "Application successfully deployed."
+
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
