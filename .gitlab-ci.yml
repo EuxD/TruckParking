@@ -22,8 +22,7 @@ deploy:
   before_script:
     - echo "Setting environment..."
     - apk add --no-cache sshpass openssh-client  # Installa sshpass e openssh-client
-    - echo "SSH_USER: $SSH_USER"
-    - echo "MACHINE_IP: $MACHINE_IP"
+
 
   script:
     - echo "Deploying application..."
