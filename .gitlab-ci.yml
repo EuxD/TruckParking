@@ -1,0 +1,92 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image:
+    name: maven:3.8.2-openjdk-17
+    pull_policy: if-not-present
+
+  before_script:
+    - echo "setting environment.."
+
+  script:
+    - echo "Compiling the Booking microservice.."
+    - cd Booking
+    - mvn clean install
+    - cd ..
+    - echo "Compiling the Entities microservice.."
+    - cd Entities
+    - mvn clean install
+    - cd ..
+    - echo "Compiling the Owner microservice.."
+    - cd Owner
+    - mvn clean install
+    - cd ..
+    - echo "Compiling the Parking microservice.."
+    - cd Parking
+    - mvn clean install
+    - cd ..
+    - echo "Compiling the Trucker microservice.."
+    - cd Trucker
+    - mvn clean install
+    - cd ..
+    - echo "Compiling the TruckParkingGateway microservice.."
+    - cd TruckParkingGateway
+    - mvn clean install
+    - cd ..
+    - echo "Done compiling all microservices."
+  artifacts:
+    paths:
+      - Booking/target/*.jar
+      - Entities/target/*.jar
+      - Owner/target/*.jar
+      - Parking/target/*.jar
+      - Trucker/target/*.jar
+      - TruckParkingGateway/target/*.jar
+
+deploy:
+  image:
+    name: alpine
+    pull_policy: if-not-present
+  stage: deploy
+  before_script:
+    - echo "Setting environment..."
+    - apk add sshpass
+    - apk add openssh-client
+    - eval $(ssh-agent -s)
+    - ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -q -N ""
+    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP ls
+    - sshpass -p $SSH_PASSWORD ssh-copy-id $SSH_USER@$MACHINE_IP
+  script:
+    - echo "Deploying Booking microservice..."
+    - scp Booking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/BOOKING_BACKEND.jar
+    - ssh $SSH_USER@$MACHINE_IP 'killall java'
+    - ssh $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/BOOKING_BACKEND.jar > /home/$SSH_USER/booking_out.log 2>&1 &'
+
+    - echo "Deploying Entities microservice..."
+    - scp Entities/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/ENTITIES_BACKEND.jar
+    - ssh $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/ENTITIES_BACKEND.jar > /home/$SSH_USER/entities_out.log 2>&1 &'
+
+    - echo "Deploying Owner microservice..."
+    - scp Owner/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/OWNER_BACKEND.jar
+    - ssh $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/OWNER_BACKEND.jar > /home/$SSH_USER/owner_out.log 2>&1 &'
+
+    - echo "Deploying Parking microservice..."
+    - scp Parking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/PARKING_BACKEND.jar
+    - ssh $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/PARKING_BACKEND.jar > /home/$SSH_USER/parking_out.log 2>&1 &'
+
+    - echo "Deploying Trucker microservice..."
+    - scp Trucker/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/TRUCKER_BACKEND.jar
+    - ssh $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/TRUCKER_BACKEND.jar > /home/$SSH_USER/trucker_out.log 2>&1 &'
+
+    - echo "Deploying TruckParkingGateway microservice..."
+    - scp TruckParkingGateway/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/TRUCKPARKINGGATEWAY_BACKEND.jar
+    - ssh $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/TRUCKPARKINGGATEWAY_BACKEND.jar > /home/$SSH_USER/gateway_out.log 2>&1 &'
+
+    - echo "All microservices successfully deployed."
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
