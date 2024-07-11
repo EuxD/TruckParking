@@ -1,7 +1,7 @@
 stages:
   - build
 
-build_entities:
+build:
   stage: build
   image:
     name: maven:3.8.2-openjdk-17
@@ -10,12 +10,16 @@ build_entities:
     - echo "Compilando e installando Entities..."
     - cd Entities
     - mvn clean install
-    - echo "Done compiling."
+    - cd ..
+
+    - echo "Compilando e installando Trucker..."
+    - cd Trucker
+    - mvn clean install
     - cd ..
   artifacts:
     paths:
       - Entities/target/*.jar
-
+      - Trucker/target/*.jar
 workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == 'main'
