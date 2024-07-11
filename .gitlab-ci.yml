@@ -1,5 +1,6 @@
 stages:
   - build
+  - deploy
 
 build:
   stage: build
@@ -12,5 +13,35 @@ build:
   artifacts:
     paths:
       - target/*.jar
-  only:
-    - main
+
+deploy:
+  image:
+    name: alpine
+    pull_policy: if-not-present
+  stage: deploy
+  before_script:
+    - echo "Setting environment..."
+    - apk add sshpass
+    - apk add openssh-client
+    - eval $(ssh-agent -s)
+      - ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -q -N ""
+      - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP ls
+      - sshpass -p $SSH_PASSWORD ssh-copy-id $SSH_USER@$MACHINE_IP
+  script:
+    - echo "Deploying application..."
+    - scp target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/TRUCKPARKING.jar
+    - echo $(ssh $SSH_USER@$MACHINE_IP 'killall java')
+    #    - ssh $SSH_USER@$MACHINE_IP 'rm out.log'
+    - ssh $SSH_USER@$MACHINE_IP 'nohup java -jar TRUCKPARKING.jar > out.log 2>&1 &'
+    - echo "Application successfully deployed."
+
+
+
+
+
+
+
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
