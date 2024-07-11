@@ -1,7 +1,7 @@
 stages:
   - build
 
-build:
+build_entities:
   stage: build
   image:
     name: maven:3.8.2-openjdk-17
@@ -11,14 +11,26 @@ build:
     - cd Entities
     - mvn clean install
     - cd ..
+  artifacts:
+    paths:
+      - Entities/target/*.jar
+  only:
+    - main
 
+build_trucker:
+  stage: build
+  image:
+    name: maven:3.8.2-openjdk-17
+    pull_policy: if-not-present
+  dependencies:
+    - build_entities
+  script:
     - echo "Compilando e installando Trucker..."
     - cd Trucker
     - mvn clean install
     - cd ..
   artifacts:
     paths:
-      - Entities/target/*.jar
       - Trucker/target/*.jar
 workflow:
   rules:
