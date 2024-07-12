@@ -2,31 +2,49 @@ package it.unisannio.ingsw24.gateway.logic;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
+import it.unisannio.ingsw24.Entities.Persona;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.gateway.config.LocalDateAdapter;
 import it.unisannio.ingsw24.gateway.config.LocalTimeAdapter;
+import it.unisannio.ingsw24.gateway.presentation.EmailService;
 import it.unisannio.ingsw24.gateway.utils.BookingCreateException;
 import it.unisannio.ingsw24.gateway.utils.BookingNotFoundException;
 import okhttp3.*;
+import org.springframework.scheduling.annotation.Async;
 
+import javax.imageio.ImageIO;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Properties;
 
 
 public class GatewayLogicImpl implements GatewayLogic{
 
     private final String ownerAddress;
     private final String truckerAddress;
+    private final EmailService emailService;
 
     public GatewayLogicImpl(){
         String ownerHost = System.getenv("OWNER_HOST");
         String ownerPort = System.getenv("OWNER_PORT");
+
+        emailService = new EmailService();
 
         if(ownerHost == null){
             ownerHost = "localhost";
@@ -50,26 +68,6 @@ public class GatewayLogicImpl implements GatewayLogic{
         truckerAddress = "http://" + truckerHost + ":" + truckerPort;
     }
 
-//    @Override
-//    public Boolean authenticateUser(String email, String pass) {
-//        try {
-//            // Ottieni l'utente da Owner o Trucker
-//            Owner owner = getOwnerByEmail(email);
-//            Trucker trucker = getTruckerByEmail(email);
-//
-//            // Confronta la password dell'Owner o del Trucker
-//            if (owner != null) {
-//                return pass.equals(owner.getPassword());
-//            } else if (trucker != null) {
-//                return pass.equals(trucker.getPassword());
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return false;
-//    }
-
-
     //////////////////////////////////// TRUCKER ///////////////////////////////////////////////////
 
     @Override
@@ -91,12 +89,13 @@ public class GatewayLogicImpl implements GatewayLogic{
                 .addHeader("Content-Type", "application/json")
                 .build();
 
-        System.out.println(request.body());
         Response response = client.newCall(request).execute();
-        System.out.println(response.code());
         if (response.code() != 201) {
             return null;
         }
+
+        // Invio email di registrazione
+        emailService.sendEmailRegistration(trucker.getEmail(),trucker.getName());
 
         return trucker;
     } //FUNZIONA
@@ -254,10 +253,11 @@ public class GatewayLogicImpl implements GatewayLogic{
                 .build();
 
         Response response = client.newCall(request).execute();
-        System.out.println(response.code());
         if (response.code() != 201) {
             return null;
         }
+
+        emailService.sendEmailRegistration(owner.getEmail(),owner.getName());
 
         return owner;
     }
@@ -538,7 +538,7 @@ public class GatewayLogicImpl implements GatewayLogic{
         return true;
     }
 
-//////////////////////////////////// BOOKING //////////////////////////////////////////
+    //////////////////////////////////// BOOKING //////////////////////////////////////////
 
     @Override
     public Booking createBooking(Booking b){
@@ -567,6 +567,15 @@ public class GatewayLogicImpl implements GatewayLogic{
             // Deserialize the response to get the full Booking object
             String responseBody = response.body().string();
             Booking createdBooking = gson.fromJson(responseBody, Booking.class);
+
+            // genero QR-CODE da inviare nella mail
+            byte[] qrCodeData = qrCodeGenerate(createdBooking);
+
+            // Invio email con QR-CODE
+            Trucker t = getTruckerByID(createdBooking.getId_trucker());
+            emailService.sendEmailWithAttachment(t.getEmail(),qrCodeData);
+
+
 
             return createdBooking;
 
@@ -713,4 +722,28 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         return true;
     }
+
+    //////////////////////////////////// EMAIL //////////////////////////////////////////
+
+    private byte[] qrCodeGenerate(Booking b) {
+        ByteArrayOutputStream qrCodeOutputStream = new ByteArrayOutputStream();
+        try {
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            String qrData = "ID_Booking: " + b.getId_booking()
+                    + "Data Prenotazione: " + b.getpDate()
+                    + "\nOrario inizio prenotazione: " + b.getOra_inizio()
+                    + "\nOrario fine: " + b.getOra_fine()
+                    + "\nTotale: " + b.getTotal();
+
+            BitMatrix bitMatrix = qrCodeWriter.encode(qrData, BarcodeFormat.QR_CODE, 300, 300);
+
+            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+            ImageIO.write(bufferedImage, "PNG", qrCodeOutputStream);
+        } catch (WriterException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return qrCodeOutputStream.toByteArray();
+    }
+
 }

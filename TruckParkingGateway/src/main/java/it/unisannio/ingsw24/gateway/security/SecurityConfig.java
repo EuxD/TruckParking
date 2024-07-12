@@ -23,15 +23,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable();
         http.authorizeHttpRequests().anyRequest().permitAll();
 
 
         return http.build();
 
     }
-
-
-
 
     @Bean
     public AuthenticationManager customAuthenticationManager(HttpSecurity http) throws Exception {

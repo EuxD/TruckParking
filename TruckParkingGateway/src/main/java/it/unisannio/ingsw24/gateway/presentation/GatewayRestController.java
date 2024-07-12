@@ -1,28 +1,30 @@
 package it.unisannio.ingsw24.gateway.presentation;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
-import it.unisannio.ingsw24.Entities.Persona;
 import it.unisannio.ingsw24.Entities.Trucker.*;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogic;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogicImpl;
 
 import it.unisannio.ingsw24.gateway.utils.BookingCreateException;
 import it.unisannio.ingsw24.gateway.utils.BookingNotFoundException;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -36,30 +38,6 @@ public class GatewayRestController {
     public GatewayRestController() {
         logic = new GatewayLogicImpl();
     }
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-//    @POST
-//    @Path("/login")
-//    public Response login(Persona persona) {
-//        try {
-//            // Autenticazione
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(persona.getEmail(), persona.getPassword())
-//            );
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//            // Se l'autenticazione ha successo, puoi restituire un messaggio di successo
-//            return Response.ok().entity("Login successful").build();
-//        } catch (Exception e) {
-//            return Response.status(Response.Status.UNAUTHORIZED)
-//                    .entity("Invalid credentials")
-//                    .build();
-//        }
-//    }
 
     //////////////////////////////// TRUCKER ////////////////////////////////
 
@@ -74,11 +52,7 @@ public class GatewayRestController {
                     .build();
         }
 
-        //Invio dell'email
-        EmailService emailService = new EmailService();
-        String subject = "Registration Successful";
-        String body = "Dear " + t.getName() + ",\n\nYour registration as a Trucker is successful.";
-        emailService.sendEmail(t.getEmail(), subject, body);
+
 
         return Response.ok().entity("Registrazione avvenuta con successo").type(MediaType.TEXT_PLAIN)
                 .build();
@@ -100,7 +74,6 @@ public class GatewayRestController {
     }
 
     @GET
-    @RolesAllowed({"TRUCKER"})
     @Path("/trucker/ID/{id}")
     public Response getTruckerByID(@PathParam("id") String id) {
         Trucker trucker = logic.getTruckerByID(id);
@@ -165,13 +138,8 @@ public class GatewayRestController {
                     .build();
         }
 
-        //Invio dell'email
-        EmailService emailService = new EmailService();
-        String subject = "Registration Successful";
-        String body = "Dear " + ow.getName() + ",\n\nYour registration as a Owner is successful.";
-        emailService.sendEmail(ow.getEmail(), subject, body);
-
         return Response.ok().entity("Registrazione avvenuta con successo").type(MediaType.TEXT_PLAIN).build();
+
     } // FUNZIONA
 
     @GET
@@ -340,11 +308,11 @@ public class GatewayRestController {
         try{
             Booking b = logic.createBooking(booking);
 
-            //Invio dell'email
-            EmailService emailService = new EmailService();
-            String subject = "Prenotazione aeffettuata con successo";
-            String body = "";
-            emailService.sendEmail(logic.getTruckerByID(booking.getId_trucker()).getEmail(),body,subject);
+//            //Invio dell'email
+//            EmailService emailService = new EmailService();
+//            String subject = "Prenotazione aeffettuata con successo";
+//            String body = "";
+//            emailService.sendEmail(logic.getTruckerByID(booking.getId_trucker()).getEmail(),body,subject);
 
             return Response.status(Response.Status.CREATED)
                     .entity(b)
