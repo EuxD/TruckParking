@@ -16,6 +16,7 @@ import okhttp3.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.awt.print.Book;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -216,11 +217,21 @@ public class BookingDAOMongo implements BookingDAO {
         }
     }
 
-    private void checkNPlaceParking(String id_park, int nPlace) {
-        List<Booking> bookings = getBookingByIdParking(id_park);
+    private void checkNPlaceParking(Booking b, Parking p) throws IOException {
+        List<Booking> bookings = getBookingByIdParking(p.getId_parking());
 
-        if (bookings.size() >= nPlace) {
-            throw new IllegalStateException("Non è più possibile effetturare prenotazioni per questo parcheggio");
+        int countConflictingBookings = 0;
+        for (Booking booking : bookings) {
+            // Verifica se la prenotazione esistente è nello stesso giorno e se c'è sovrapposizione
+            if (booking.getpDate().equals(b.getpDate()) &&
+                    ((b.getOra_inizio().isBefore(booking.getOra_fine()) && b.getOra_fine().isAfter(booking.getOra_inizio())))) {
+                countConflictingBookings++;
+            }
+        }
+
+        // Verifica se il numero di prenotazioni in conflitto è maggiore o uguale ai posti disponibili
+        if (countConflictingBookings >= p.getnPlace()) {
+            throw new IllegalStateException("Non è più possibile effettuare prenotazioni per questo parcheggio.");
         }
     }
 
@@ -256,7 +267,7 @@ public class BookingDAOMongo implements BookingDAO {
             return null;
         }
 
-        checkNPlaceParking(booking.getId_parking(), p.getnPlace());
+        checkNPlaceParking(booking, p);
 
         Double totale = calcoloTariffaTotale(booking.getOra_inizio(), booking.getOra_fine(), booking.getId_parking());
         booking.setTotal(totale);

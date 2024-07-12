@@ -8,6 +8,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Trucker.utils.EmailAlreadyExistsException;
@@ -16,7 +17,10 @@ import jakarta.ws.rs.core.Response;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -142,11 +146,6 @@ public class TruckerDAOMongo implements TruckerDAO {
 
     }
 
-    // controllo età Trucker
-    /*
-    private void checkDate(Date data){
-
-    }*/
 
     @Override
     public Trucker findTruckerById(String id) {
@@ -194,7 +193,7 @@ public class TruckerDAOMongo implements TruckerDAO {
     public Boolean deleteTruckerByEmail(String email) {
         List<Trucker> truckers = new ArrayList<>();
 
-        for (Document doc : this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE, "ROLE_TRUCKER")))) {
+        for (Document doc : this.collection.find((eq(ELEMENT_ID, email)))) {
             Trucker t = truckerFromDocument(doc);
             truckers.add(t);
         }
@@ -217,7 +216,7 @@ public class TruckerDAOMongo implements TruckerDAO {
     public Boolean deleteTruckerByID(String id) {
         List<Trucker> truckers = new ArrayList<>();
 
-        for (Document doc : this.collection.find(and(eq(ELEMENT_ID, id), eq(ELEMENT_ROLE, "ROLE_TRUCKER")))) {
+        for (Document doc : this.collection.find((eq(ELEMENT_ID, id)))) {
             Trucker t = truckerFromDocument(doc);
             truckers.add(t);
         }

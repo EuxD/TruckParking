@@ -24,7 +24,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.authorizeHttpRequests().anyRequest().permitAll();
+
+        http.authorizeHttpRequests().requestMatchers("/truckparking/rest/trucker/**").hasRole("TRUCKER")
+                .requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER")
+                .requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER")
+                .requestMatchers("/truckparking/rest/booking/**").hasRole("TRUCKER")
+                .anyRequest().authenticated().and().httpBasic();
+
+
+
 
 
         return http.build();
