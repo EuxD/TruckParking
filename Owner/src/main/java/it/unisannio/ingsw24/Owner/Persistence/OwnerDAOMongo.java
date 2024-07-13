@@ -8,8 +8,9 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
-import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Owner.utils.EmailAlreadyExistsException;
+import it.unisannio.ingsw24.Owner.utils.IllegalBDateException;
+
 import org.bson.Document;
 
 import java.io.IOException;
@@ -122,7 +123,7 @@ public class OwnerDAOMongo implements OwnerDAO{
     public Owner createOwner(Owner ow){
         try {
             if (!checkbDate(ow.getbDate())) {
-                throw new IllegalArgumentException("Data di nascita non valida");
+                throw new IllegalBDateException("Data di nascita non valida");
             }
 
             int newSeq = getNextSequence();
@@ -152,7 +153,7 @@ public class OwnerDAOMongo implements OwnerDAO{
     public Owner findOwnerByEmail(String email) {
         List<Owner> owners = new ArrayList<>();
 
-        for (Document doc : this.collection.find(and(eq(ELEMENT_EMAIL, email), eq(ELEMENT_ROLE,"ROLE_OWNER")))) {
+        for (Document doc : this.collection.find(eq(ELEMENT_EMAIL, email))){
             Owner o = ownerFromDocument(doc);
             owners.add(o);
         }
@@ -217,7 +218,7 @@ public class OwnerDAOMongo implements OwnerDAO{
     public Boolean deleteOwnerByID(String id) {
         List<Owner> owners = new ArrayList<>();
 
-        for (Document doc : this.collection.find(and(eq(ELEMENT_ID, id), eq(ELEMENT_ROLE, "ROLE_OWNER")))) {
+        for (Document doc : this.collection.find(eq(ELEMENT_ID, id))){
             Owner ow = ownerFromDocument(doc);
             owners.add(ow);
         }

@@ -26,6 +26,10 @@ public class Owner extends Persona {
         this.id_owner = id;
     }
 
+    public Owner(String name, String surname, LocalDate bDate, String mail, String gender, String role, String password) {
+        super(name, surname, bDate, mail, gender, role, password);
+    }
+
     public String getId_owner() {
         return id_owner;
     }

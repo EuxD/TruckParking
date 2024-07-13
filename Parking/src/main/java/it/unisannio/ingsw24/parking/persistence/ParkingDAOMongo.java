@@ -217,6 +217,7 @@ public class ParkingDAOMongo implements ParkingDAO{
 
         for(Document doc : this.collection.find(eq(ELEMENT_ID, id))){
             Parking p = parkingFromDocument(doc);
+            Owner o = checkIDOwner(p.getId_owner()); // se owner eliminato, come se parcheggio fosse stato eliminato
             park.add(p);
         }
 

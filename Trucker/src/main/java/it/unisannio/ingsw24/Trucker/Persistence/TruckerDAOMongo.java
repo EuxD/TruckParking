@@ -1,5 +1,7 @@
 package it.unisannio.ingsw24.Trucker.Persistence;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
@@ -12,8 +14,9 @@ import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Trucker.utils.EmailAlreadyExistsException;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import it.unisannio.ingsw24.Trucker.utils.IllegalTruckerDeleteException;
+import okhttp3.OkHttpClient;
+import okhttp3.*;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
@@ -189,28 +192,6 @@ public class TruckerDAOMongo implements TruckerDAO {
         return truckers.get(0);
     }
 
-    @Override
-    public Boolean deleteTruckerByEmail(String email) {
-        List<Trucker> truckers = new ArrayList<>();
-
-        for (Document doc : this.collection.find((eq(ELEMENT_ID, email)))) {
-            Trucker t = truckerFromDocument(doc);
-            truckers.add(t);
-        }
-
-        if (truckers.size() > 1) {
-            throw new IllegalStateException();
-        }
-
-        if (truckers.isEmpty()) {
-            // Nessun trucker trovato con l'email specificata
-            return false;
-        }
-
-        assert truckers.size() == 1;
-        this.collection.deleteOne(truckerToDocument(truckers.get(0)));
-        return true;
-    }
 
     @Override
     public Boolean deleteTruckerByID(String id) {
@@ -228,6 +209,10 @@ public class TruckerDAOMongo implements TruckerDAO {
         if (truckers.isEmpty()) {
             // Nessun trucker trovato con l'id specificato
             return false;
+        }
+
+        if(!checkAreAllBookingsExpired(id)){
+            throw new IllegalTruckerDeleteException("Impossibile eliminare il Trucker perchè ci sono delle prenotazioni in corso");
         }
 
         assert truckers.size() == 1;
@@ -280,4 +265,28 @@ public class TruckerDAOMongo implements TruckerDAO {
             throw new RuntimeException("Errore durante l'aggiornamento del trucker: " + e.getMessage());
         }
     }
+
+    public Boolean checkAreAllBookingsExpired(String id_trucker){
+        try {
+            String URL = String.format("http://localhost:8084/booking/truckerID/" + id_trucker);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.code() != 200) {
+                return false;
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+
+
 }

@@ -15,6 +15,8 @@ import org.bson.Document;
 import okhttp3.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.unisannio.ingsw24.booking.utils.BookingNotExpiredException;
+
 
 import java.awt.print.Book;
 import java.io.IOException;
@@ -358,43 +360,6 @@ public class BookingDAOMongo implements BookingDAO {
         return bookings;
     }
 
-    @Override
-    public Boolean deleteExpiredBookings() throws IOException {
-        // Ottieni la data e l'ora correnti
-        LocalDateTime now = LocalDateTime.now();
-
-        // Crea un filtro per trovare tutte le prenotazioni con data e ora scaduti
-        Document query = new Document(ELEMENT_PDATE, new Document("$lt", now.toLocalDate().toString()))
-                .append(ELEMENT_ORA_FINE, new Document("$lt", now.toLocalTime().toString()));
-
-        // Trova tutte le prenotazioni che corrispondono al filtro
-        List<Document> expiredBookings = collection.find(query).into(new ArrayList<>());
-
-        if (expiredBookings.isEmpty()) {
-            return false;
-        }
-
-        // Rimuove ogni prenotazione scaduta
-        for (Document expiredBooking : expiredBookings) {
-            String bookingId = expiredBooking.getString(ELEMENT_ID);
-            try {
-                // Elimina la prenotazione dalla collezione
-                collection.deleteOne(new Document(ELEMENT_ID, bookingId));
-
-                // Recupera il camionista associato alla prenotazione per aggiornare la lista delle prenotazioni
-                Booking booking = bookingFromDocument(expiredBooking);
-                Trucker trucker = checkIdTrucker(booking.getId_trucker());
-                if (trucker != null) {
-                    removeBookingToTrucker(trucker, bookingId);
-                }
-            } catch (IOException e) {
-                // Gestisce eccezioni durante la rimozione del booking
-                throw new IOException("Errore nella rimozione della prenotazione scaduta con ID: " + expiredBooking.getString(ELEMENT_ID), e);
-            }
-        }
-
-        return true;
-    }
 
     @Override
     public Boolean deleteBookingById(String id) throws IOException {
@@ -409,18 +374,45 @@ public class BookingDAOMongo implements BookingDAO {
         Trucker trucker = checkIdTrucker(booking.getId_trucker());
 
         if (trucker == null) {
-            return false;
+            return false; // Camionista non trovato
+        }
+
+        if (!isBookingExpired(booking)) {
+            throw new BookingNotExpiredException("La prenotazione non è ancora scaduta, non puoi rimuoverla"); // Prenotazione non scaduta
         }
 
         try {
             collection.deleteOne(query);
             removeBookingToTrucker(trucker, id);
-            return true;
+            return true; // Prenotazione scaduta cancellata con successo
         } catch (MongoWriteException e) {
             e.printStackTrace();
             throw new IOException("Errore nella rimozione della prenotazione.");
         }
     }
+
+    @Override
+    public Boolean areAllBookingsExpired(String truckerId){
+        // Recupera tutte le prenotazioni per il camionista
+        List<Booking> bookings = getBookingByIdTrucker(truckerId);
+
+        // Verifica se tutte le prenotazioni sono scadute
+        for (Booking booking : bookings) {
+            if (!isBookingExpired(booking)) {
+                throw new BookingNotExpiredException("Esiste almeno una prenotazione ancora attiva: "+ booking.getId_booking());
+            }
+        }
+        return true; // Tutte le prenotazioni sono scadute
+    }
+
+
+
+    private boolean isBookingExpired(Booking booking) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime bookingEndDateTime = LocalDateTime.of(booking.getpDate(), booking.getOra_fine());
+        return bookingEndDateTime.isBefore(now);
+    }
+
 }
 
 

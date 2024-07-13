@@ -3,6 +3,7 @@ package it.unisannio.ingsw24.booking.Controller;
 import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.booking.persistence.BookingDAOMongo;
+import it.unisannio.ingsw24.booking.utils.BookingNotExpiredException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -116,6 +117,24 @@ public class BookingRestController {
         }
     }
 
+    @GET
+    @Path("/booking/truckerID/{id_trucker}")
+    public Response areAllBookingsTruckerExpired(@PathParam("id_trucker") String id){
+        try{
+            bookingDAOMongo.areAllBookingsExpired(id);
+            return Response.ok()
+                    .entity("Tutte le prenotazioni per questo Trucker: " + id + "sono terminate")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+
+        } catch (BookingNotExpiredException e){
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+    }
+
     @DELETE
     @Path("/delete/{id}")
     public Response deleteBookingById(@PathParam("id") String id) {
@@ -140,29 +159,6 @@ public class BookingRestController {
         }
     }
 
-    @DELETE
-    @Path("/delete/expired")
-    public Response deleteExpiredBookings() {
-        try {
-            boolean result = bookingDAOMongo.deleteExpiredBookings();
-            if (result) {
-                return Response.ok()
-                        .entity("Prenotazioni scadute eliminate con successo")
-                        .type(MediaType.TEXT_PLAIN)
-                        .build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("Nessuna prenotazione scaduta trovata.")
-                        .type(MediaType.TEXT_PLAIN)
-                        .build();
-            }
-        } catch (IOException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Errore nell'eliminazione delle prenotazioni scadute: " + e.getMessage())
-                    .type(MediaType.TEXT_PLAIN)
-                    .build();
-        }
-    }
 
 
 

@@ -4,6 +4,7 @@ import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Owner.Persistence.OwnerDAOMongo;
 import it.unisannio.ingsw24.Owner.utils.EmailAlreadyExistsException;
+import it.unisannio.ingsw24.Owner.utils.IllegalBDateException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.MediaType;
@@ -43,7 +44,7 @@ public class OwnerRestController {
             return Response.status(Response.Status.CONFLICT)
                     .entity(e.getMessage())
                     .type(MediaType.TEXT_PLAIN).build();
-        } catch (IllegalArgumentException e){
+        } catch (IllegalBDateException e){
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(e.getMessage())
                     .type(MediaType.TEXT_PLAIN)
@@ -103,7 +104,7 @@ public class OwnerRestController {
 
     @DELETE
     @Path("/delete/{email}")
-    public Response deleteTruckerByEmail(@PathParam("email") String email) {
+    public Response deleteOwnerByEmail(@PathParam("email") String email) {
         try {
         if (ownerDAOMongo.deleteOwnerByEmail(email)) {
             return Response.ok()

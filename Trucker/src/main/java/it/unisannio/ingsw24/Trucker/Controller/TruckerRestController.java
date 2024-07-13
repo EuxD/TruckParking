@@ -101,32 +101,6 @@ public class TruckerRestController {
     }
 
     @DELETE
-    @Path("/delete/{email}")
-    public Response deleteTruckerByEmail(@PathParam("email") String email) {
-        try {
-            if (truckerDAOMongo.deleteTruckerByEmail(email)) {
-                return Response.ok()
-                        .entity("Trucker eliminato con successo")
-                        .type(MediaType.TEXT_PLAIN)
-                        .build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("Nessun Trucker trovato con questa email: " + email)
-                        .type(MediaType.TEXT_PLAIN)
-                        .build();
-            }
-
-        } catch (IllegalStateException e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("Errore: " + e.getMessage())
-                    .type(MediaType.TEXT_PLAIN)
-                    .build();
-
-        }
-    }
-
-
-    @DELETE
     @Path("/deleteID/{id}")
     public Response deleteTruckerByID(@PathParam("id") String id) {
         try {

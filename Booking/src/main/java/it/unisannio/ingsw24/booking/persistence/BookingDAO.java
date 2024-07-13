@@ -26,9 +26,6 @@ public interface BookingDAO {
     List<Booking> getBookingByIdParking(String id_parking);
     List<Booking> getBookingByIdTrucker(String id_trucker);
     List<Booking> getAllBooking();
-    Boolean deleteExpiredBookings() throws IOException;
     Boolean deleteBookingById(String id) throws IOException;
-
-
-
+    Boolean areAllBookingsExpired(String truckerId);
 }
