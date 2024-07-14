@@ -28,6 +28,7 @@ test:
     pull_policy: if-not-present
   script:
     - echo "Eseguendo i test per il modulo Trucker..."
+    - mvn -pl Entities clean install  # Aggiungi questa riga per assicurarti che Entities sia costruito prima dei test
     - mvn -pl Trucker clean test
     - echo "Eseguendo i test per il modulo Owner..."
     - mvn -pl Owner clean test
@@ -48,7 +49,6 @@ deploy:
   before_script:
     - echo "Setting environment..."
     - apk add --no-cache sshpass openssh-client
-
   script:
     - echo "Deploying application..."
     # Copia i file JAR dei moduli al server remoto
@@ -58,6 +58,16 @@ deploy:
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no TruckParkingGateway/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/TruckParkingGateway.jar
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no Parking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/Parking.jar
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no Booking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/Booking.jar
+    - echo "Application successfully deployed."
+
+    #    # Termina i processi Java preesistenti e avvia i nuovi
+    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'killall java || true'
+    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Entities.jar > /home/$SSH_USER/Entities.log 2>&1 &'
+    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Trucker.jar > /home/$SSH_USER/Trucker.log 2>&1 &'
+    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Owner.jar > /home/$SSH_USER/Owner.log 2>&1 &'
+    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/TruckParkingGateway.jar > /home/$SSH_USER/TruckParkingGateway.log 2>&1 &'
+    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Parking.jar > /home/$SSH_USER/Parking.log 2>&1 &'
+    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Booking.jar > /home/$SSH_USER/Booking.log 2>&1 &'
     - echo "Application successfully deployed."
 
 workflow:
