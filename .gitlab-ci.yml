@@ -15,11 +15,13 @@ build:
     - find . -name "*.jar"
   artifacts:
     paths:
-      - Booking/target/*.jar
       - Entities/target/*.jar
-      - Owner/target/*.jar
-      - Parking/target/*.jar
       - Trucker/target/*.jar
+      - Owner/target/*.jar
+      - TruckParkingGateway/target/*.jar
+      - Parking/target/*.jar
+      - Booking/target/*.jar
+
 
 test:
   stage: test
