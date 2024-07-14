@@ -27,8 +27,9 @@ test:
     name: maven:3.8.2-openjdk-17
     pull_policy: if-not-present
   script:
+    - echo "Eseguendo l'installazione di tutti i moduli..."
+    - mvn install -Dmaven.test.skip=true  # Installa tutti i moduli senza eseguire i test
     - echo "Eseguendo i test per il modulo Trucker..."
-    - mvn -pl Entities clean install  # Aggiungi questa riga per assicurarti che Entities sia costruito prima dei test
     - mvn -pl Trucker clean test
     - echo "Eseguendo i test per il modulo Owner..."
     - mvn -pl Owner clean test
@@ -58,7 +59,6 @@ deploy:
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no TruckParkingGateway/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/TruckParkingGateway.jar
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no Parking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/Parking.jar
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no Booking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/Booking.jar
-    - echo "Application successfully deployed."
 
     #    # Termina i processi Java preesistenti e avvia i nuovi
     #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'killall java || true'
