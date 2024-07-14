@@ -24,7 +24,8 @@ public interface TruckerDAO {
     Trucker createTrucker(Trucker t);
     Trucker findTruckerByEmail(String email);
     Trucker findTruckerById(String id);
-    Boolean deleteTruckerByID(String email);
+    Boolean deleteTruckerByID(String id);
+//    Boolean deleteTruckerByEmail(String email); non impl per motivi di gestione delle prenotazioni
     Trucker updateTrucker(String email, Trucker t);
 
 

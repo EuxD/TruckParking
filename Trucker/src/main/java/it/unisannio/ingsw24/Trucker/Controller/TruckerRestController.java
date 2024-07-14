@@ -5,6 +5,7 @@ import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Trucker.Persistence.TruckerDAO;
 import it.unisannio.ingsw24.Trucker.Persistence.TruckerDAOMongo;
 import it.unisannio.ingsw24.Trucker.utils.EmailAlreadyExistsException;
+import it.unisannio.ingsw24.Trucker.utils.IllegalBDateException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.MediaType;
@@ -19,9 +20,7 @@ import java.util.NoSuchElementException;
 @Path("/trucker")
 public class TruckerRestController {
 
-    @Autowired
-//    @Qualifier("truckerDAO") //indico quale BEAN andare ad iniettare (in questo caso posso anche evitare, dato che è uno)
-    private TruckerDAO truckerDAOMongo;
+    private TruckerDAOMongo truckerDAOMongo = TruckerDAOMongo.getIstance();
 
     @POST
     @Path("/create")
@@ -43,7 +42,7 @@ public class TruckerRestController {
             return Response.status(Response.Status.CONFLICT)
                     .entity(e.getMessage())
                     .type(MediaType.TEXT_PLAIN).build();
-        } catch (IllegalArgumentException e){
+        } catch (IllegalBDateException e){
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(e.getMessage())
                     .type(MediaType.TEXT_PLAIN)

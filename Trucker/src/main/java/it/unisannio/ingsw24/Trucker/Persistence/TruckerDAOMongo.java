@@ -14,6 +14,7 @@ import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.Trucker.utils.EmailAlreadyExistsException;
+import it.unisannio.ingsw24.Trucker.utils.IllegalBDateException;
 import it.unisannio.ingsw24.Trucker.utils.IllegalTruckerDeleteException;
 import okhttp3.OkHttpClient;
 import okhttp3.*;
@@ -44,10 +45,19 @@ public class TruckerDAOMongo implements TruckerDAO {
     private final MongoClient mongoClient;
     private final MongoDatabase database;
     private final MongoCollection<Document> collection;
+    private static TruckerDAOMongo truckerDAOMongo = null;
+
     private static final String COUNTER_ID = "counter";
     private static final String PREFIX = "Tr";
     private static final int ID_LENGTH = 2;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    public static TruckerDAOMongo getIstance(){
+        if(truckerDAOMongo == null){
+            truckerDAOMongo = new TruckerDAOMongo();
+        }
+        return truckerDAOMongo;
+    }
 
 
     public TruckerDAOMongo() {
@@ -124,7 +134,7 @@ public class TruckerDAOMongo implements TruckerDAO {
     public Trucker createTrucker(Trucker t) {
         try {
             if (!checkbDate(t.getbDate())) {
-                throw new IllegalArgumentException("Data di nascita non valida");
+                throw new IllegalBDateException("Data di nascita non valida");
             }
 
             int newSeq = getNextSequence();
