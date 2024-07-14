@@ -1,3 +1,8 @@
+stages:
+  - build
+  - test
+  - deploy
+
 build:
   stage: build
   image:
@@ -10,14 +15,30 @@ build:
     - find . -name "*.jar"
   artifacts:
     paths:
-      - Entities/target/*.jar
-      - Trucker/target/*.jar
-      - Owner/target/*.jar
-      - TruckParkingGateway/target/*.jar
-      - Parking/target/*.jar
       - Booking/target/*.jar
+      - Entities/target/*.jar
+      - Owner/target/*.jar
+      - Parking/target/*.jar
+      - Trucker/target/*.jar
 
-
+test:
+  stage: test
+  image:
+    name: maven:3.8.2-openjdk-17
+    pull_policy: if-not-present
+  script:
+    - echo "Eseguendo i test per il modulo Trucker..."
+    - mvn -pl Trucker clean test
+    - echo "Eseguendo i test per il modulo Owner..."
+    - mvn -pl Owner clean test
+    - echo "Eseguendo i test per il modulo Booking..."
+    - mvn -pl Booking clean test
+  artifacts:
+    when: always
+    paths:
+      - Trucker/target/surefire-reports/*.xml
+      - Owner/target/surefire-reports/*.xml
+      - Booking/target/surefire-reports/*.xml
 
 deploy:
   stage: deploy
@@ -37,15 +58,6 @@ deploy:
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no TruckParkingGateway/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/TruckParkingGateway.jar
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no Parking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/Parking.jar
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no Booking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/Booking.jar
-
-    #    # Termina i processi Java preesistenti e avvia i nuovi
-    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'killall java || true'
-    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Entities.jar > /home/$SSH_USER/Entities.log 2>&1 &'
-    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Trucker.jar > /home/$SSH_USER/Trucker.log 2>&1 &'
-    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Owner.jar > /home/$SSH_USER/Owner.log 2>&1 &'
-    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/TruckParkingGateway.jar > /home/$SSH_USER/TruckParkingGateway.log 2>&1 &'
-    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Parking.jar > /home/$SSH_USER/Parking.log 2>&1 &'
-    #    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USER@$MACHINE_IP 'nohup java -jar /home/$SSH_USER/Booking.jar > /home/$SSH_USER/Booking.log 2>&1 &'
     - echo "Application successfully deployed."
 
 workflow:
