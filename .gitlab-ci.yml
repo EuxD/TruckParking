@@ -29,8 +29,8 @@ test:
     name: maven:3.8.2-openjdk-17
     pull_policy: if-not-present
   script:
-    - echo "Eseguendo l'installazione di tutti i moduli..."
-    - mvn install -Dmaven.test.skip=true  # Installa tutti i moduli senza eseguire i test
+#    - echo "Eseguendo l'installazione di tutti i moduli..."
+#    - mvn install -Dmaven.test.skip=true  # Installa tutti i moduli senza eseguire i test
     - echo "Eseguendo i test per il modulo Trucker..."
     - mvn -pl Trucker clean test
     - echo "Eseguendo i test per il modulo Owner..."
