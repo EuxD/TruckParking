@@ -94,18 +94,6 @@ public class GatewayRestController {
     }
 
     @DELETE
-    @Path("/trucker/delete/email/{email}")
-    public Response deleteTruckerByEmail(@PathParam("email") String email) {
-        boolean flag = logic.deleteTruckerByEmail(email);
-        if (flag) {
-            return Response.ok().entity("Trucker eliminato con successo").type(MediaType.TEXT_PLAIN).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Trucker non trovato").build();
-        }
-        // FUNZIONA
-    }
-
-    @DELETE
     @Path("/trucker/delete/ID/{id}")
     public Response deleteTruckerByID(@PathParam("id") String id) {
         boolean flag = logic.deleteTruckerByID(id);
