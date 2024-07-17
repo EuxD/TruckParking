@@ -59,7 +59,7 @@ public class MyUserAuthUserDetailService implements UserDetailsService {
         truckerAddress = "http://" + truckerHost + ":" + truckerPort;
     }
 
-    private Persona getUser(String email) {
+    public Persona getUser(String email) {
         try {
             OkHttpClient client = new OkHttpClient();
             Gson gson = new GsonBuilder()

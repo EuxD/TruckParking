@@ -74,10 +74,10 @@
 <body>
 <h1>Crea Prenotazione</h1>
 <form id="createBookingForm">
-    <div class="form-group">
-        <label for="id_trucker">ID Trucker:</label>
-        <input type="text" id="id_trucker" name="id_trucker" required>
-    </div>
+<!--    <div class="form-group">-->
+<!--        <label for="id_trucker">ID Trucker:</label>-->
+<!--        <input type="text" id="id_trucker" name="id_trucker" required>-->
+<!--    </div>-->
     <div class="form-group">
         <label for="id_parking">ID Parking:</label>
         <input type="text" id="id_parking" name="id_parking" required>
@@ -108,7 +108,7 @@
         const formattedDate = new Date(rawDate).toLocaleDateString('it-IT'); // Format as dd/MM/yyyy
 
         const data = JSON.stringify({
-            id_trucker: document.getElementById("id_trucker").value,
+            // id_trucker: document.getElementById("id_trucker").value,
             id_parking: document.getElementById("id_parking").value,
             pDate: formattedDate,
             ora_inizio: document.getElementById("ora_inizio").value,

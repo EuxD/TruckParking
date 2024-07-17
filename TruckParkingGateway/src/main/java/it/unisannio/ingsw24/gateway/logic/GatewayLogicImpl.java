@@ -19,6 +19,8 @@ import it.unisannio.ingsw24.gateway.utils.BookingCreateException;
 import it.unisannio.ingsw24.gateway.utils.BookingNotFoundException;
 import okhttp3.*;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 import javax.imageio.ImageIO;
 import javax.mail.*;
@@ -388,6 +390,11 @@ public class GatewayLogicImpl implements GatewayLogic{
 
     @Override
     public Parking createParking(Parking parking) throws IOException {
+        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = authUser.getUsername();
+        Owner ow = getOwnerByEmail(email);
+
+        parking.setId_owner(ow.getId_owner());
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -542,6 +549,11 @@ public class GatewayLogicImpl implements GatewayLogic{
 
     @Override
     public Booking createBooking(Booking b){
+        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = authUser.getUsername();
+        Trucker tr = getTruckerByEmail(email);
+
+        b.setId_trucker(tr.getId_trucker());
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
 

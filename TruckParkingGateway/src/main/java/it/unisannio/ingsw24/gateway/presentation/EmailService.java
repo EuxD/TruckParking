@@ -54,12 +54,10 @@ public class EmailService {
 
             message.setContent(multipart);
 
-            // Aggiungi log di debug
-            System.out.println("Invio del messaggio email con allegato...");
+//            System.out.println("Invio del messaggio email con allegato...");
             Transport.send(message);
-            System.out.println("Email con allegato inviata con successo!");
+//            System.out.println("Email con allegato inviata con successo!");
         } catch (MessagingException | IOException e) {
-            // Aggiungi log di debug per errori
             e.printStackTrace();
         }
     }
