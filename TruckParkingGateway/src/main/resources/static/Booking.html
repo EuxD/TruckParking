@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crea Prenotazione</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #4CAF50;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: calc(100% - 22px); /* 100% minus padding */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<h1>Crea Prenotazione</h1>
+<form id="createBookingForm">
+    <div class="form-group">
+        <label for="id_trucker">ID Trucker:</label>
+        <input type="text" id="id_trucker" name="id_trucker" required>
+    </div>
+    <div class="form-group">
+        <label for="id_parking">ID Parking:</label>
+        <input type="text" id="id_parking" name="id_parking" required>
+    </div>
+    <div class="form-group">
+        <label for="pDate">Data Prenotazione:</label>
+        <input type="date" id="pDate" name="pDate" required>
+    </div>
+    <div class="form-group">
+        <label for="ora_inizio">Ora Inizio:</label>
+        <input type="time" id="ora_inizio" name="ora_inizio" required>
+    </div>
+    <div class="form-group">
+        <label for="ora_fine">Ora Fine:</label>
+        <input type="time" id="ora_fine" name="ora_fine" required>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Crea Prenotazione">
+    </div>
+</form>
+
+<script>
+    document.getElementById('createBookingForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Convert date to the required format
+        const rawDate = document.getElementById("pDate").value;
+        const formattedDate = new Date(rawDate).toLocaleDateString('it-IT'); // Format as dd/MM/yyyy
+
+        const data = JSON.stringify({
+            id_trucker: document.getElementById("id_trucker").value,
+            id_parking: document.getElementById("id_parking").value,
+            pDate: formattedDate,
+            ora_inizio: document.getElementById("ora_inizio").value,
+            ora_fine: document.getElementById("ora_fine").value
+        });
+
+        console.log("JSON data to be sent:", data);
+
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === XMLHttpRequest.DONE) {
+                if (this.status === 201 || this.status === 200) {
+                    alert("Prenotazione creata con successo");
+                } else {
+                    console.error("Errore nella creazione della prenotazione: " + this.status);
+                    console.error("Response from server:", this.responseText);
+                    alert("Errore nella creazione della prenotazione: " + this.status + "\n" + this.responseText);
+                }
+            }
+        });
+
+        xhr.open("POST", "http://localhost:8080/truckparking/rest/booking/create", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+    });
+</script>
+</body>
+</html>
