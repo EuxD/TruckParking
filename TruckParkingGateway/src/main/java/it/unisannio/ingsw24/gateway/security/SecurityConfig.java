@@ -25,14 +25,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
-        http.authorizeHttpRequests().requestMatchers("/truckparking/rest/trucker/**").hasRole("TRUCKER")
-                .requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER")
-                .requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER")
-                .requestMatchers("/truckparking/rest/booking/**").hasRole("TRUCKER")
-                .anyRequest().authenticated().and().httpBasic();
+        http.authorizeHttpRequests().requestMatchers("truckparking/rest/trucker/**").hasRole("TRUCKER")
+                .and()
+                .authorizeHttpRequests().requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER").and()
+                .authorizeHttpRequests().requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER").and()
+                .authorizeHttpRequests().requestMatchers("/truckparking/rest/booking/").hasRole("TRUCKER")
+                .and().httpBasic();
 
-
-
+        http.authorizeHttpRequests().anyRequest().permitAll();
 
 
         return http.build();
