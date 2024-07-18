@@ -334,5 +334,21 @@ public class ParkingDAOMongo implements ParkingDAO{
         }
     }
 
+    @Override
+    public List<Parking> getParkingByCity(String city) {
+        List<Parking> parkings = new ArrayList<>();
+
+        for(Document doc : this.collection.find(eq(ELEMENT_CITY, city))){
+            Parking p = parkingFromDocument(doc);
+            parkings.add(p);
+        }
+
+        if(parkings.isEmpty()){
+            throw new NoSuchElementException();
+        }
+
+        return parkings;
+    }
+
 
 }

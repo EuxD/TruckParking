@@ -545,6 +545,34 @@ public class GatewayLogicImpl implements GatewayLogic{
         return true;
     }
 
+    @Override
+    public List<Parking> getParkingByCity(String city) throws IOException {
+        try {
+            String URL = String.format(parkingAddress + "/parking/city/" + city);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.code() != 200) {
+                return null;
+            }
+            Gson gson = new GsonBuilder().create();
+            String body = response.body().string();
+
+            // Utilizzare TypeToken per deserializzare un array JSON
+            Type listType = new TypeToken<List<Parking>>() {}.getType();
+            List<Parking> parkings = gson.fromJson(body, listType);
+
+            return parkings;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     //////////////////////////////////// BOOKING //////////////////////////////////////////
 
     @Override

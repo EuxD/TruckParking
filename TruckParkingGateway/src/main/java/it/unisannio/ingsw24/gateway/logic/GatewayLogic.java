@@ -32,6 +32,7 @@ public interface GatewayLogic {
     List<Parking> getParkingByIdOwner(String id);
     List<Parking> getAllParking();
     Boolean updateParking(String id_owner, Parking parking) throws IOException;
+    List<Parking> getParkingByCity(String city) throws IOException;
 
 //    Boolean authenticateUser(String email, String pass);
 

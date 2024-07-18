@@ -254,6 +254,23 @@ public class GatewayRestController {
                 .build();
     }
 
+    @GET
+    @Path("/parking/city/{city}")
+    public Response getParkingByCity(@PathParam("city") String city) throws IOException {
+        List<Parking> parking = logic.getParkingByCity(city);
+        if (parking == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Nessun parhceggio con la città inserita")
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+
+        return Response.ok()
+                .entity(parking)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
     @PUT
     @Path("/parking/update/{id_owner}")
     public Response updateParking(@PathParam("id_owner") String id, @RequestBody Parking parking) throws IOException {

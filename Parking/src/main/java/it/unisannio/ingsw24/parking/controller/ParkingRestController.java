@@ -87,6 +87,23 @@ public class ParkingRestController {
         }
     }
 
+    @GET
+    @Path("/city/{city}")
+    public Response getParkingByCity(@PathParam("city") String city) {
+        try{
+            List<Parking> p = parkingDAOMongo.getParkingByCity(city);
+            return Response.ok()
+                    .entity(p)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (NoSuchElementException e){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Nessun Parking con quella città: " + city)
+                    .type(MediaType.TEXT_PLAIN)
+                    .build();
+        }
+    }
+
     @DELETE
     @Path("/delete/{id}")
     public Response deleteParkingById(@PathParam("id") String id) {
