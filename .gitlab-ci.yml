@@ -9,8 +9,8 @@ build:
     name: maven:3.8.2-openjdk-17
     pull_policy: if-not-present
   script:
-    - echo "Compilando e installando il progetto multi-modulo..."
-    - mvn clean install -DskipTests  # Salta i test durante la fase di build
+    - echo "Compilando il progetto multi-modulo..."
+    - mvn clean install -DskipTests
     - echo "Contenuto della directory target dei moduli:"
     - find . -name "*.jar"
   artifacts:
@@ -30,7 +30,14 @@ test:
     name: maven:3.8.2-openjdk-17
     pull_policy: if-not-present
   script:
-    - mvn clean test
+    - mvn clean test -X  # Abilita il debug per i test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - Parking/target/surefire-reports/TEST-*.xml
+    paths:
+      - Parking/target/surefire-reports/
 
 deploy:
   stage: deploy
