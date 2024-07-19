@@ -50,7 +50,6 @@ deploy:
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no Parking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/Parking.jar
     - sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no Booking/target/*.jar $SSH_USER@$MACHINE_IP:/home/$SSH_USER/Booking.jar
 
-
     - echo "Application successfully deployed."
 
 workflow:
