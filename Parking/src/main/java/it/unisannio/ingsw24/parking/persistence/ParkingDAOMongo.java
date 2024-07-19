@@ -297,12 +297,10 @@ public class ParkingDAOMongo implements ParkingDAO{
     public Boolean updateParking(String id, Parking parking) {
         try {
             if (parking.getnPlace() < 0) {
-                System.out.println("Errore: il numero di posti non può essere negativo");
                 return false;
             }
 
             if (parking.getTariffa() != null && parking.getTariffa() < 0) {
-                System.out.println("Errore: la tariffa non può essere negativa");
                 return false;
             }
 

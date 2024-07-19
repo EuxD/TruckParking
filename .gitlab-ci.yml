@@ -22,7 +22,6 @@ build:
       - Parking/target/*.jar
       - Booking/target/*.jar
 
-
 test:
   stage: test
   needs:

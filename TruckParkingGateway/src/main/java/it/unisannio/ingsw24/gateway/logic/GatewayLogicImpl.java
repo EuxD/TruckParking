@@ -123,7 +123,6 @@ public class GatewayLogicImpl implements GatewayLogic{
                     .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
                     .create();
             String body = response.body().string();
-//            System.out.println(body);
             Trucker t = gson.fromJson(body, Trucker.class);
             return t;
         } catch (IOException e) {
@@ -770,7 +769,7 @@ public class GatewayLogicImpl implements GatewayLogic{
         try {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             String qrData = "ID_Booking: " + b.getId_booking()
-                    + "Data Prenotazione: " + b.getpDate()
+                    + "\nData Prenotazione: " + b.getpDate()
                     + "\nOrario inizio prenotazione: " + b.getOra_inizio()
                     + "\nOrario fine: " + b.getOra_fine()
                     + "\nTotale: " + b.getTotal();

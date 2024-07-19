@@ -150,12 +150,6 @@ public class ParkingRestController {
                     .type(MediaType.TEXT_PLAIN)
                     .build();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Errore interno del server durante l'aggiornamento del parking.")
-                    .type(MediaType.TEXT_PLAIN)
-                    .build();
         }
     }
 

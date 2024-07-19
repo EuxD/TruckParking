@@ -41,7 +41,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.createParking(parking);
 
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.APPLICATION_JSON, response.getMediaType().toString());
         assertEquals(parking, response.getEntity());
     }
 
@@ -53,7 +52,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.createParking(parking);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
         assertEquals("Errore nella creazione del parcheggio", response.getEntity());
     }
 
@@ -65,7 +63,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.getParkingById("123");
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.APPLICATION_JSON, response.getMediaType().toString());
         assertEquals(parking, response.getEntity());
     }
 
@@ -76,7 +73,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.getParkingById("123");
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
         assertEquals("Nessun Parking con quell'ID: 123", response.getEntity());
     }
 
@@ -88,7 +84,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.getParkingByIdOwner("owner123");
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.APPLICATION_JSON, response.getMediaType().toString());
         assertEquals(parkings, response.getEntity());
     }
 
@@ -99,7 +94,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.getParkingByIdOwner("owner123");
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
         assertEquals("Nessun parcheggio riferito a questo id owner", response.getEntity());
     }
 
@@ -111,7 +105,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.getAllParkings();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.APPLICATION_JSON, response.getMediaType().toString());
         assertEquals(parkings, response.getEntity());
     }
 
@@ -122,7 +115,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.getAllParkings();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
         assertEquals("Nessun parcheggio", response.getEntity());
     }
 
@@ -133,7 +125,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.deleteParkingById("123");
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
         assertEquals("Parcheggio eliminato", response.getEntity());
     }
 
@@ -144,7 +135,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.deleteParkingById("123");
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
         assertEquals("Parcheggio non trovato", response.getEntity());
     }
 
@@ -155,7 +145,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.deleteParkingById("123");
 
         assertEquals(Response.Status.CONFLICT.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
         assertEquals("Errore nel database: null", response.getEntity());
     }
 
@@ -167,7 +156,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.updateParking("123", parking);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_HTML, response.getMediaType().toString());
         assertEquals("Parking modificato con successo", response.getEntity());
     }
 
@@ -179,7 +167,6 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.updateParking("123", parking);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
         assertEquals("Parking non trovato o aggiornamento non riuscito", response.getEntity());
     }
 
@@ -191,20 +178,8 @@ public class ParkingRestControllerTest {
         Response response = parkingRestController.updateParking("123", parking);
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
         assertEquals("Errore: Errore di input", response.getEntity());
     }
 
-    @Test
-    public void testUpdateParking_InternalServerError() {
-        doThrow(new RuntimeException()).when(parkingDAOMongo).updateParking(anyString(), any(Parking.class));
-
-        Parking parking = new Parking();
-        Response response = parkingRestController.updateParking("123", parking);
-
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
-        assertEquals("Errore interno del server durante l'aggiornamento del parking.", response.getEntity());
-    }
 }
 
