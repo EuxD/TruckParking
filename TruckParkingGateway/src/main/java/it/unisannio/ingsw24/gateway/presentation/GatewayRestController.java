@@ -4,6 +4,7 @@ package it.unisannio.ingsw24.gateway.presentation;
 import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
+import it.unisannio.ingsw24.Entities.Persona;
 import it.unisannio.ingsw24.Entities.Trucker.*;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogic;
 import it.unisannio.ingsw24.gateway.logic.GatewayLogicImpl;
@@ -14,7 +15,10 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 import java.io.IOException;
@@ -392,6 +396,7 @@ public class GatewayRestController {
                     .entity("Prenotazione non trovata").build();
         }
     }
+
 }
 
 

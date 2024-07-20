@@ -63,15 +63,18 @@
             <div class="form-wrapper align-items-center">
                 <div class="form sign-in">
                     <h2>Sign In</h2>
-                    <div class="input-group">
-                        <i class='bx bxs-user'></i>
-                        <input type="text" id="emailLog" name="emailLog" placeholder="Email" required>
-                    </div>
-                    <div class="input-group">
-                        <i class='bx bxs-lock-alt'></i>
-                        <input type="password" id="passLog" name="passLog" placeholder="Password" required>
-                    </div>
-                    <button id="loginButton">Sign in</button>
+                    <form action="/truckparking/rest/login" method="post">
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input type="text" id="emailLog" name="username" placeholder="Email" required>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" id="passLog" name="password" placeholder="Password" required>
+                        </div>
+                        <button type="submit">Sign in</button>
+                        <div id="error-message" class="error"></div>
+                    </form>
                     <p>
                         <span>Don't have an account?</span>
                         <b onclick="toggle()" class="pointer">Sign up here</b>
@@ -196,34 +199,13 @@
         return false;
     }
 
-    document.getElementById('loginButton').addEventListener('click', function (event) {
-        event.preventDefault();
+    // Controlla se c'è un parametro 'error' nella URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
 
-        const email = document.getElementById('emailLog').value;
-        const password = document.getElementById('passLog').value;
-
-        const loginData = new URLSearchParams();
-        loginData.append('username', email);
-        loginData.append('password', password);
-
-        const loginXhr = new XMLHttpRequest();
-        loginXhr.addEventListener("readystatechange", function () {
-            if (this.readyState === XMLHttpRequest.DONE) {
-                if (this.status === 200) {
-                    alert("Login Successful");
-                } else {
-                    console.error("Login failed: " + this.status);
-                    alert("Login Failed: " + this.status);
-                }
-            }
-        });
-
-        // Adjust URL to match your login endpoint
-        const loginUrl = "http://localhost:8080/truckparking/rest/login"; // URL to match the login processing URL
-        loginXhr.open("POST", loginUrl, true);
-        loginXhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        loginXhr.send(loginData.toString());
-    });
+    if (error) {
+        document.getElementById('error-message').innerText = 'Invalid email or password.';
+    }
 </script>
 </body>
 </html>

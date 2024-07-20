@@ -25,18 +25,23 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
-        http.authorizeHttpRequests().requestMatchers("truckparking/rest/trucker/**").hasRole("TRUCKER")
+        http.authorizeHttpRequests()
+                .requestMatchers("/truckparking/rest/trucker/**").hasRole("TRUCKER")
+                .requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER")
+                .requestMatchers("/truckparking/rest/parking/city/**").hasRole("TRUCKER")
+                .requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER")
+                .requestMatchers("/truckparking/rest/booking/").hasRole("TRUCKER")
+                .requestMatchers("/SearchParkingMap.html").hasRole("TRUCKER")
+                .anyRequest().permitAll()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER").and()
-                .authorizeHttpRequests().requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER").and()
-                .authorizeHttpRequests().requestMatchers("/truckparking/rest/booking/").hasRole("TRUCKER")
-                .and().httpBasic();
-
-        http.authorizeHttpRequests().anyRequest().permitAll();
+                .formLogin()
+                .loginPage("/Accesso.html")  // Path to your custom login page
+                .loginProcessingUrl("/truckparking/rest/login")
+                .defaultSuccessUrl("/HomePage.html", true)
+                .failureUrl("/Accesso.html?error=true");
 
 
         return http.build();
-
     }
 
     @Bean
@@ -51,6 +56,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new PasswordEncoderPlain();
     }
-
-
 }

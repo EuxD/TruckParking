@@ -130,21 +130,28 @@
         }).addTo(map);
     }
 
-    function fetchCoordinates(address) {
-        return fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
+    function fetchCoordinates(address, city) {
+        const completeAddress = `${address}, ${city}, Italia`; // Aggiungi la città e il paese all'indirizzo
+        const viewbox = '6.6272658,35.2889616,18.7844746,47.0917834'; // Limita la ricerca all'Italia
+
+        return fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(completeAddress)}&countrycodes=it&limit=1&viewbox=${viewbox}&bounded=1`)
             .then(response => response.json())
             .then(data => {
                 if (data.length > 0) {
                     const location = data[0];
-                    console.log(`Fetched coordinates for ${address}:`, location);
+                    console.log(`Fetched coordinates for ${completeAddress}:`, location);
                     return {
                         lat: parseFloat(location.lat),
                         lon: parseFloat(location.lon),
                         display_name: location.display_name
                     };
                 } else {
-                    throw new Error('Coordinate not found for address: ' + address);
+                    throw new Error('Coordinate not found for address: ' + completeAddress);
                 }
+            })
+            .catch(error => {
+                console.error('Error fetching coordinates:', error);
+                throw error;
             });
     }
 
@@ -165,7 +172,7 @@
                     markers = []; // Resetta la lista di marker
 
                     const fetchCoordinatesPromises = parkings.map(parking => {
-                        return fetchCoordinates(parking.address).then(coordinates => {
+                        return fetchCoordinates(parking.address, city).then(coordinates => {
                             // Visualizza i risultati nella lista
                             const parkingItem = document.createElement("div");
                             parkingItem.classList.add("result-item");

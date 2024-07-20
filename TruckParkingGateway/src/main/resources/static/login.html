@@ -5,92 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            width: 300px;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input {
-            width: calc(100% - 20px);
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .form-group button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .form-group button:hover {
-            background-color: #45a049;
-        }
-        .error-message {
+        .error {
             color: red;
-            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-<div class="login-container">
-    <h2>Login</h2>
-    <form id="loginForm" action="/truckparking/rest/getTruckerForLogin" method="post" >
-<!--        onsubmit="return validateForm()"-->
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div class="form-group">
-            <button type="submit">Login</button>
-        </div>
-        <div class="form-group">
-            <!-- Add a link to register if needed -->
-            <a href="/register.html">Register</a>
-        </div>
-    </form>
-    <!-- Display error message if login fails -->
-    <p id="errorMessage" class="error-message" style="display:none;">Invalid email or password. Please try again.</p>
-</div>
+<h2>Login</h2>
+<form action="/truckparking/rest/login" method="post">
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="username" required>
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <div>
+        <button type="submit">Login</button>
+    </div>
+    <div id="error-message" class="error"></div>
+</form>
 
 <script>
-    function validateForm() {
-        var email = document.getElementById('email').value;
-        var password = document.getElementById('password').value;
+    // Controlla se c'è un parametro 'error' nella URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
 
-        // Simple validation, you can add more complex logic here if needed
-        if (email.trim() === '' || password.trim() === '') {
-            document.getElementById('errorMessage').style.display = 'block';
-            return false; // Prevent form submission
-        }
-
-        return true; // Allow form submission
+    if (error) {
+        document.getElementById('error-message').innerText = 'Invalid email or password.';
     }
 </script>
 </body>
