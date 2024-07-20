@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -37,7 +38,7 @@ public class SecurityConfig {
                 .formLogin()
                 .loginPage("/Accesso.html")  // Path to your custom login page
                 .loginProcessingUrl("/truckparking/rest/login")
-                .defaultSuccessUrl("/HomePage.html", true)
+                .successHandler(customAuthenticationSuccessHandler())
                 .failureUrl("/Accesso.html?error=true");
 
 
@@ -50,6 +51,11 @@ public class SecurityConfig {
         authenticationManagerBuilder.userDetailsService(userDetailService)
                 .passwordEncoder(passwordEncoder());
         return authenticationManagerBuilder.build();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler();
     }
 
     @Bean
