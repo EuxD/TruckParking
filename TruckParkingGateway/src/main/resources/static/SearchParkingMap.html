@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricerca Parcheggi</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #4CAF50;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+        }
+
+        .results {
+            flex: 1;
+            max-width: 600px;
+            margin-right: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        #map {
+            flex: 2;
+            height: 500px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: calc(100% - 22px); /* 100% minus padding */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<h1>Ricerca Parcheggi</h1>
+<form id="searchParkingForm">
+    <div class="form-group">
+        <label for="city">Città:</label>
+        <input type="text" id="city" name="city" placeholder="Città" required>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Cerca Parcheggi">
+    </div>
+</form>
+
+<div class="container">
+    <div id="results" class="results"></div>
+    <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    let map;
+    let markers = [];
+
+    function initMap() {
+        map = L.map('map').setView([41.9028, 12.4964], 12); // Centra la mappa su Roma
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+    }
+
+    function fetchCoordinates(address) {
+        return fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const location = data[0];
+                    console.log(`Fetched coordinates for ${address}:`, location);
+                    return {
+                        lat: parseFloat(location.lat),
+                        lon: parseFloat(location.lon),
+                        display_name: location.display_name
+                    };
+                } else {
+                    throw new Error('Coordinate not found for address: ' + address);
+                }
+            });
+    }
+
+    function codeAddress() {
+        const city = document.getElementById("city").value;
+        if (city) {
+            fetch(`http://localhost:8080/truckparking/rest/parking/city/${encodeURIComponent(city)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(parkings => {
+                    const resultsContainer = document.getElementById("results");
+                    resultsContainer.innerHTML = ""; // Pulisce i risultati precedenti
+                    markers.forEach(marker => map.removeLayer(marker)); // Rimuove i marker esistenti
+                    markers = []; // Resetta la lista di marker
+
+                    const fetchCoordinatesPromises = parkings.map(parking => {
+                        return fetchCoordinates(parking.address).then(coordinates => {
+                            // Visualizza i risultati nella lista
+                            const parkingItem = document.createElement("div");
+                            parkingItem.classList.add("result-item");
+                            parkingItem.innerHTML = `
+                                <p><strong>Indirizzo:</strong> ${parking.address}</p>
+                                <p><strong>Città:</strong> ${parking.city}</p>
+                                <p><strong>Numero di Posti:</strong> ${parking.nPlace}</p>
+                                <p><strong>Tariffa:</strong> €${parking.tariffa}</p>
+                            `;
+                            resultsContainer.appendChild(parkingItem);
+
+                            // Aggiungi marker sulla mappa
+                            const marker = L.marker([coordinates.lat, coordinates.lon]).addTo(map)
+                                .bindPopup(`<strong>Indirizzo:</strong> ${parking.address}<br><strong>Tariffa:</strong> €${parking.tariffa}`)
+                                .openPopup();
+
+                            markers.push(marker); // Aggiungi il marker alla lista
+                        });
+                    });
+
+                    // Dopo che tutte le coordinate sono state recuperate e i marker sono stati aggiunti
+                    Promise.all(fetchCoordinatesPromises)
+                        .then(() => {
+                            // Adatta il view della mappa per includere tutti i marker
+                            if (markers.length > 0) {
+                                const bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
+                                map.fitBounds(bounds);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Errore nella ricerca dei parcheggi:", error);
+                            alert("Errore nella ricerca dei parcheggi: " + error.message);
+                        });
+                })
+                .catch(error => {
+                    console.error("Errore nella ricerca dei parcheggi:", error);
+                    alert("Errore nella ricerca dei parcheggi: " + error.message);
+                });
+        } else {
+            alert('Please enter a city name.');
+        }
+    }
+
+    // Inizializza la mappa quando la pagina viene caricata
+    document.addEventListener('DOMContentLoaded', initMap);
+
+    // Gestione del submit del form
+    document.getElementById('searchParkingForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        codeAddress();
+    });
+</script>
+</body>
+</html>
