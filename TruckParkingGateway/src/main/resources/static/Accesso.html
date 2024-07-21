@@ -199,6 +199,27 @@
         return false;
     }
 
+    document.querySelector('.form.sign-in form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const email = document.getElementById('emailLog').value;
+        const password = document.getElementById('passLog').value;
+
+        // Imposta un cookie per memorizzare le credenziali
+        document.cookie = `email=${email}; path=/`;
+        document.cookie = `password=${password}; path=/`;
+
+        // Invia il modulo per il login (commenta o modifica secondo le tue necessità)
+        this.submit();
+    });
+
+    // Funzione per leggere i cookie
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
     // Controlla se c'è un parametro 'error' nella URL
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
