@@ -158,7 +158,7 @@
     function codeAddress() {
         const city = document.getElementById("city").value;
         if (city) {
-            fetch(`http://localhost:8080/truckparking/rest/parking/city/${encodeURIComponent(city)}`)
+            fetch(`http://172.31.6.11:8080/truckparking/rest/parking/city/${encodeURIComponent(city)}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

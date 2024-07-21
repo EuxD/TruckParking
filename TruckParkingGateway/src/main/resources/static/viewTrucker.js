@@ -65,7 +65,7 @@ function buildListItem(trucker, number) {
 
 function handleTruckerRequestById(id) {
     var xhttp = new XMLHttpRequest();
-    var url = 'http://localhost:8080/truckparking/rest/trucker/ID/' + id;
+    var url = 'http://172.31.6.11:8080/truckparking/rest/trucker/ID/' + id;
     xhttp.open("GET", url, false);
     xhttp.send();
 

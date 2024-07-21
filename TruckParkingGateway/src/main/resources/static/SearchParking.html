@@ -137,7 +137,7 @@
             }
         });
 
-        xhr.open("GET", "http://localhost:8080/truckparking/rest/parking/city/" + encodeURIComponent(city), true);
+        xhr.open("GET", "http://172.31.6.11:8080/truckparking/rest/parking/city/" + encodeURIComponent(city), true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send();
     });

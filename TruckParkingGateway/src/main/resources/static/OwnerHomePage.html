@@ -117,7 +117,7 @@
     if (!email) {
         document.querySelector('.profile-info').innerHTML = 'Nessuna email trovata nei cookie. Impossibile recuperare i dati del profilo.';
     } else {
-        fetch(`http://localhost:8080/truckparking/rest/owner/email/${email}`)
+        fetch(`http://172.31.6.11:8080/truckparking/rest/owner/email/${email}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Errore HTTP: ${response.status}`);

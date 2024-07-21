@@ -25,7 +25,7 @@ public interface GatewayLogic {
     Trucker getTruckerByID(String id);
     Trucker updateTrucker(String email, Trucker trucker) throws IOException;
 
-    String parkingAddress = "http://localhost:8083";
+    String parkingAddress = "http://172.31.6.11:8083";
     Parking createParking(Parking parking) throws IOException;
     Parking getParkingById(String id);
     Boolean deleteParkingById(String id);
@@ -36,7 +36,7 @@ public interface GatewayLogic {
 
 //    Boolean authenticateUser(String email, String pass);
 
-    String bookingAddress = "http://localhost:8084";
+    String bookingAddress = "http://172.31.6.11:8084";
     Booking createBooking(Booking b);
     Booking getBookingById(String id);
     List<Booking> getBookingByIdTrucker(String id_trucker);

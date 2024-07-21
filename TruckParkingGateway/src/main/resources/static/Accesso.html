@@ -157,9 +157,9 @@
 
         let url;
         if (role === "ROLE_OWNER") {
-            url = "http://localhost:8080/truckparking/rest/createOwner";
+            url = "http://172.31.6.11:8080/truckparking/rest/createOwner";
         } else if (role === "ROLE_TRUCKER") {
-            url = "http://localhost:8080/truckparking/rest/createTrucker";
+            url = "http://172.31.6.11:8080/truckparking/rest/createTrucker";
         }
 
         xhr.open("POST", url, true);

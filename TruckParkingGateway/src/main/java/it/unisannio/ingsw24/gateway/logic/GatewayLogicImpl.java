@@ -43,7 +43,7 @@ public class GatewayLogicImpl implements GatewayLogic{
         emailService = new EmailService();
 
         if(ownerHost == null){
-            ownerHost = "localhost";
+            ownerHost = "172.31.6.11";
         }
 
         if(ownerPort == null){
@@ -55,7 +55,7 @@ public class GatewayLogicImpl implements GatewayLogic{
         String truckerPort = System.getenv("TRUCKER_PORT");
 
         if(truckerHost == null){
-            truckerHost = "localhost";
+            truckerHost = "172.31.6.11";
         }
 
         if(truckerPort == null){
@@ -80,7 +80,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8081/trucker/create")
+                .url("http://172.31.6.11:8081/trucker/create")
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -168,7 +168,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8081/trucker/update/" + email)
+                .url("http://172.31.6.11:8081/trucker/update/" + email)
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -242,7 +242,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8082/owner/create")
+                .url("http://172.31.6.11:8082/owner/create")
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -365,7 +365,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8082/owner/update/" + email)
+                .url("http://172.31.6.11:8082/owner/update/" + email)
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -397,7 +397,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8083/parking/create")
+                .url("http://172.31.6.11:8083/parking/create")
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -524,7 +524,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8083/parking/update/" + id)
+                .url("http://172.31.6.11:8083/parking/update/" + id)
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -587,7 +587,7 @@ public class GatewayLogicImpl implements GatewayLogic{
         try {
             RequestBody body = RequestBody.create(jsonBody, mediaType);
             Request request = new Request.Builder()
-                    .url("http://localhost:8084/booking/create")
+                    .url("http://172.31.6.11:8084/booking/create")
                     .post(body)
                     .addHeader("Content-Type", "application/json")
                     .build();
