@@ -45,6 +45,15 @@ function buildListItem(trucker, number) {
     currentElement.style.fontWeight = "bold";
     li.appendChild(currentElement);
 
+    currentElement = document.createElement("h5");
+    currentElement.innerText = "Date of Birth: " + trucker.bDate;
+    currentElement.style.fontWeight = "bold";
+    li.appendChild(currentElement);
+
+    currentElement = document.createElement("h5");
+    currentElement.innerText = "Email: " + trucker.email;
+    currentElement.style.fontWeight = "bold";
+    li.appendChild(currentElement);
 
     currentElement = document.createElement("h5");
     currentElement.setAttribute("class", "role-class");

@@ -1,5 +1,6 @@
 package it.unisannio.ingsw24.parking.persistence;
 
+import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 
 import java.io.IOException;
@@ -25,4 +26,5 @@ public interface ParkingDAO {
     Boolean updateParking(String id, Parking parking);
     List<Parking> getParkingByCity(String city);
 
+    List<Booking> getBookingByParking(String idOwner);
 }

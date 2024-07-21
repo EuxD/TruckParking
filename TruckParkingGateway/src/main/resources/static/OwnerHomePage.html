@@ -23,7 +23,7 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            background: #4EA685; /* Colore di sfondo */
+            background: #4EA685;
             border-bottom-left-radius: 15px;
             border-bottom-right-radius: 15px;
         }
@@ -34,11 +34,11 @@
             background: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
             transition: transform 0.3s ease, background 0.3s ease;
-            color: #fff; /* Colore del testo */
+            color: #fff;
         }
         .header h1:hover {
             transform: scale(1.05);
-            background: rgba(0, 0, 0, 0.7); /* Colore più scuro per hover */
+            background: rgba(0, 0, 0, 0.7);
         }
         .container {
             padding: 20px;
@@ -46,9 +46,9 @@
         }
         .button-group {
             text-align: center;
-            margin-bottom: 30px; /* Margine inferiore per distanziare dalla sezione delle credenziali */
+            margin-bottom: 30px;
         }
-        .button-group a {
+        .button-group a, .button-group button {
             color: #fff;
             text-decoration: none;
             padding: 15px 30px;
@@ -58,8 +58,9 @@
             transition: background-color 0.3s ease;
             display: inline-block;
             margin: 0 10px;
+            cursor: pointer;
         }
-        .button-group a:hover {
+        .button-group a:hover, .button-group button:hover {
             background-color: #5cbf2a;
             transform: scale(1.05);
         }
@@ -92,12 +93,12 @@
     <div class="button-group">
         <a href="OwnerHomePage.html">Home</a>
         <a href="Parking.html">Parking</a>
-        <a href="ViewTruckers.html">Visualizza Trucker</a>
+        <a href="viewTrucker.html">Visualizza Info Trucker</a>
+        <a href="viewBookingOw.html">Prenotazioni effettuate sui parcheggi</a>
     </div>
     <h2>Le Tue Credenziali</h2>
     <div class="profile-info">
         <p><strong>Email:</strong> <span id="email">Caricamento...</span></p>
-        <!-- Rimuovi la riga della password -->
         <p><strong>Nome:</strong> <span id="name">Caricamento...</span></p>
         <p><strong>Cognome:</strong> <span id="surname">Caricamento...</span></p>
         <p><strong>Data di Nascita:</strong> <span id="bDate">Caricamento...</span></p>
@@ -105,20 +106,17 @@
 </div>
 
 <script>
-    // Funzione per leggere i cookie
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
-    // Recupera l'email dai cookie
     const email = getCookie('email');
 
     if (!email) {
         document.querySelector('.profile-info').innerHTML = 'Nessuna email trovata nei cookie. Impossibile recuperare i dati del profilo.';
     } else {
-        // Recupera i dati dal server
         fetch(`http://localhost:8080/truckparking/rest/owner/email/${email}`)
             .then(response => {
                 if (!response.ok) {
@@ -128,10 +126,10 @@
             })
             .then(data => {
                 document.getElementById('email').textContent = email || 'Non disponibile';
-                // Non stampare la password
                 document.getElementById('name').textContent = data.name || 'Non disponibile';
                 document.getElementById('surname').textContent = data.surname || 'Non disponibile';
                 document.getElementById('bDate').textContent = data.bDate || 'Non disponibile';
+                localStorage.setItem('ownerId', data.id_owner);  // Memorizza l'ID dell'owner in localStorage
             })
             .catch(error => {
                 console.error('Errore nel recupero dei dati:', error);

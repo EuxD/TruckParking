@@ -27,9 +27,11 @@ public class SecurityConfig {
         http.csrf().disable();
 
         http.authorizeHttpRequests()
+                .requestMatchers("/truckparking/rest/trucker/ID/**").hasAnyRole("TRUCKER","OWNER")
                 .requestMatchers("/truckparking/rest/trucker/**").hasRole("TRUCKER")
                 .requestMatchers("/truckparking/rest/owner/**").hasRole("OWNER")
                 .requestMatchers("/truckparking/rest/parking/city/**").hasRole("TRUCKER")
+
                 .requestMatchers("/truckparking/rest/parking/**").hasRole("OWNER")
                 .requestMatchers("/truckparking/rest/booking/**").hasRole("TRUCKER")
                 .requestMatchers("/SearchParkingMap.html").hasRole("TRUCKER")

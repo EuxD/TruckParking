@@ -10,7 +10,6 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
-import it.unisannio.ingsw24.Entities.Persona;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.gateway.config.LocalDateAdapter;
 import it.unisannio.ingsw24.gateway.config.LocalTimeAdapter;
@@ -18,14 +17,10 @@ import it.unisannio.ingsw24.gateway.presentation.EmailService;
 import it.unisannio.ingsw24.gateway.utils.BookingCreateException;
 import it.unisannio.ingsw24.gateway.utils.BookingNotFoundException;
 import okhttp3.*;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
 import javax.imageio.ImageIO;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,7 +28,6 @@ import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Properties;
 
 
 public class GatewayLogicImpl implements GatewayLogic{
@@ -783,6 +777,36 @@ public class GatewayLogicImpl implements GatewayLogic{
         }
 
         return qrCodeOutputStream.toByteArray();
+    }
+
+    @Override
+    public List<Booking> getBookingProva(String id){
+        try {
+            String URL = String.format(parkingAddress + "/parking/infoBooking/" + id);
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.code() != 200) {
+                return null;
+            }
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                    .create();
+            String body = response.body().string();
+
+            // Utilizzare TypeToken per deserializzare un array JSON
+            Type listType = new TypeToken<List<Booking>>() {}.getType();
+            List<Booking> bookings = gson.fromJson(body, listType);
+
+            return bookings;
+        } catch (IOException e) {
+            throw new RuntimeException("Errore nella richiesta di ricerca");
+        }
     }
 
 }

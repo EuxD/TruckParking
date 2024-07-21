@@ -2,6 +2,7 @@ package it.unisannio.ingsw24.parking.persistence;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -9,9 +10,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Owner.Owner;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.parking.config.LocalDateAdapter;
+import it.unisannio.ingsw24.parking.config.LocalTimeAdapter;
 import okhttp3.*;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
@@ -19,7 +22,9 @@ import org.springframework.stereotype.Repository;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -347,6 +352,51 @@ public class ParkingDAOMongo implements ParkingDAO{
 
         return parkings;
     }
+
+    @Override
+    public List<Booking> getBookingByParking(String idPersona) {
+        // Trova tutti i parcheggi di proprietà dell'owner
+        List<Parking> parkings = findParkingByIdOwner(idPersona);
+
+        // Lista per accumulare tutte le prenotazioni
+        List<Booking> allBookings = new ArrayList<>();
+
+        for (Parking parking : parkings) {
+            String idParking = parking.getId_parking();  // Assicurati che Parking abbia un metodo getId() o equivalente
+            try {
+                // Costruisci l'URL per recuperare le prenotazioni per questo parcheggio
+                String URL = String.format("http://localhost:8084/booking/parkingID/" + idParking);
+                OkHttpClient client = new OkHttpClient();
+
+                Request request = new Request.Builder()
+                        .url(URL)
+                        .get()
+                        .build();
+                Response response = client.newCall(request).execute();
+                if (response.code() != 200) {
+                    return null;
+                }
+
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                        .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                        .create();
+                String body = response.body().string();
+
+                // Utilizzare TypeToken per deserializzare un array JSON
+                Type listType = new TypeToken<List<Booking>>() {}.getType();
+                List<Booking> bookings = gson.fromJson(body, listType);
+
+                // Aggiungi tutte le prenotazioni per questo parcheggio alla lista totale
+                allBookings.addAll(bookings);
+            } catch (IOException e) {
+                throw new RuntimeException("Errore nella richiesta di ricerca per il parcheggio: " + idParking, e);
+            }
+        }
+
+        return allBookings;
+    }
+
 
 
 }

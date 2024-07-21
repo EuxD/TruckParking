@@ -44,4 +44,5 @@ public interface GatewayLogic {
     List<Booking> getAllBooking();
     Boolean deleteBookingById(String id);
 
+    List<Booking> getBookingProva(String id);
 }

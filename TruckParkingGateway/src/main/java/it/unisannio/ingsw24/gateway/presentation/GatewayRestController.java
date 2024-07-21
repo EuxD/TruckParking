@@ -163,7 +163,7 @@ public class GatewayRestController {
                     .type(MediaType.TEXT_PLAIN)
                     .build();
         }
-        return Response.ok().build();
+        return Response.ok().entity("Owner aggiornato con successo").type(MediaType.TEXT_PLAIN).build();
     }
 
     @DELETE
@@ -309,11 +309,6 @@ public class GatewayRestController {
         try{
             Booking b = logic.createBooking(booking);
 
-//            //Invio dell'email
-//            EmailService emailService = new EmailService();
-//            String subject = "Prenotazione aeffettuata con successo";
-//            String body = "";
-//            emailService.sendEmail(logic.getTruckerByID(booking.getId_trucker()).getEmail(),body,subject);
 
             return Response.status(Response.Status.CREATED)
                     .entity(b)
@@ -395,6 +390,17 @@ public class GatewayRestController {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Prenotazione non trovata").build();
         }
+    }
+
+    @GET
+    @Path("/infoBooking/{id}")
+    public Response infoBooking(@PathParam("id") String id){
+        List<Booking> bookings = logic.getBookingProva(id);
+        if(bookings == null){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        return Response.ok().entity(bookings).type(MediaType.APPLICATION_JSON).build();
     }
 
 }

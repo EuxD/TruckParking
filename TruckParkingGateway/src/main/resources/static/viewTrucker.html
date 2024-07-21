@@ -3,7 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <title>Trucker Page</title>
-    <link rel="stylesheet" type="text/css" href="style-viewTrucker.css">
+    <style>
+        /* Reset di base */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        /* Intestazione */
+        header {
+            background-color: #4EA685;
+            color: white;
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin: 0;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #5cbf2a;
+            display: inline-block;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1:hover {
+            transform: scale(1.05);
+            background-color: #4EA685;
+        }
+
+        /* Form di ricerca */
+        #truckerForm {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #truckerForm label {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        #truckerForm input[type="text"] {
+            width: calc(100% - 10px);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        #truckerForm input[type="submit"] {
+            background-color: #4EA685;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1em;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #truckerForm input[type="submit"]:hover {
+            background-color: #5cbf2a;
+        }
+
+        /* Risultati */
+        #results {
+            text-align: left;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Stili generici */
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        /* Stili per link */
+        a {
+            color: #4EA685;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #5cbf2a;
+        }
+
+        /* Stili per i pulsanti */
+        .button {
+            display: inline-block;
+            background-color: #4EA685;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1em;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #5cbf2a;
+        }
+
+    </style>
 </head>
 <body>
 <header>

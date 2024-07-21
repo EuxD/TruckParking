@@ -1,5 +1,6 @@
 package it.unisannio.ingsw24.parking.controller;
 
+import it.unisannio.ingsw24.Entities.Booking.Booking;
 import it.unisannio.ingsw24.Entities.Parking.Parking;
 import it.unisannio.ingsw24.Entities.Trucker.Trucker;
 import it.unisannio.ingsw24.parking.persistence.ParkingDAO;
@@ -151,6 +152,16 @@ public class ParkingRestController {
                     .build();
 
         }
+    }
+    @GET
+    @Path("/infoBooking/{id}")
+    public Response getBookingByIdOwner(@PathParam("id") String id_persona){
+        List<Booking> bookings = parkingDAOMongo.getBookingByParking(id_persona);
+        if(bookings == null){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        return Response.ok().entity(bookings).type(MediaType.APPLICATION_JSON).build();
     }
 
 }
