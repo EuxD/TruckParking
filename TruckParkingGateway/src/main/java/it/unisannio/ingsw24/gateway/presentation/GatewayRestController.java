@@ -94,7 +94,7 @@ public class GatewayRestController {
                     .type(MediaType.TEXT_PLAIN)
                     .build();
         }
-        return Response.ok().build();
+        return Response.ok().entity("Trucker modificato con successo").type(MediaType.TEXT_PLAIN).build();
     }
 
     @DELETE

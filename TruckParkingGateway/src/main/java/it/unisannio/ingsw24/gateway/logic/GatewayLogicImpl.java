@@ -174,7 +174,7 @@ public class GatewayLogicImpl implements GatewayLogic{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8081/trucker/update" + email)
+                .url("http://localhost:8081/trucker/update/" + email)
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
