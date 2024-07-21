@@ -133,7 +133,7 @@ public class ParkingDAOMongo implements ParkingDAO{
 
     private Owner checkIDOwner(String id) {
         try {
-            String URL = String.format("http://localhost:8082/owner/ID/" + id);
+            String URL = String.format("http://172.31.6.11:8082/owner/ID/" + id);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
@@ -175,7 +175,7 @@ public class ParkingDAOMongo implements ParkingDAO{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8082/owner/update/" + owner.getEmail())
+                .url("http://172.31.6.11:8082/owner/update/" + owner.getEmail())
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -203,7 +203,7 @@ public class ParkingDAOMongo implements ParkingDAO{
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8082/owner/update/" + owner.getEmail())
+                .url("http://172.31.6.11:8082/owner/update/" + owner.getEmail())
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -365,7 +365,7 @@ public class ParkingDAOMongo implements ParkingDAO{
             String idParking = parking.getId_parking();  // Assicurati che Parking abbia un metodo getId() o equivalente
             try {
                 // Costruisci l'URL per recuperare le prenotazioni per questo parcheggio
-                String URL = String.format("http://localhost:8084/booking/parkingID/" + idParking);
+                String URL = String.format("http://172.31.6.11:8084/booking/parkingID/" + idParking);
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder()

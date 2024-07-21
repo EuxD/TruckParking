@@ -278,7 +278,7 @@ public class TruckerDAOMongo implements TruckerDAO {
 
     public Boolean checkAreAllBookingsExpired(String id_trucker){
         try {
-            String URL = String.format("http://localhost:8084/booking/truckerID/" + id_trucker);
+            String URL = String.format("http://172.31.6.11:8084/booking/truckerID/" + id_trucker);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()

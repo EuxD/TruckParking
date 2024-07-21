@@ -38,7 +38,7 @@ public class MyUserAuthUserDetailService implements UserDetailsService {
         String ownerPort = System.getenv("OWNER_PORT");
 
         if (ownerHost == null) {
-            ownerHost = "localhost";
+            ownerHost = "172.31.6.11";
         }
 
         if (ownerPort == null) {
@@ -50,7 +50,7 @@ public class MyUserAuthUserDetailService implements UserDetailsService {
         String truckerPort = System.getenv("TRUCKER_PORT");
 
         if (truckerHost == null) {
-            truckerHost = "localhost";
+            truckerHost = "172.31.6.11";
         }
 
         if (truckerPort == null) {

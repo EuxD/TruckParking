@@ -111,7 +111,7 @@ public class BookingDAOMongo implements BookingDAO {
 
     private Trucker checkIdTrucker(String id) throws IOException {
         try {
-            String URL = String.format("http://localhost:8081/trucker/ID/" + id);
+            String URL = String.format("http://172.31.6.11:8081/trucker/ID/" + id);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
@@ -140,7 +140,7 @@ public class BookingDAOMongo implements BookingDAO {
 
     private Parking checkIdParking(String id) throws IOException {
         try {
-            String URL = String.format("http://localhost:8083/parking/id/" + id);
+            String URL = String.format("http://172.31.6.11:8083/parking/id/" + id);
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
@@ -179,7 +179,7 @@ public class BookingDAOMongo implements BookingDAO {
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8081/trucker/update/" + trucker.getEmail())
+                .url("http://172.31.6.11:8081/trucker/update/" + trucker.getEmail())
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -208,7 +208,7 @@ public class BookingDAOMongo implements BookingDAO {
 
         RequestBody body = RequestBody.create(mediaType, jsonBody);
         Request request = new Request.Builder()
-                .url("http://localhost:8081/trucker/update/" + trucker.getEmail())
+                .url("http://172.31.6.11:8081/trucker/update/" + trucker.getEmail())
                 .put(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
