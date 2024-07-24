@@ -10,8 +10,8 @@ import java.io.IOException;
 
 public class EmailService {
 
-    private final String username = "truckparkingapp@gmail.com";
-    private final String password = "themzfgqwpavnilr";
+    private final String username = "email@example.com";
+    private final String password = "passwordExample";
 
     public void sendEmailWithAttachment(String to, byte[] attachmentData) {
         Properties props = new Properties();
